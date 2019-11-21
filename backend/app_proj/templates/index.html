@@ -1,0 +1,56 @@
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Minifig ClanWar</title>
+
+	</head>
+	<body>
+
+		<div id="root">REACT CONTENT</div>
+
+		{% render_bundle 'runtime~main' %}
+
+		{% render_bundle 'undefined' %}
+
+		{% render_bundle 'main' %}
+
+		<!--
+		<img src="http://localhost:3000/static/media/logo.5d5d9eef.svg" class="runlogo">
+		<script src="http://localhost:3000/static/js/bundle.js"></script>
+		<script src="http://localhost:3000/static/js/0.chunk.js"></script>
+		<script src="http://localhost:3000/static/js/main.chunk.js"></script>
+		-->
+
+	</body>
+</html>
+
+<script type="text/javascript">
+
+window.onload = testLoad;
+
+function testLoad() {
+	//console.log(testFile);
+	//console.log(options);
+}
+
+</script>
+
+<style>
+
+html {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+</style>

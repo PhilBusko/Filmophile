@@ -1,0 +1,41 @@
+/**************************************************************************************************
+CONTENT BLOCK STYLES
+**************************************************************************************************/
+@import '../app_main/styles.scss';
+
+.content-wrapper {
+
+   font-family: Garamond, Baskerville, Baskerville Old Face, Hoefler Text, Times New Roman, serif;
+   font-size: 18px;
+   color: $contentMain;
+
+   .page-title {
+      padding: 10px 0px 10px 0px;
+      text-align: center;
+      font-size: 200%;
+
+      color: #6c9dc6;      // SteelBlue
+      text-shadow: -1px 0px 0 #000000, 1px 0px 0 #000000, 0px 1px 0 #000000, 0px -1px 0 #000000;
+   }
+   .outer-spacing {
+      padding: 5px;
+   }
+   .inner-spacing {
+      margin: 5px;
+   }
+   .block-horizontal {
+      min-height: 100px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      border: 1px solid $blockBorder;
+      border-radius: 4px;
+      background: $blockBackground;
+   }
+
+   .center-text {
+      text-align: center !important;
+   }
+}
+

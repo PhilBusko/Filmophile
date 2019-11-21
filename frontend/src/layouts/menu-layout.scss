@@ -1,0 +1,28 @@
+/**************************************************************************************************
+MENU LAYOUT STYLES
+**************************************************************************************************/
+@import '../app_main/styles.scss';
+
+.menu-layout {
+   //width: 100%;
+   min-height: 100vh;
+   display: flex;
+   flex-direction: row;
+}
+
+.nav-column {
+   width: 16%;
+   background: $navBackground;
+
+   .fixed-panel {
+      position: sticky;           // IE, Edge not supported 
+      position: -webkit-sticky;   // Safari
+      top: 6px;
+   }
+}
+
+.content-column {
+   width: 94%;
+   background: $contentBackground;
+}
+

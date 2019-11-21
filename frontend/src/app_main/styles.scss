@@ -1,0 +1,104 @@
+/**************************************************************************************************
+GLOBAL STYLES
+**************************************************************************************************/
+
+// color scheme: split complementary with orange-red, steel-blue and green
+
+// menu-layout
+$navBackground: #ffb499;         // Coral
+$contentBackground:  #d9f2e4;    // SeaGreen
+
+// nav-menu
+$navMain: #651a1a;               // Brown
+$navLinkBackground: #fff4b3;     // Gold
+$navHighlight: #e91640;          // Crimson
+$navLinkBkgdHighlight: #fff4b3;  // Gold
+
+// content-block
+$contentMain: #000000;           // Black
+$blockBorder: #1e7b1e;           // ForestGreen
+$blockBackground: #dae7f1;       // SteelBlue         
+
+// table-wrapper
+$tableBorder: #6A5ACD;           // SlateBlue
+$tableBackground: #fbfbfb;       // White
+
+
+/**************************************************************************************************
+FONTS
+**************************************************************************************************/
+
+
+//@import '~@fortawesome/fontawesome-free/css/all.css';
+
+
+/**************************************************************************************************
+RESPONSIVENESS
+**************************************************************************************************/
+
+@import '~purecss/build/pure-min.css';
+@import '~purecss/build/grids-responsive-min.css';
+
+// override pure fonts
+.pure-g, .pure-g [class *= "pure-u"], .pure-g [class*=pure-u] {
+   font-family: inherit !important;
+}
+
+
+/* Responsive setters for property values */
+/* Structure of $property-map: { $property-name: (default, sm, md, lg, xl) } */
+
+@mixin responsive-setter($property-map, $limit: 5) {
+    @for $i from 1 through 5 {
+        @if ($i == 1 and $i <= $limit) {
+            @include _responsive-setter-helper($property-map, $i);
+        }
+        @if ($i == 2 and $i <= $limit) {
+            @include pure-sm-layout() {
+                @include _responsive-setter-helper($property-map, $i);
+            }
+        }
+        @if ($i == 3 and $i <= $limit) {
+            @include pure-md-layout() {
+                @include _responsive-setter-helper($property-map, $i);
+            }
+        }
+        @if ($i == 4 and $i <= $limit) {
+            @include pure-lg-layout() {
+                @include _responsive-setter-helper($property-map, $i);
+            }
+        }
+        @if ($i == 5 and $i <= $limit) {
+            @include pure-xl-layout() {
+                @include _responsive-setter-helper($property-map, $i);
+            }
+        }
+    }
+}
+
+@mixin _responsive-setter-helper($property-map, $value-index) {
+    @each $property-name, $property-values in $property-map {
+        $value: nth($property-values, $value-index);
+        @if ($value) {
+            #{$property-name}: $value;
+        }
+    }
+}
+
+
+/**************************************************************************************************
+BROWSER COMPATIBILITY
+**************************************************************************************************/
+
+@mixin chrome-styles() {
+   @media screen and (-webkit-min-device-pixel-ratio:0) {
+       @content;
+   }
+}
+
+@mixin ie-styles {  /* IE10 and IE11 */
+   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+       @content;
+   }
+}
+

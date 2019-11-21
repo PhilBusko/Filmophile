@@ -1,0 +1,37 @@
+/**************************************************************************************************
+NAVIGATION MENU STYLES
+**************************************************************************************************/
+@import '../app_main/styles.scss';
+
+.navigation-wrapper {
+
+   font-family: Gill Sans, Gill Sans MT, Calibri, sans-serif;
+   font-size: 22px;
+
+   .nav-link-container {
+      margin: 6px;
+      a {
+         display: block;
+         border: 2px solid $navMain;
+         border-radius: 3px;
+         padding: 6px 10px;
+         background: $navLinkBackground;
+
+         color: $navMain;
+         text-decoration: none;
+         font-weight: bold;
+      }
+      a:hover {
+         border-color: $navHighlight;
+         color: $navHighlight;
+         background: $navLinkBkgdHighlight;
+      }
+      a:visited {
+         color: $navMain;
+      }
+      a:visited:hover {
+         color: $navHighlight;
+      }
+   }  
+}
+
