@@ -41,10 +41,11 @@ class ReelgoodScraper(object):
         # initialize the driver
 
         this_path = os.path.abspath(os.path.dirname(__file__))
+        this_parent = os.path.dirname(this_path)
         if sys.platform == 'darwin': # mac
-            driver_path = os.path.join(this_path, 'static/geckodriver_mac')
+            driver_path = os.path.join(this_parent, 'static/geckodriver_mac')
         else:
-            driver_path = os.path.join(this_path, 'static/geckodriver')
+            driver_path = os.path.join(this_parent, 'static/geckodriver')
         self.driver = SN.Firefox(executable_path=driver_path)
         print(self.driver)
 
