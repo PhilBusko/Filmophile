@@ -88,6 +88,7 @@ class NetflixScraper(object):
 
         pass
 
+
     def close(self):
         TM.sleep(10)
         self.driver.quit()
