@@ -186,7 +186,7 @@ class ImdbScraper(object):
             elif block_type == 'Cumulative Worldwide Gross:':
                 gross_worldwide = blk.text
             elif block_type == 'Production Co:':
-                company = blk.find_elements_by_tag_name('a')[0].text
+                companies = blk.find_elements_by_tag_name('a')[0].text
 
         if budget:
             budget = budget.replace('Budget:', '').replace('$', '').replace(',', '')
@@ -200,16 +200,16 @@ class ImdbScraper(object):
 
         movie_dx = {
             'imdb_id': imdb_id,
-            'title_imdb': title_imdb,
-            'title_original': title_original,
+            'title': title_imdb,
+            'original_title': title_original,
             'year': year, 
             'rating': rating,
-            'company': company,
+            'companies': companies,
             'country': country,
             'language': language, 
-            'runtime': duration,
-            'director': director,
-            'writer': writer,
+            'duration': duration,
+            'directors': director,
+            'writers': writer,
             'actors': actors, 
             'genres': genres, 
             'synopsis': synopsis, 

@@ -66,7 +66,7 @@ class MovieDBHelper(object):
         return movie_ls
 
 
-    def get_movie_by_title(self, title, year):
+    def get_movie_id(self, title, year):
 
         # search for movie and inspect results
         # the year helps greatly to resolve ties
@@ -94,23 +94,6 @@ class MovieDBHelper(object):
 
         if not movie_found:
             raise Exception(f'Movie not in results: {title} ({year}).')
-
-        return self.get_movie_by_id(movie_found['id'])
-
-
-    def get_movie_id(self, title, year):
-
-        search = MB.Search()
-        search_results = search.movie(query=title, primary_release_year=year)
-        TM.sleep(0.5)
-
-        if search_results['total_results'] == 0:
-            raise Exception(f'Movie not found: {title} ({year}).')
-
-        if search_results['total_results'] > 1:
-            raise Exception(f'Too many results: {title} ({year}).')
-
-        movie_found = search_results['results'][0]
 
         return movie_found['id']
 
@@ -195,7 +178,7 @@ class MovieDBHelper(object):
             'companies': companies,
             'country': country,
             'language': language,
-            'runtime': runtime,
+            'run_time': runtime,
             'crew': ', '.join(crew_ls),
             'cast': cast,
             'poster': poster,
@@ -205,8 +188,8 @@ class MovieDBHelper(object):
             'synopsis': synopsis,
             'budget': budget if budget else None,
             'gross': gross if gross else None,
-            'tmdb_score': tmdb_score,
-            'tmdb_votes': tmdb_votes,
+            'score': tmdb_score,
+            'votes': tmdb_votes,
             
             'tmdb_id': tmdb_id,
             'imdb_id': imdb_id,
