@@ -22,11 +22,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     # installed packages
+    'django_extensions',
     'rest_framework',
     'corsheaders',
     'webpack_loader',
     # custom apps
-    #'game_rules',
+    'movies',
 ]
 
 MIDDLEWARE = [
@@ -57,18 +58,18 @@ TEMPLATES = [
         },
     },
 ]
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST': 'localhost',
         'PORT': '',
-        'NAME': 'clanwarDB',
-        'USER': 'legoadmin',
-        'PASSWORD': 'v2b1n4h5y6g7d8k9r0',
+        'NAME': 'movieDB',
+        'USER': 'movieadmin',
+        'PASSWORD': 'l9k7j5h3g1a2s4d6f8',
     }
 }
-"""
+
 ROOT_URLCONF = 'app_proj.urls'
 STATIC_URL = '/static/'
 

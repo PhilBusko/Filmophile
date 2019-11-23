@@ -11,32 +11,65 @@ import tmdbsimple as MB
 
 class MovieDBHelper(object):
 
+
     def __init__(self):
-
         MB.API_KEY = 'f000577cd45312936e5b58384faa5569'
+
+
+    def discover_movies(self, year):
         
+        movie_ls = []
 
-    def get_movie_id(self, title, year):
+        date_start = f'{year}-01-01'
+        date_end = f'{year}-04-30'
+        movie_ls += self.discover_by_period(date_start, date_end)
+        
+        date_start = f'{year}-05-01'
+        date_end = f'{year}-08-31'
+        movie_ls += self.discover_by_period(date_start, date_end)
+        
+        date_start = f'{year}-09-01'
+        date_end = f'{year}-12-31'
+        movie_ls += self.discover_by_period(date_start, date_end)
+        
+        return movie_ls
 
-        search = MB.Search()
-        search_results = search.movie(query=title, primary_release_year=year)
+
+    def discover_by_period(self, date_start, date_end):
+
+        discover = MB.Discover()
+        pagination = discover.movie(release_date_gte=date_start, release_date_lte=date_end,
+                                    include_adult=False, include_video=False)
         TM.sleep(0.5)
 
-        if search_results['total_results'] == 0:
-            raise Exception(f'Movie not found: {title} ({year}).')
+        total_pages = int(pagination['total_pages'])
+        total_results = pagination['total_results']
+        print(f'results for {date_start} to {date_end}: {total_results} ({total_pages} pages)')
 
-        if search_results['total_results'] > 1:
-            raise Exception(f'Too many results: {title} ({year}).')
+        movie_ls = []
 
-        movie_found = search_results['results'][0]
+        for pg in range(1, total_pages+1):
+            if pg % 20 == 0:
+                print(f'page: {pg}')
 
-        return movie_found['id']
+            results_dx = discover.movie(page=pg,
+                                    release_date_gte=date_start, release_date_lte=date_end,
+                                    include_adult=False, include_video=False)
+            TM.sleep(0.3)
+            movies = results_dx['results']
+
+            for mov in movies:
+                mov_id = mov['id']
+                movie_dx = self.get_movie_by_id(mov_id)
+                movie_ls.append(movie_dx)
+
+        return movie_ls
 
 
-    def get_movie_data(self, title, year):
+    def get_movie_by_title(self, title, year):
 
         # search for movie and inspect results
-        # the year should be enough to resolve any ties
+        # the year helps greatly to resolve ties
 
         search = MB.Search()
         search_results = search.movie(query=title, primary_release_year=year)
@@ -62,11 +95,32 @@ class MovieDBHelper(object):
         if not movie_found:
             raise Exception(f'Movie not in results: {title} ({year}).')
 
-        # get the actual movie entry
+        return self.get_movie_by_id(movie_found['id'])
 
-        movie = MB.Movies(movie_found['id'])
+
+    def get_movie_id(self, title, year):
+
+        search = MB.Search()
+        search_results = search.movie(query=title, primary_release_year=year)
+        TM.sleep(0.5)
+
+        if search_results['total_results'] == 0:
+            raise Exception(f'Movie not found: {title} ({year}).')
+
+        if search_results['total_results'] > 1:
+            raise Exception(f'Too many results: {title} ({year}).')
+
+        movie_found = search_results['results'][0]
+
+        return movie_found['id']
+
+
+    def get_movie_by_id(self, tmdb_id):
+
+        movie = MB.Movies(tmdb_id)
         movie_info = movie.info()
         TM.sleep(0.5)
+        #return movie_info
 
         try:
             collection = movie_info['belongs_to_collection']['name']
@@ -77,9 +131,17 @@ class MovieDBHelper(object):
         genres = [g['name'] for g in movie_info['genres']] 
         tmdb_id = movie_info['id']
         imdb_id = movie_info['imdb_id']
-        language = self.convert_iso6391(movie_info['original_language'])
+
+        try:
+            language = self.convert_iso6391(movie_info['original_language'])
+        except:
+            lang = movie_info['original_language']
+            print(f'language error: {lang} | id: {tmdb_id}')
+            language = None
+
         original_title = movie_info['original_title']
         synopsis = movie_info['overview']
+        poster = movie_info['poster_path']
 
         companies = None
         try:
@@ -101,7 +163,6 @@ class MovieDBHelper(object):
         title = movie_info['title']
         tmdb_score = movie_info['vote_average']
         tmdb_votes = movie_info['vote_count']
-
 
         cast = None
         cast_ls = movie.credits()['cast']
@@ -130,13 +191,14 @@ class MovieDBHelper(object):
             'title': title,
             'original_title': original_title,
             'year': year,
-            'rating': None,
+            #'rating': None,
             'companies': companies,
             'country': country,
             'language': language,
             'runtime': runtime,
             'crew': ', '.join(crew_ls),
             'cast': cast,
+            'poster': poster,
             
             'genres': ', '.join(genres),
             'collection': collection,
@@ -185,6 +247,7 @@ class MovieDBHelper(object):
             ('ce', 'Chechen'),
             ('ny', 'Chichewa; Chewa; Nyanja'),
             ('zh', 'Chinese'),
+            ('cn', 'Chinese'),      # Guangzhou dialect
             ('cv', 'Chuvash'),
             ('kw', 'Cornish'),
             ('co', 'Corsican'),
@@ -345,3 +408,4 @@ class MovieDBHelper(object):
                 return tpl[1]
 
         raise Exception(f'Language code not found: {code}')
+
