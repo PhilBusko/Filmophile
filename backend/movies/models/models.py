@@ -2,7 +2,8 @@
 MOVIE MODELS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-import os, csv
+import os, csv, re
+import pandas as PD
 import django.db as DB
 import app_proj.utility as UT
 
@@ -165,4 +166,83 @@ class Editor(object):
   
         fhandle.close()
         return data_ls
+
+
+    @staticmethod
+    def RunMasterMovies():
+
+        # apparently django ORM can only join tables if there is a foreign key relation
+        # but these 3 tables are from disparate sources, the relation comes from outside of them
+        # so use pandas to join, though it will be expensive to create copies of all 3 tables
+        # pandas is better than sql because this join requires tokenizing the titles
+
+        # create and join dataframes
+        # joining imdb on id is better than on the token, though the token in 100% for tmdb and reelgood
+
+        moviedb_df = PD.DataFrame(list(MovieDB_Load.objects.values()))
+        reelgood_df = PD.DataFrame(list(Reelgood_Load.objects.values()))
+        imdb_df = PD.DataFrame(list(IMDB_Load.objects.values()))
+
+        def GetJoinToken(row):
+            title = row['Title']
+            year = row['Year']
+            token = re.sub(r'[#,:"/=&¡!?\-\.\'\(\)\s]', '', title).lower()
+            token = token[:12] if len(token) > 12 else token
+            token = f'{token}_{year}'
+            return token
+
+        moviedb_df['join_token'] = moviedb_df.apply(GetJoinToken, axis=1)
+        reelgood_df['join_token'] = reelgood_df.apply(GetJoinToken, axis=1)
+        #return moviedb_df[['Title', 'Year', 'join_token']]
+
+        moviedb_df.columns = [f'{c}_tmdb' for c in moviedb_df.columns]
+        reelgood_df.columns = [f'{c}_rlgd' for c in reelgood_df.columns]
+        imdb_df.columns = [f'{c}_imdb' for c in imdb_df.columns]
+
+        merge_df = PD.merge(moviedb_df, reelgood_df, how='left', left_on='join_token_tmdb', right_on='join_token_rlgd')
+        merge_df = PD.merge(merge_df, imdb_df, how='left', left_on='ImdbId_tmdb', right_on='ImdbId_imdb')
+        merge_df = merge_df.drop(columns=['id_tmdb', 'Collection_tmdb', 'ImdbId_tmdb', 'join_token_tmdb',
+                    'id_rlgd', 'Tags_rlgd', 'join_token_rlgd', 'id_imdb', 'GrossUs_imdb'])
+        return merge_df
+
+        master_ls = []
+        for idx, row in merge_df.iterrows():
+            master_dx = Editor.GetMasterMovie(row)
+            master_ls.append(master_dx)
+
+        return master_ls
+
+    
+    @staticmethod
+    def GetMasterMovie(row):
         
+        def function(row):
+            return None
+
+
+
+
+        master_dx = {
+            'Movie_ID': row['TmdbId_tmdb'],
+            'Title': row['Title_tmdb'],
+            'OriginalTitle': row['OriginalTitle_tmdb'],
+            'Year': row['Year_tmdb'],
+            'Rating': function(row),
+            'Companies': function(row),
+            'Country': function(row),
+            'Language': row['Language_tmdb'],
+            'RunTime': function(row),
+            'Crew': function(row),
+            'Cast': function(row),
+            'Poster': function(row),
+            'Genres': function(row),
+            'Collection': function(row),
+            'Synopsis': function(row),
+            'Budget': function(row),
+            'Gross': function(row),
+            'Scores': function(row),
+            'Indeces': function(row),
+        }
+
+        return master_dx
+
