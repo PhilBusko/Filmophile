@@ -73,7 +73,7 @@ class MovieDBHelper(object):
 
         search = MB.Search()
         search_results = search.movie(query=title, primary_release_year=year)
-        TM.sleep(0.5)
+        TM.sleep(0.3)
 
         # for id 3083, 6223 it seems just taking 1st resolves multiple results
         # but id 11787 has the 2nd result be the true result 
@@ -102,7 +102,7 @@ class MovieDBHelper(object):
 
         movie = MB.Movies(tmdb_id)
         movie_info = movie.info()
-        TM.sleep(0.5)
+        TM.sleep(0.3)
         #return movie_info
 
         try:

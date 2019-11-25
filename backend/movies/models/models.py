@@ -415,3 +415,154 @@ class Editor(object):
 
         return master_dx
 
+
+class Reporter(object):
+
+
+    def GetDataHistory():
+        history_ls = []
+        tmdb_total = MovieDB_Load.objects.count()
+        imdb_total = IMDB_Load.objects.count()
+        reelgood_total = Reelgood_Load.objects.count() 
+        master_total = MasterMovie.objects.count()
+
+        new_dx = {
+            'Column': 'Title',
+            'TMDB': tmdb_total,
+            'IMDB': 0,
+            'Reelgood': 0,
+            'Union-All': master_total,
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Year',
+            'TMDB': tmdb_total,
+            'IMDB': 0,
+            'Reelgood': 0,
+            'Union-All': master_total,
+
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Rating',
+            'TMDB': 0,
+            'IMDB': IMDB_Load.objects.filter(Rating__isnull=False).
+                    exclude(Rating__in=['Not Rated', 'Unrated', 'Approved', 'Passed']).count(),
+            'Reelgood': Reelgood_Load.objects.filter(Rating__isnull=False).count(),
+            'Union-All': MasterMovie.objects.filter(Rating__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Companies',
+            'TMDB': MovieDB_Load.objects.filter(Companies__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Companies__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(Companies__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Country',
+            'TMDB': MovieDB_Load.objects.filter(Country__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Country__isnull=False).count(),
+            'Reelgood': Reelgood_Load.objects.filter(Country__isnull=False).count(),
+            'Union-All': MasterMovie.objects.filter(Country__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Language',
+            'TMDB': MovieDB_Load.objects.filter(Language__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Language__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(Language__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'RunTime',
+            'TMDB': MovieDB_Load.objects.filter(RunTime__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Duration__isnull=False).count(),
+            'Reelgood': Reelgood_Load.objects.filter(Duration__isnull=False).count(),
+            'Union-All': MasterMovie.objects.filter(RunTime__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Crew*',
+            'TMDB': MovieDB_Load.objects.filter(Crew__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Directors__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(Crew__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Cast*',
+            'TMDB': MovieDB_Load.objects.filter(Cast__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Actors__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(Cast__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Genres*',
+            'TMDB': MovieDB_Load.objects.filter(Genres__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Genres__isnull=False).count(),
+            'Reelgood': Reelgood_Load.objects.filter(Genres__isnull=False).count(),
+            'Union-All': MasterMovie.objects.filter(Genres__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Budget',
+            'TMDB': MovieDB_Load.objects.filter(Budget__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(Budget__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(Budget__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'Gross',
+            'TMDB': MovieDB_Load.objects.filter(Gross__isnull=False).count(),
+            'IMDB': IMDB_Load.objects.filter(GrossWorldwide__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(Gross__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'UserScore',
+            'TMDB': 0,
+            'IMDB': IMDB_Load.objects.filter(Score__isnull=False).count(),
+            'Reelgood': 0,
+            'Union-All': MasterMovie.objects.filter(ScoreImdb__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+        new_dx = {
+            'Column': 'StreamingId',
+            'TMDB': 0,
+            'IMDB': 0,
+            'Reelgood': Reelgood_Load.objects.filter(Services__isnull=False).count(),
+            'Union-All': MasterMovie.objects.filter(Indeces__isnull=False).count(),
+        }
+        history_ls.append(new_dx)
+
+
+
+        # normalize the values, done here to simplify the above code
+
+        for row in history_ls:
+            row['TMDB'] = round(row['TMDB'] / tmdb_total * 100, 1)
+            row['IMDB'] = round(row['IMDB'] / imdb_total * 100, 1)
+            row['Reelgood'] = round(row['Reelgood'] / reelgood_total * 100, 1)
+            row['Union-All'] = round(row['Union-All'] / master_total * 100, 1)
+
+        return history_ls
+
