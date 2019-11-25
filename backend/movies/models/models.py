@@ -2,8 +2,9 @@
 MOVIE MODELS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-import os, csv, re
+import os, csv, re, json
 import pandas as PD
+import numpy as NP
 import django.db as DB
 import app_proj.utility as UT
 
@@ -22,16 +23,17 @@ class MasterMovie(DB.models.Model):
     Cast = DB.models.TextField(null=True)
     Poster = DB.models.TextField(null=True)
     Genres = DB.models.TextField(null=True)
-    Collection = DB.models.TextField(null=True)
+    #Collection = DB.models.TextField(null=True)
     Synopsis = DB.models.TextField(null=True)
     Budget = DB.models.IntegerField(null=True)
     Gross = DB.models.IntegerField(null=True)
-    Scores = DB.models.TextField(null=True)
+    ScoreImdb = DB.models.FloatField(null=True)
+    VotesImdb = DB.models.IntegerField(null=True)
     Indeces = DB.models.TextField(null=True)
 
 
 class MovieDB_Load(DB.models.Model):
-    TmdbId = DB.models.IntegerField(unique=True)
+    TmdbId = DB.models.IntegerField(unique=True, default=-1)
     Title = DB.models.TextField()
     OriginalTitle = DB.models.TextField()
     Year = DB.models.TextField()
@@ -79,7 +81,7 @@ class Reelgood_Load(DB.models.Model):
 
 
 class IMDB_Load(DB.models.Model):
-    ImdbId = DB.models.TextField(unique=True)
+    ImdbId = DB.models.TextField(unique=True, default='tt')
     Title = DB.models.TextField()
     OriginalTitle = DB.models.TextField(null=True)
     Year = DB.models.TextField()
@@ -88,13 +90,13 @@ class IMDB_Load(DB.models.Model):
     Country = DB.models.TextField(null=True)
     Language = DB.models.TextField(null=True)
     Duration = DB.models.FloatField(null=True)
-    Directors = DB.models.TextField()
+    Directors = DB.models.TextField(null=True)
     Writers = DB.models.TextField(null=True)
     Actors = DB.models.TextField(null=True)
     #Poster = DB.models.TextField()
-    Genres = DB.models.TextField()
+    Genres = DB.models.TextField(null=True)
     #Collection = DB.models.TextField()
-    Synopsis = DB.models.TextField()
+    Synopsis = DB.models.TextField(null=True)
     Budget = DB.models.TextField(null=True)
     GrossUs = DB.models.IntegerField(null=True)
     GrossWorldwide = DB.models.IntegerField(null=True)
@@ -119,8 +121,8 @@ class Editor(object):
 
     @staticmethod
     def DeleteTable(table_name):
-        if table_name == 'Movie' or table_name == 'All':
-            Movie.objects.all().delete()
+        if table_name == 'MasterMovie' or table_name == 'All':
+            MasterMovie.objects.all().delete()
         if table_name == 'MovieDB_Load' or table_name == 'All':
             MovieDB_Load.objects.all().delete()
         if table_name == 'Reelgood_Load' or table_name == 'All':
@@ -203,7 +205,7 @@ class Editor(object):
         merge_df = PD.merge(merge_df, imdb_df, how='left', left_on='ImdbId_tmdb', right_on='ImdbId_imdb')
         merge_df = merge_df.drop(columns=['id_tmdb', 'Collection_tmdb', 'ImdbId_tmdb', 'join_token_tmdb',
                     'id_rlgd', 'Tags_rlgd', 'join_token_rlgd', 'id_imdb', 'GrossUs_imdb'])
-        return merge_df
+        #return merge_df
 
         master_ls = []
         for idx, row in merge_df.iterrows():
@@ -216,32 +218,199 @@ class Editor(object):
     @staticmethod
     def GetMasterMovie(row):
         
-        def function(row):
+        def best_rating(row):
+            rlgd_raw = row['Rating_rlgd']
+            imdb_raw = row['Rating_imdb']
+            rlgd = 0
+            imdb = 0
+
+            if rlgd_raw in ['18+ (R)', '16+']: rlgd = 4
+            if rlgd_raw == '13+ (PG-13)': rlgd = 3
+            if rlgd_raw == '7+ (PG)': rlgd = 2
+            if rlgd_raw == 'All (G)': rlgd = 1
+            
+            if imdb_raw in ['R', 'TV-MA']: imdb = 4
+            if imdb_raw in ['PG-13', 'PG', 'TV-14', 'TV-PG', 'GP']: imdb = 3
+            if imdb_raw in ['TV-Y7']: imdb = 2
+            if imdb_raw in ['G', 'TV-G']: imdb = 1
+            if imdb_raw in ['Not Rated', 'Unrated', 'Approved', 'Passed']: imdb = 0
+
+            final = max([rlgd, imdb])
+
+            if final == 4: return 'R'
+            if final == 3: return 'PG-13'
+            if final == 2: return 'PG'
+            if final == 1: return 'G'
             return None
 
+        def best_companies(row):
+            tmdb = row['Companies_tmdb']
+            imdb = row['Companies_imdb']
 
+            if tmdb: return tmdb
+            if imdb: return imdb
+            return None
+            
+        def best_country(row):
+            # this one is tied between IMDB and TMDB
+            tmdb = row['Country_tmdb']
+            rlgd = row['Country_rlgd']
+            imdb = row['Country_imdb']
 
+            if imdb: return imdb
+            if tmdb: return tmdb
+            return None
 
+        def best_runtime(row):
+            tmdb_raw = row['RunTime_tmdb']
+            rlgd_raw = row['Duration_rlgd']
+            imdb_raw = row['Duration_imdb']
+
+            try: tmdb = int(tmdb_raw)
+            except: tmdb = 0
+
+            try: rlgd = int(rlgd_raw)
+            except: rlgd = 0
+
+            try: imdb = int(imdb_raw)
+            except: imdb = 0
+            
+            rt_max = max([tmdb, rlgd, imdb])
+            if rt_max: return rt_max
+            return None
+
+        def best_crew(row):
+            tmdb = row['Crew_tmdb'] 
+            imdb1 = row['Directors_imdb'] 
+            imdb2 = row['Writers_imdb'] 
+
+            crew_full_ls = tmdb.split(', ') if type(tmdb)==str else []
+            crew_full_ls += imdb1.split(', ') if type(imdb1)==str else []
+            crew_full_ls += imdb2.split(', ') if type(imdb2)==str else []
+            
+            series = PD.Series(crew_full_ls)
+            counts = series.value_counts()
+            crew_ls = []
+            for idx, val in counts.items():
+                if val >= 2:
+                    crew_ls.append(idx)
+            return ', '.join(crew_ls) if len(crew_ls) >= 1 else None
+
+        def best_cast(row):
+            tmdb = row['Cast_tmdb']
+            imdb = row['Actors_imdb']
+
+            if tmdb and imdb == '':
+                return tmdb
+            if tmdb == '' and imdb:
+                return imdb
+
+            cast_full_ls = tmdb.split(', ') if type(tmdb)==str else []
+            cast_full_ls += imdb.split(', ') if type(imdb)==str else []
+            series = PD.Series(cast_full_ls)
+            counts = series.value_counts()
+            cast_ls = []
+            for idx, val in counts.items():
+                if val >= 2:
+                    cast_ls.append(idx)
+            return ', '.join(cast_ls) if len(cast_ls) >= 1 else None
+
+        def best_poster(row):
+            # poster seem very similar from both sources, they are tall
+            tmdb = row['Poster_tmdb'] or ''
+            rlgd = row['Poster_rlgd'] or ''
+
+            if tmdb: return tmdb
+            if rlgd: return rlgd
+            return None
+
+        def best_genres(row):
+            tmdb = row['Genres_tmdb']
+            rlgd = row['Genres_rlgd']
+            imdb = row['Genres_imdb']
+
+            if type(tmdb)==float or tmdb is None: tmdb = ''
+            if type(rlgd)==float or rlgd is None: rlgd = ''
+            if type(imdb)==float or imdb is None: imdb = ''
+            
+            tmdb = tmdb.replace('Science Fiction', 'Sci-Fi')
+            rlgd = rlgd.replace('Action & Adventure', 'Action, Adventure').replace('Science-Fiction', 'Sci-Fi').replace('Musical', 'Music')
+            imdb = imdb.replace('Musical', 'Music')
+
+            genre_full_ls = tmdb.split(', ') + rlgd.split(', ') + imdb.split(', ') 
+            series = PD.Series(genre_full_ls)
+            counts = series.value_counts()
+            genre_ls = []
+            for idx, val in counts.items():
+                if val >= 2:
+                    genre_ls.append(idx)
+            return ', '.join(genre_ls) if len(genre_ls) >= 1 else None
+
+        def best_synopsis(row):
+            tmdb = row['Synopsis_tmdb'] 
+            rlgd = row['Synopsis_rlgd'] 
+            imdb = row['Synopsis_imdb'] 
+            return rlgd
+
+        def best_budget(row):
+            tmdb_raw = row['Budget_tmdb'] 
+            imdb_raw = row['Budget_imdb'] 
+
+            try: tmdb = int(tmdb_raw)
+            except: tmdb = 0
+
+            try: imdb = int(imdb_raw)
+            except: imdb = 0
+
+            money_max = max([tmdb, imdb])
+            if money_max: return money_max
+            return None
+
+        def best_gross(row):
+            tmdb_raw = row['Gross_tmdb'] 
+            imdb_raw = row['GrossWorldwide_imdb'] 
+
+            try: tmdb = int(tmdb_raw)
+            except: tmdb = 0
+
+            try: imdb = int(imdb_raw)
+            except: imdb = 0
+
+            money_max = max([tmdb, imdb])
+            if money_max: return money_max
+            return None
+
+        def aggregate_scores(row):
+            # the number of votes on TMDb is 2 orders of magnitude less than IMDB
+            # so just keep IMDB scores and votes
+            pass
+
+        def aggregate_indeces(row):
+            index_dx = json.loads(row['Services_rlgd'])
+            imdb_id = row['ImdbId_imdb']
+            index_dx['imdb'] = imdb_id
+            return json.dumps(index_dx)
+            
         master_dx = {
             'Movie_ID': row['TmdbId_tmdb'],
             'Title': row['Title_tmdb'],
             'OriginalTitle': row['OriginalTitle_tmdb'],
             'Year': row['Year_tmdb'],
-            'Rating': function(row),
-            'Companies': function(row),
-            'Country': function(row),
+            'Rating': best_rating(row),
+            'Companies': best_companies(row),
+            'Country': best_country(row),
             'Language': row['Language_tmdb'],
-            'RunTime': function(row),
-            'Crew': function(row),
-            'Cast': function(row),
-            'Poster': function(row),
-            'Genres': function(row),
-            'Collection': function(row),
-            'Synopsis': function(row),
-            'Budget': function(row),
-            'Gross': function(row),
-            'Scores': function(row),
-            'Indeces': function(row),
+            'RunTime': best_runtime(row),
+            'Crew': best_crew(row),
+            'Cast': best_cast(row),
+            'Poster': best_poster(row),
+            'Genres': best_genres(row),
+            'Synopsis': best_synopsis(row),
+            'Budget': best_budget(row),
+            'Gross': best_gross(row),
+            'ScoreImdb': float(row['Score_imdb']),
+            'VotesImdb': int(row['Votes_imdb']) if NP.isnan(row['Votes_imdb'])==False else None,
+            'Indeces': aggregate_indeces(row),
         }
 
         return master_dx

@@ -46,7 +46,16 @@ class ReelgoodScraper(object):
             driver_path = os.path.join(this_parent, 'static/geckodriver_mac')
         else:
             driver_path = os.path.join(this_parent, 'static/geckodriver')
-        self.driver = SN.Firefox(executable_path=driver_path)
+            
+        # disable javascript to save time (can check on about:config)
+
+        profile = SN.FirefoxProfile()
+        profile.DEFAULT_PREFERENCES['frozen']['javascript.enabled'] = False
+        profile.set_preference('app.update.auto', False)
+        profile.set_preference('app.update.enabled', False)
+        profile.update_preferences()
+
+        self.driver = SN.Firefox(executable_path=driver_path, firefox_profile=profile)
         print(self.driver)
 
 

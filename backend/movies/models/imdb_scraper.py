@@ -27,7 +27,16 @@ class ImdbScraper(object):
             driver_path = os.path.join(this_parent, 'static/geckodriver_mac')
         else:
             driver_path = os.path.join(this_parent, 'static/geckodriver')
-        self.driver = SN.Firefox(executable_path=driver_path)
+
+        # disable javascript to save time (can check on about:config)
+
+        profile = SN.FirefoxProfile()
+        profile.DEFAULT_PREFERENCES['frozen']['javascript.enabled'] = False
+        profile.set_preference('app.update.auto', False)
+        profile.set_preference('app.update.enabled', False)
+        profile.update_preferences()
+
+        self.driver = SN.Firefox(executable_path=driver_path, firefox_profile=profile)
         print(self.driver)
 
 
@@ -51,196 +60,30 @@ class ImdbScraper(object):
         #print(self.driver.current_url)
 
 
+    # option 1: get movie by id
     def get_movie_by_id(self, imdb_id):
 
         movie_url = f'{MOVIE_BASE}{imdb_id}'
         self.driver.get(movie_url)
         TM.sleep(0.2)
 
-        # title block
-
-        title_imdb = None
-        title_original = None
-        year = None
-
-        title_lm = self.driver.find_element_by_class_name('title_wrapper')
-        h1_tx = title_lm.find_element_by_tag_name('h1').text
-
-        matches = re.match(MOVIE_RX, h1_tx)
-        if matches:
-            title_imdb = matches.group(1)
-            year = matches.group(2)
-        else:
-            print(f'Title not found: {imdb_id}')
-            return {}
-
-        try:
-            original_tx = title_lm.find_element_by_class_name('originalTitle').text
-            title_original = re.sub(r'\([^)]*\)', '', original_tx).strip()
-        except:
-            pass
-        
-        # title subtext block
-
-        rating = None
-        duration = None
-        genres = None
-
-        subtext_tx = title_lm.find_element_by_class_name('subtext').text
-        subtext_ls = subtext_tx.split('|')
-
-        if len(subtext_ls) == 4:
-            rating = subtext_ls[0].strip()
-            duration_raw = subtext_ls[1].strip()
-            genres = subtext_ls[2].strip()
-
-        if len(subtext_ls) == 3:
-            duration_raw = subtext_ls[0].strip()
-            genres = subtext_ls[1].strip()
-
-        if len(subtext_ls) == 2:
-            genres = subtext_ls[0].strip()
-
-        try:
-            matches = re.match(r'(?:(\d)h\s)*([\d]+)min', duration_raw)
-            hrs = matches.groups()[0]
-            mins = matches.groups()[1]
-            if hrs:
-                duration = int(hrs) * 60 + int(mins)
-            else:
-                duration = int(mins)
-        except:
-            pass
-
-        # score block
-
-        score = None
-        votes = None
-
-        try:
-            score_block_lm = self.driver.find_element_by_class_name('imdbRating')
-            score = score_block_lm.find_element_by_class_name('ratingValue').find_element_by_tag_name('strong').text
-            votes = score_block_lm.find_element_by_tag_name('a').text.replace(',', '')
-        except:
-            pass
-
-        # synopsis & credits
-
-        synopsis = None
-        director = None
-        writer = None
-        actors = None
-
-        summary_lm = self.driver.find_element_by_class_name('plot_summary')
-        synopsis = summary_lm.find_element_by_class_name('summary_text').text.replace('... See full summary »', '')
-        credit_lm_ls = summary_lm.find_elements_by_class_name('credit_summary_item')
-
-        for crd in credit_lm_ls:
-            try:
-                credit_type = crd.find_element_by_tag_name('h4').text.strip()
-            except: 
-                continue
-
-            if credit_type in ['Director:', 'Directors:']:
-                director = crd.find_elements_by_tag_name('a')[0].text
-            elif credit_type in ['Writer:', 'Writers:']:
-                writer = crd.find_elements_by_tag_name('a')[0].text
-            elif credit_type == 'Stars:':
-                actors = crd.text
-
-        if director:
-            director = director.replace('Director:', '').replace('Directors:', '') #.split(',')[0]
-            director = re.sub(r'\([^)]*\)', '', director).strip()
-        if writer: 
-            writer = writer.replace('Writer:', '').replace('Writers:', '') #.split(',')[0]
-            writer = re.sub(r'\([^)]*\)', '', writer).strip()
-        if actors:
-            actors = actors.replace('Stars:', '').split('|')[0].strip()
-
-        # country, box office, company
-
-        country = None
-        language = None
-        budget = None
-        gross_us = None
-        gross_worldwide = None
-        company = None
-
-        details_lm = self.driver.find_element_by_id('titleDetails')
-        blocks_lm_ls = details_lm.find_elements_by_class_name('txt-block')
-
-        for blk in blocks_lm_ls:
-            try:
-                block_type = blk.find_element_by_tag_name('h4').text.strip()
-            except: 
-                continue
-
-            if block_type == 'Country:':
-                country = blk.find_elements_by_tag_name('a')[0].text
-            elif block_type == 'Language:':
-                language = blk.find_elements_by_tag_name('a')[0].text
-            elif block_type == 'Budget:':
-                budget = blk.text
-            elif block_type == 'Gross USA:':
-                gross_us = blk.text
-            elif block_type == 'Cumulative Worldwide Gross:':
-                gross_worldwide = blk.text
-            elif block_type == 'Production Co:':
-                companies = blk.find_elements_by_tag_name('a')[0].text
-
-        if budget:
-            budget = budget.replace('Budget:', '').replace('$', '').replace(',', '')
-            budget = re.sub(r'\([^)]*\)', '', budget).strip()
-        if gross_us:
-            gross_us = gross_us.replace('Gross USA:', '').replace('$', '').replace(',', '').strip()
-        if gross_worldwide:
-            gross_worldwide = gross_worldwide.replace('Cumulative Worldwide Gross:', '').replace('$', '').replace(',', '').strip()
-
-        # compile all data and return 
-
-        movie_dx = {
-            'imdb_id': imdb_id,
-            'title': title_imdb,
-            'original_title': title_original,
-            'year': year, 
-            'rating': rating,
-            'companies': companies,
-            'country': country,
-            'language': language, 
-            'duration': duration,
-            'directors': director,
-            'writers': writer,
-            'actors': actors, 
-            'genres': genres, 
-            'synopsis': synopsis, 
-            'budget': budget, 
-            'gross_us': gross_us,
-            'gross_worldwide': gross_worldwide, 
-            'score': score,
-            'votes': votes, 
-        }
-        return movie_dx
+        return self.get_movie_data()
 
 
-    def close(self):
-        TM.sleep(1)
-        self.driver.quit()
-    
-
-    # DEPRECATE
-
+    # option 2: search for movie by title-year
     def search_any(self, search_tx):
 
-        input_lm = self.driver.find_element_by_id('navbar-query')
+        input_lm = self.driver.find_element_by_id('suggestion-search')
         input_lm.clear()
         TM.sleep(0.1)
         input_lm.send_keys(search_tx)
         TM.sleep(0.1)
         input_lm.send_keys(KY.Keys.ENTER)
-        TM.sleep(2)
+        TM.sleep(1)
         #print(self.driver.current_url)
 
 
+    # option 2 continued
     def map_to_imdb(self, title_streaming):
 
         mapping_dx = {
@@ -269,7 +112,8 @@ class ImdbScraper(object):
         return None
 
 
-    def find_movie_result(self, title, year):
+    # option 2 continued
+    def goto_movie_result(self, title, year):
 
         # get all search results
         # the order of Titles, Names, Companies result types can change with each search
@@ -312,13 +156,13 @@ class ImdbScraper(object):
                 row_aka = result_ls[1].replace('aka', '')
                 row_aka = clean_title(row_aka)
 
-            print('')
-            print(movie_tx)
-            print(movie_imdb_tx)
-            print(year)
-            print(row_title)
-            print(row_aka)
-            print(row_year)
+            # print('')
+            # print(movie_tx)
+            # print(movie_imdb_tx)
+            # print(year)
+            # print(row_title)
+            # print(row_aka)
+            # print(row_year)
 
             # compare the data, sometimes year can be off by 1 (like a dec release)
 
@@ -337,7 +181,10 @@ class ImdbScraper(object):
         return False
 
 
-    def get_movie_data(self, title_stream):
+    # both options use this to get the data
+    def get_movie_data(self):
+
+        # assumes that the browser is already on movie page
 
         imdb_id = self.driver.current_url.split('/')[-2]
 
@@ -411,12 +258,13 @@ class ImdbScraper(object):
         # synopsis & credits
 
         synopsis = None
-        director = None
-        writer = None
+        directors = None
+        writers = None
         actors = None
 
         summary_lm = self.driver.find_element_by_class_name('plot_summary')
-        synopsis = summary_lm.find_element_by_class_name('summary_text').text.replace('... See full summary »', '')
+        synopsis = summary_lm.find_element_by_class_name('summary_text').text
+        synopsis = synopsis.replace('... See full summary »', '').replace('Add a Plot »', '')
         credit_lm_ls = summary_lm.find_elements_by_class_name('credit_summary_item')
 
         for crd in credit_lm_ls:
@@ -426,20 +274,16 @@ class ImdbScraper(object):
                 continue
 
             if credit_type in ['Director:', 'Directors:']:
-                director = crd.find_elements_by_tag_name('a')[0].text
+                directors = crd.text.replace('Director:', '').replace('Directors:', '')
+                directors = directors.split('|')[0]
+                directors = re.sub(r'\([^)]*\)', '', directors).strip()
             elif credit_type in ['Writer:', 'Writers:']:
-                writer = crd.find_elements_by_tag_name('a')[0].text
+                writers = crd.text.replace('Writer:', '').replace('Writers:', '')
+                writers = writers.split('|')[0]
+                writers = re.sub(r'\([^)]*\)', '', writers).strip()
             elif credit_type == 'Stars:':
-                actors = crd.text
-
-        if director:
-            director = director.replace('Director:', '').replace('Directors:', '').split(',')[0]
-            director = re.sub(r'\([^)]*\)', '', director).strip()
-        if writer: 
-            writer = writer.replace('Writer:', '').replace('Writers:', '').split(',')[0]
-            writer = re.sub(r'\([^)]*\)', '', writer).strip()
-        if actors:
-            actors = actors.replace('Stars:', '').split('|')[0].strip()
+                actors = crd.text.replace('Stars:', '')
+                actors = actors.split('|')[0].strip()
 
         # country, box office, company
 
@@ -448,7 +292,7 @@ class ImdbScraper(object):
         budget = None
         gross_us = None
         gross_worldwide = None
-        company = None
+        companies = None
 
         details_lm = self.driver.find_element_by_id('titleDetails')
         blocks_lm_ls = details_lm.find_elements_by_class_name('txt-block')
@@ -470,7 +314,9 @@ class ImdbScraper(object):
             elif block_type == 'Cumulative Worldwide Gross:':
                 gross_worldwide = blk.text
             elif block_type == 'Production Co:':
-                company = blk.find_elements_by_tag_name('a')[0].text
+                links = blk.find_elements_by_tag_name('a')[0:2]
+                companies = ', '.join([k.text for k in links])
+                companies = companies.replace(', See more', '')
 
         if budget:
             budget = budget.replace('Budget:', '').replace('$', '').replace(',', '')
@@ -483,26 +329,30 @@ class ImdbScraper(object):
         # compile all data and return 
 
         movie_dx = {
-            'title_imdb': title_imdb,
-            'title_original': title_original,
-            'title_stream': title_stream,        
-            'year': year, 
             'imdb_id': imdb_id,
-            'score': score,
-            'votes': votes, 
+            'title': title_imdb,
+            'original_title': title_original,
+            'year': year, 
             'rating': rating,
-            'duration': duration,
-            'genres': genres, 
-            'synopsis': synopsis, 
-            'director': director,
-            'writer': writer,
-            'actors': actors, 
+            'companies': companies,
             'country': country,
             'language': language, 
+            'duration': duration,
+            'directors': directors,
+            'writers': writers,
+            'actors': actors, 
+            'genres': genres, 
+            'synopsis': synopsis, 
             'budget': budget, 
             'gross_us': gross_us,
             'gross_worldwide': gross_worldwide, 
-            'company': company,
+            'score': score,
+            'votes': votes, 
         }
         return movie_dx
+    
+
+    def close(self):
+        TM.sleep(1)
+        self.driver.quit()
 
