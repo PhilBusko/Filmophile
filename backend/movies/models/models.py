@@ -40,7 +40,7 @@ class MovieDB_Load(DB.models.Model):
     #Rating = DB.models.TextField()
     Companies = DB.models.TextField(null=True)
     Country = DB.models.TextField(null=True)
-    Language = DB.models.TextField()
+    Language = DB.models.TextField(null=True)
     RunTime = DB.models.FloatField(null=True)
     Crew = DB.models.TextField(null=True)
     Cast = DB.models.TextField(null=True)
@@ -50,8 +50,8 @@ class MovieDB_Load(DB.models.Model):
     Synopsis = DB.models.TextField(null=True)
     Budget = DB.models.FloatField(null=True)
     Gross = DB.models.FloatField(null=True)
-    Score = DB.models.TextField()
-    Votes = DB.models.TextField()
+    Score = DB.models.TextField(null=True)
+    Votes = DB.models.TextField(null=True)
     ImdbId = DB.models.TextField(null=True)
 
 
@@ -111,6 +111,12 @@ class StreamService(DB.models.Model):
     Active = DB.models.BooleanField()
 
 
+class UserVotes(DB.models.Model):
+    Movie_ID = DB.models.IntegerField()     # if not a foreign key, can reload master table
+    User = DB.models.TextField()            # should be foreign key to user
+    Vote = DB.models.IntegerField()
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 DATABASE CLASSES 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -138,6 +144,20 @@ class Editor(object):
         data_obj_ls = eval(f"[{table}(**r) for r in data_ls]")
         exec(f"{table}.objects.bulk_create(data_obj_ls, ignore_conflicts=True)")
 
+        # for debugging input data
+        # bulk insert is faster
+
+        # for dt in data_ls:
+        #     try:
+        #         new_mv = MovieDB_Load(**dt)
+        #         new_mv.save()
+        #     except Exception as ex:
+        #         print(ex)
+        #         print(dt)
+        #         print('')
+        #         continue
+
+
 
     @staticmethod
     def ToDBColumns(header_ls):
@@ -163,7 +183,13 @@ class Editor(object):
         for row in reader:
             new_dx = {}
             for idx, col in enumerate(header_ls):
-                new_dx[col] = row[idx] if row[idx] else None
+                try:
+                    new_dx[col] = row[idx] if row[idx] else None
+                except Exception as ex:
+                    print(ex)
+                    print(f'title: {row[0]} error-col: {col}')
+                    print('')
+                    break
             data_ls.append(new_dx)
   
         fhandle.close()
@@ -408,12 +434,90 @@ class Editor(object):
             'Synopsis': best_synopsis(row),
             'Budget': best_budget(row),
             'Gross': best_gross(row),
-            'ScoreImdb': float(row['Score_imdb']),
+            'ScoreImdb': float(row['Score_imdb']) if NP.isnan(row['Score_imdb'])==False else None,
             'VotesImdb': int(row['Votes_imdb']) if NP.isnan(row['Votes_imdb'])==False else None,
             'Indeces': aggregate_indeces(row),
         }
 
         return master_dx
+
+
+    @staticmethod
+    def CreateSyntheticVotes():
+        
+        import random as RD
+        RD.seed(666)
+        number_votes = 300
+        UserVotes.objects.all().delete()
+
+        # assume all movies in master table have a streaming index
+
+        master_total = MasterMovie.objects.count()
+        vote_ls = []
+
+        for vt in range(0, number_votes):
+            random_idx = RD.randint(0, master_total-1)
+            random_movie = MasterMovie.objects.values()[random_idx]
+            score = random_movie['ScoreImdb']
+            genres = random_movie['Genres']
+            year = int(random_movie['Year'])
+            bias = 0
+
+            # set bias based on score, genre, year
+
+            if score < 3:
+                bias -= 40
+            elif score < 5:
+                bias -= 20
+            elif score < 6:
+                bias -= 10
+            elif score < 7:
+                bias += 0
+            elif score < 8:
+                bias += 5
+            elif score < 9:
+                bias += 10
+            else:
+                bias += 15
+
+            if any(g in genres for g in ['Thriller', 'Fantasy', 'Sci-Fi', 'Mystery']):
+                bias += 5
+
+            if any(g in genres for g in ['Comedy', 'Family', 'Documentary', 'Music', 'Biography', 'Sport']):
+                bias -= 10
+
+            if year <= 1980:
+                bias -= 10
+            elif year <= 2000:
+                bias += 0
+            else:
+                bias += 5
+
+            # should be 5% of 3, 30% of 2, 70% of 1
+
+            random_100 = RD.randint(1, 100) + bias
+
+            if random_100 <= 65:
+                vote = 1
+            elif random_100 <= 95:
+                vote = 2
+            else:
+                vote = 3
+
+            print(f"{random_movie['Title']} ({year}) {score} {genres} : {vote}")
+
+            new_dx = {
+                'Movie_ID': random_movie['Movie_ID'],
+                'User': 'main',
+                'Vote': vote,
+            }
+            vote_ls.append(new_dx)
+
+        data_obj_ls = [UserVotes(**r) for r in vote_ls]
+        UserVotes.objects.bulk_create(data_obj_ls)
+
+
+        
 
 
 class Reporter(object):
@@ -429,8 +533,8 @@ class Reporter(object):
         new_dx = {
             'Column': 'Title',
             'TMDB': tmdb_total,
-            'IMDB': 0,
-            'Reelgood': 0,
+            'IMDB': imdb_total,
+            'Reelgood': reelgood_total,
             'Union-All': master_total,
         }
         history_ls.append(new_dx)
@@ -438,8 +542,8 @@ class Reporter(object):
         new_dx = {
             'Column': 'Year',
             'TMDB': tmdb_total,
-            'IMDB': 0,
-            'Reelgood': 0,
+            'IMDB': imdb_total,
+            'Reelgood': reelgood_total,
             'Union-All': master_total,
 
         }
@@ -553,8 +657,6 @@ class Reporter(object):
             'Union-All': MasterMovie.objects.filter(Indeces__isnull=False).count(),
         }
         history_ls.append(new_dx)
-
-
 
         # normalize the values, done here to simplify the above code
 

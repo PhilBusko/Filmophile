@@ -56,7 +56,7 @@ class ImdbScraper(object):
 
         self.driver.get(IMDB_HOME)
         self.driver.maximize_window() 
-        TM.sleep(0.1)
+        TM.sleep(0.3)
         #print(self.driver.current_url)
 
 
@@ -202,8 +202,7 @@ class ImdbScraper(object):
             title_imdb = matches.group(1)
             year = matches.group(2)
         else:
-            print(f'Title not found: {imdb_id}')
-            return {}
+            raise Exception(f'get_movie_data(): title error: {imdb_id}')
 
         try:
             original_tx = title_lm.find_element_by_class_name('originalTitle').text
