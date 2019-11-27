@@ -89,7 +89,7 @@ class IMDB_Load(DB.models.Model):
     Companies = DB.models.TextField(null=True)
     Country = DB.models.TextField(null=True)
     Language = DB.models.TextField(null=True)
-    Duration = DB.models.FloatField(null=True)
+    Duration = DB.models.IntegerField(null=True)
     Directors = DB.models.TextField(null=True)
     Writers = DB.models.TextField(null=True)
     Actors = DB.models.TextField(null=True)
@@ -98,8 +98,8 @@ class IMDB_Load(DB.models.Model):
     #Collection = DB.models.TextField()
     Synopsis = DB.models.TextField(null=True)
     Budget = DB.models.TextField(null=True)
-    GrossUs = DB.models.IntegerField(null=True)
-    GrossWorldwide = DB.models.IntegerField(null=True)
+    GrossUs = DB.models.TextField(null=True)
+    GrossWorldwide = DB.models.TextField(null=True)
     Score = DB.models.FloatField(null=True)
     Votes = DB.models.IntegerField(null=True)
 
@@ -149,14 +149,13 @@ class Editor(object):
 
         # for dt in data_ls:
         #     try:
-        #         new_mv = MovieDB_Load(**dt)
+        #         new_mv = IMDB_Load(**dt)
         #         new_mv.save()
         #     except Exception as ex:
         #         print(ex)
         #         print(dt)
         #         print('')
         #         continue
-
 
 
     @staticmethod
@@ -240,7 +239,7 @@ class Editor(object):
 
         return master_ls
 
-    
+
     @staticmethod
     def GetMasterMovie(row):
         
@@ -273,10 +272,28 @@ class Editor(object):
             tmdb = row['Companies_tmdb']
             imdb = row['Companies_imdb']
 
-            if tmdb: return tmdb
-            if imdb: return imdb
-            return None
-            
+            companies = None
+            if tmdb and type(tmdb)==str: companies = tmdb
+            elif imdb and type(imdb)==str: companies = imdb
+
+            # 'The' in company name is problematic for analysis - remove them all
+
+            if companies is None or type(companies)==float:
+                return None
+
+            companies = re.sub(r', The$', '', companies)
+            companies = companies.replace(', The ', ', ').replace('The ', ' ')
+            companies = companies.replace(', Ltd.', '').replace(', Inc.', '')
+            companies = companies.replace('Asylum', 'The Asylum')
+
+            companies = companies.replace('Lions Gate Films', 'Lionsgate')
+            companies = companies.replace('Star Cinema – ABS-CBN Film Productions', 'ABS-CBN Films')
+            companies = companies.replace('HBO Films', 'HBO').replace('HBO', 'HBO Films')
+            companies = companies.replace('BBC Films', 'BBC').replace('BBC', 'BBC Films')
+            companies = re.sub(r'\([^)]*\)', '', companies).strip()
+
+            return companies
+
         def best_country(row):
             # this one is tied between IMDB and TMDB
             tmdb = row['Country_tmdb']
@@ -447,17 +464,18 @@ class Editor(object):
         
         import random as RD
         RD.seed(666)
-        number_votes = 300
+        number_votes = 600
         UserVotes.objects.all().delete()
 
         # assume all movies in master table have a streaming index
 
-        master_total = MasterMovie.objects.count()
+        master_query = MasterMovie.objects.filter(ScoreImdb__isnull=False).filter(Genres__isnull=False)
+        master_total = master_query.count()
         vote_ls = []
 
         for vt in range(0, number_votes):
             random_idx = RD.randint(0, master_total-1)
-            random_movie = MasterMovie.objects.values()[random_idx]
+            random_movie = master_query.values()[random_idx]
             score = random_movie['ScoreImdb']
             genres = random_movie['Genres']
             year = int(random_movie['Year'])
@@ -476,12 +494,12 @@ class Editor(object):
             elif score < 8:
                 bias += 5
             elif score < 9:
-                bias += 10
-            else:
                 bias += 15
+            else:
+                bias += 20
 
-            if any(g in genres for g in ['Thriller', 'Fantasy', 'Sci-Fi', 'Mystery']):
-                bias += 5
+            if any(g in genres for g in ['Thriller', 'Fantasy', 'Sci-Fi', 'Mystery', 'Crime']):
+                bias += 10
 
             if any(g in genres for g in ['Comedy', 'Family', 'Documentary', 'Music', 'Biography', 'Sport']):
                 bias -= 10
@@ -493,18 +511,18 @@ class Editor(object):
             else:
                 bias += 5
 
-            # should be 5% of 3, 30% of 2, 70% of 1
+            # should be 10% of 3, 30% of 2, 60% of 1
 
             random_100 = RD.randint(1, 100) + bias
 
-            if random_100 <= 65:
+            if random_100 <= 60:
                 vote = 1
-            elif random_100 <= 95:
+            elif random_100 <= 90:
                 vote = 2
             else:
                 vote = 3
 
-            print(f"{random_movie['Title']} ({year}) {score} {genres} : {vote}")
+            #print(f"{random_movie['Title']} ({year}) {score} {genres} : {vote}")
 
             new_dx = {
                 'Movie_ID': random_movie['Movie_ID'],
@@ -517,12 +535,10 @@ class Editor(object):
         UserVotes.objects.bulk_create(data_obj_ls)
 
 
-        
-
-
 class Reporter(object):
 
 
+    @staticmethod
     def GetDataHistory():
         history_ls = []
         tmdb_total = MovieDB_Load.objects.count()
@@ -668,3 +684,10 @@ class Reporter(object):
 
         return history_ls
 
+
+    @staticmethod
+    def GetVoteCounts():
+        vote_hist = list(   UserVotes.objects.all().values('Vote').
+                            annotate(total=DB.models.Count('Vote')).
+                            order_by('Vote') )
+        return vote_hist

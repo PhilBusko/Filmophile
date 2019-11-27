@@ -2,7 +2,7 @@
 MOVIE ANALYSIS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-import os
+import os, re
 import pandas as PD
 import numpy as NP
 
@@ -10,7 +10,7 @@ import app_proj.utility as UT
 import app_proj.settings as ST
 import movies.models.models as MD
 
-FEATURE_PATH = 'movies/data/movie_feature.csv'
+FEATURE_PATH = 'movies/data/clean_feature.csv'
 
 
 class FeatureEngineer(object):
@@ -21,6 +21,10 @@ class FeatureEngineer(object):
         master_ls = MD.MasterMovie.objects.values()
         master_df = PD.DataFrame(master_ls).drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
         master_df['Year'] = master_df['Year'].astype('int')
+        master_df['RunTime'] = master_df['RunTime'].astype('Int64')
+        master_df['Budget'] = master_df['Budget'].astype('Int64')
+        master_df['Gross'] = master_df['Gross'].astype('Int64')
+        master_df['VotesImdb'] = master_df['VotesImdb'].astype('Int64')
         return master_df
 
 
@@ -44,14 +48,17 @@ class FeatureEngineer(object):
             entry = row[column]
             if entry is None or entry == 'nan':
                 continue
+            
             full_ls += entry.split(', ')
 
         counts = PD.Series(full_ls).value_counts()
 
         keep_ls = []
         for idx, val in counts.items():
-            if val >= 2:
-                keep_ls.append(idx)
+            if val >= 5: 
+                keep_ls.append(idx.strip())
+
+        #print(keep_ls)
 
         # keep only the highest frequency entry found, if any
 
@@ -81,7 +88,7 @@ class FeatureEngineer(object):
         multihot_df = PD.merge(multihot_df, df_out, left_index=True, right_index=True)
         multihot_df = multihot_df.drop(columns=[column, array_column])
 
-        return multihot_df
+        return multihot_df        
 
 
     @staticmethod
