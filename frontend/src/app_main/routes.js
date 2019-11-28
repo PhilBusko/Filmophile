@@ -5,21 +5,21 @@ import * as PR from '../page-routes/_index.js'
 
 export const RoutesConfig = [
    {
-      title: 'Home',
+      title: 'Introduction',
       path: '/',
-      component: PR.Home,
+      component: PR.Introduction,
       order: 1,
    },
    {
-      title: 'Rule Book',
-      path: '/',
-      component: PR.RuleBook,
+      title: 'Data Science',
+      path: '/data-science',
+      component: PR.DataScience,
       order: 2,
    },
    {
-      title: 'Rules Loader',
-      path: '/rules-loader',
-      component: PR.RulesLoader,
+      title: 'Statistics',
+      path: '/statistics',
+      component: PR.Statistics,
       order: 3,
    },
 ]

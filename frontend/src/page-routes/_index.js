@@ -2,7 +2,7 @@
 PAGE ROUTES INDEX
 **************************************************************************************************/
 
-export { default as Home } from './home-page.js';
-export { default as RuleBook } from './rule-book.js';
-export { default as RulesLoader } from './rules-loader.js';
+export { default as Introduction } from './introduction.js';
+export { default as DataScience } from './data-science.js';
+export { default as Statistics } from './statistics.js';
 

@@ -14,7 +14,9 @@ class NavMenu extends Component {
             {
                RoutesConfig.map( (menu, idx) => 
                   <div className='nav-link-container' key={ menu.order }>
-                     <NavLink exact to={ menu.path }>{ menu.title }</NavLink>
+                        <div className='moving-border'>
+                            <NavLink exact to={ menu.path }>{ menu.title }</NavLink>
+                        </div>
                   </div> )
             }
          </div>

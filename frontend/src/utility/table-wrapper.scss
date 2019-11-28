@@ -3,9 +3,11 @@ TABLE-WRAPPER STYLES
 **************************************************************************************************/
 @import '../app_main/styles.scss';
 
+$tableBorder: black;
+
 .table-wrapper {
    margin: 10px;
-   background: $tableBackground;
+   //background: $tableBackground;
 
    .table-header {
       text-align: left;
@@ -38,7 +40,5 @@ TABLE-WRAPPER STYLES
    .ReactTable .rt-tbody .rt-td {
       border-right-color: $tableBorder;
    }
-
-
 }
 

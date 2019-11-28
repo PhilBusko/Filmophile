@@ -11,8 +11,8 @@ MENU LAYOUT STYLES
 }
 
 .nav-column {
-   width: 16%;
-   background: $navBackground;
+   width: 14%;
+   background: slategray;
 
    .fixed-panel {
       position: sticky;           // IE, Edge not supported 
@@ -22,7 +22,7 @@ MENU LAYOUT STYLES
 }
 
 .content-column {
-   width: 94%;
-   background: $contentBackground;
+   width: 86%;
+   background: navy;
 }
 

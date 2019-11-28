@@ -3,35 +3,43 @@ NAVIGATION MENU STYLES
 **************************************************************************************************/
 @import '../app_main/styles.scss';
 
+$linkColor: white;
+$linkColorHighlight: goldenrod;
+
 .navigation-wrapper {
+    padding: 8px 8px; 
 
-   font-family: Gill Sans, Gill Sans MT, Calibri, sans-serif;
-   font-size: 22px;
+    .nav-link-container {
+        margin: 0px;
+        
+        .moving-border {
+            display: inline-block;
+            width: 100%;
+            margin: 0px ;
+            text-align: center;
 
-   .nav-link-container {
-      margin: 6px;
-      a {
-         display: block;
-         border: 2px solid $navMain;
-         border-radius: 3px;
-         padding: 6px 10px;
-         background: $navLinkBackground;
+            &:hover {
+                margin-top: -4px;
+                margin-bottom: 4px;
+            }
+        }
 
-         color: $navMain;
-         text-decoration: none;
-         font-weight: bold;
-      }
-      a:hover {
-         border-color: $navHighlight;
-         color: $navHighlight;
-         background: $navLinkBkgdHighlight;
-      }
-      a:visited {
-         color: $navMain;
-      }
-      a:visited:hover {
-         color: $navHighlight;
-      }
-   }  
+        a, a:visited {
+            display: block;
+            padding: 6px 10px;
+            border: 4px solid transparent;
+            border-radius: 5px;
+
+            font-family: Optima, sans-serif;
+            font-size: 22px;
+            color: $linkColor;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover, a:visited:hover {
+            color: $linkColorHighlight;
+            border: 4px outset $linkColorHighlight;
+        }
+    }  
 }
 
