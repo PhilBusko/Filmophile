@@ -5,7 +5,7 @@ import * as React from 'react';
 import axios from 'axios';
 
 import MenuLayout from '../layouts/menu-layout'
-import TableWrapper from '../utility/table-wrapper'
+import TableWrapper from '../elements/table-wrapper'
 
 class DataScience extends React.Component {
 

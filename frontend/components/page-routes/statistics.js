@@ -6,7 +6,7 @@ import axios from 'axios';
 //import { When } from 'react-if';
 
 import MenuLayout from '../layouts/menu-layout'
-import TableWrapper from '../utility/table-wrapper'
+//import TableWrapper from '../elements/table-wrapper'
 
 class RulesLoader extends React.Component {
 
@@ -74,7 +74,6 @@ class RulesLoader extends React.Component {
 
                      <button onClick={ this.loadDbClick }>Load DB</button>
 
-                     <TableWrapper tableRows={ this.state.rulesTables }></TableWrapper>
 
                   </div>
                </div>

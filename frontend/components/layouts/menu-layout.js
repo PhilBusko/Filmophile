@@ -9,15 +9,15 @@ import './menu-layout.scss'
 class MenuLayout extends React.Component {
    render() {
       return (
-         <div className='menu-layout'>
+         <div className='pure-g menu-layout'>
 
-            <div className='nav-column'>
+            <div className='pure-u-4-24 pure-u-xl-3-24  nav-column'>
                <div className='fixed-panel'>
                   <NavMenu></NavMenu>
                </div>
             </div>
 
-            <div className='content-column'>
+            <div className='pure-u-20-24 pure-u-xl-21-24  content-column'>
                <ContentBlock>
                   { this.props.children }
                </ContentBlock>

@@ -4,14 +4,13 @@ MENU LAYOUT STYLES
 @import '../app_main/styles.scss';
 
 .menu-layout {
-   //width: 100%;
    min-height: 100vh;
-   display: flex;
-   flex-direction: row;
+   min-width: 1024px;       // smallest is ipad screen
+
+   align-content: initial !important;   // reset pure-g so min-height takes effect
 }
 
 .nav-column {
-   width: 14%;
    background: slategray;
 
    .fixed-panel {
@@ -22,7 +21,6 @@ MENU LAYOUT STYLES
 }
 
 .content-column {
-   width: 86%;
    background: navy;
 }
 

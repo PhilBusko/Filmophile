@@ -6,35 +6,35 @@ CONTENT BLOCK STYLES
 .content-wrapper {
 
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: 18px;
-    color: white;
+    font-size: 16px;
+    color: $textColor;
+
+    .grid-spacing {
+        margin: 20px 20px 0px 20px;
+    }
+    .left-panel {
+        display: flex;
+        flex-direction: row;
+    }
 
     .page-title {
-        padding: 10px 0px 10px 0px;
         text-align: center;
         font-size: 200%;
 
         font-family: Gill Sans, sans-serif;
         font-weight: bold;
-        color: white;
+        color: $textColor;
     }
-    .outer-spacing {
-        padding: 5px;
-    }
-    .inner-spacing {
-        margin: 5px;
-    }
-    .block-horizontal {
-        min-height: 100px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        border-radius: 4px;
-    }
+    .heading {
 
-    .center-text {
-        text-align: center !important;
+    }
+    .entry-title{
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .link-format {
+        color: aqua;
+        text-decoration: underline;
     }
 }
 
