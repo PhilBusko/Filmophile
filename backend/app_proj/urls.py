@@ -9,6 +9,7 @@ import movies.views as MV
 
 filmophile_url = [
     url(r'^data_history/', MV.DataHistory),
+    url(r'^vote_plot/', MV.VotePlot),
 ]
 
 urlpatterns = [

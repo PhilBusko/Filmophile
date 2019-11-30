@@ -13,7 +13,15 @@ class Introduction extends Component {
     imdbIcon = require('../assets/icons/imdb.ico')
     jupyterIcon = require('../assets/icons/jupyter.png')
     pandasIcon = require('../assets/icons/pandas.png')
+    seleniumIcon = require('../assets/icons/selenium.ico')
     sklearnIcon = require('../assets/icons/sklearn.ico')
+    djangoIcon = require('../assets/icons/django.png')
+    postgresIcon = require('../assets/icons/postgres.png')
+    reactIcon = require('../assets/icons/react.ico')
+    sassIcon = require('../assets/icons/sass.png')
+    purecssIcon = require('../assets/icons/purecss.png')
+    webpackIcon = require('../assets/icons/webpack.ico')
+    githubIcon = require('../assets/icons/github.png')
 
     render() {
         return (
@@ -62,6 +70,8 @@ class Introduction extends Component {
                                     icon={ this.jupyterIcon } text='Jupyter Project'></ResourceLink>
                                 <ResourceLink url={'https://pandas.pydata.org/'} 
                                     icon={ this.pandasIcon } text='pandas'></ResourceLink>
+                                <ResourceLink url={'https://selenium.dev/'} 
+                                    icon={ this.seleniumIcon } text='Selenium'></ResourceLink>
                                 <ResourceLink url={'https://scikit-learn.org/stable/'} 
                                     icon={ this.sklearnIcon } text='scikit-learn'></ResourceLink>
                                 <ResourceLink url={'https://www.imdb.com/'} 
@@ -70,6 +80,45 @@ class Introduction extends Component {
                         </div>
                     </div>
 
+                    <div className='pure-u-1 grid-spacing'>
+                        <div className='left-panel'>
+                            <span className='entry-title'>Backend:</span> 
+                            <span>
+                                <ResourceLink url={'https://www.djangoproject.com/'} 
+                                    icon={ this.djangoIcon } text='Django'></ResourceLink>
+                                <ResourceLink url={'https://www.postgresql.org/'} 
+                                    icon={ this.postgresIcon } text='PostgreSQL' isLast={ true }></ResourceLink>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className='pure-u-1 grid-spacing'>
+                        <div className='left-panel'>
+                            <span className='entry-title'>Frontend:</span> 
+                            <span>
+                                <ResourceLink url={'https://reactjs.org/'} 
+                                    icon={ this.reactIcon } text='React'></ResourceLink>
+                                <ResourceLink url={'https://sass-lang.com/'} 
+                                    icon={ this.sassIcon } text='Sass'></ResourceLink>
+                                <ResourceLink url={'https://purecss.io/'} 
+                                    icon={ this.purecssIcon } text='Pure.css'></ResourceLink>
+                                <ResourceLink url={'https://webpack.js.org/'} 
+                                    icon={ this.webpackIcon } text='webpack' isLast={ true }></ResourceLink>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className='pure-u-1 grid-spacing'>
+                        <div className='left-panel'>
+                            <span className='entry-title'>Deployment:</span> 
+                            <span>
+                                <ResourceLink url={'https://github.com/PhilBusko/Filmophile'} 
+                                    icon={ this.githubIcon } text='Github Repo'></ResourceLink>
+                                <ResourceLink url={'https://github.com/PhilBusko/Filmophile'} 
+                                    icon={ this.githubIcon } text='PaaS' isLast={ true }></ResourceLink>
+                            </span>
+                        </div>
+                    </div>
 
                 </div>
             </MenuLayout>

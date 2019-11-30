@@ -539,6 +539,35 @@ class Reporter(object):
 
 
     @staticmethod
+    def ConvertToHistogramSeries(data_ls):
+        """
+        Takes a list of dictionaries with 2 items and converts them to 2 lists.
+        """
+        x_ls = []
+        y_ls = []
+
+        for dt in data_ls:
+            x = dt[list(dt.keys())[0]]
+            y = dt[list(dt.keys())[1]]
+
+            x_ls.append(x)
+            y_ls.append(y)
+        
+        return (x_ls, y_ls)
+
+
+    @staticmethod
+    def ConvertFigureToJson(figure):
+        from plotly.utils import PlotlyJSONEncoder
+
+        redata = json.loads(json.dumps(figure.data, cls=PlotlyJSONEncoder))
+        relayout = json.loads(json.dumps(figure.layout, cls=PlotlyJSONEncoder))
+        fig_json=json.dumps({'data': redata,'layout': relayout})
+
+        return fig_json
+
+
+    @staticmethod
     def GetDataHistory():
         history_ls = []
         tmdb_total = MovieDB_Load.objects.count()
@@ -686,8 +715,45 @@ class Reporter(object):
 
 
     @staticmethod
+    def RunVotePlot():
+        vote_md_ls = Reporter.GetVoteCounts()
+        vote_xy = Reporter.ConvertToHistogramSeries(vote_md_ls)
+        figure = Reporter.GetVoteFigure(vote_xy)
+        json = Reporter.ConvertFigureToJson(figure)
+        return json
+
+
+    @staticmethod
     def GetVoteCounts():
         vote_hist = list(   UserVotes.objects.all().values('Vote').
                             annotate(total=DB.models.Count('Vote')).
                             order_by('Vote') )
         return vote_hist
+
+
+    @staticmethod
+    def GetVoteFigure(vote_xy):
+        import plotly.graph_objects as GO
+
+        fig = GO.Figure()
+        fig.add_trace(
+            GO.Bar(
+                x= vote_xy[0],
+                y= vote_xy[1],
+                marker_color=['crimson', 'seagreen', 'gold']
+            ))
+        fig.update_layout(
+            title="User Movie Votes",
+            xaxis_title="Number of Stars",
+            yaxis_title="Movie Count",
+            width=500,
+            height=400,
+            margin=GO.layout.Margin(t=50, r=20, b=50, l=70, pad=0),
+            paper_bgcolor="LightSteelBlue",
+        )
+        fig.update_xaxes(tickvals=vote_xy[0])
+        fig.update_yaxes(tickvals=list(range(0, 500, 100)))
+
+        return fig
+
+

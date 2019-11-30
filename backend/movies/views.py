@@ -1,5 +1,5 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-GAME-RULES VIEWS
+FILMOPHILE VIEWS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 from rest_framework.decorators import api_view
@@ -13,4 +13,10 @@ import movies.models.models as MM
 def DataHistory(request):
    result_dx = MM.Reporter.GetDataHistory()
    return Response(result_dx)
+
+
+@api_view(["GET"])
+def VotePlot(request):
+    result_dx = MM.Reporter.RunVotePlot()
+    return Response(result_dx)
 
