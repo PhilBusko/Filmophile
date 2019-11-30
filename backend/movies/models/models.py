@@ -686,7 +686,7 @@ class Reporter(object):
         history_ls.append(new_dx)
 
         new_dx = {
-            'Column': 'UserScore',
+            'Column': 'ImdbScore',
             'TMDB': 0,
             'IMDB': IMDB_Load.objects.filter(Score__isnull=False).count(),
             'Reelgood': 0,

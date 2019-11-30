@@ -39,7 +39,18 @@ class FeatureEngineer(object):
 
 
     @staticmethod
-    def SingularColumn(onehot_df, column):
+    def GetSingularMaximums():
+        # ok to match total obs because will pca later
+
+        total_obs = MD.UserVotes.objects.all().count()
+        total_obs -= 220                        # subtract for country, language, genres, etc
+        max_companies = int(total_obs / 2)
+        max_crew = int(total_obs / 4)
+        max_cast = int(total_obs / 4)
+        return max_companies, max_crew, max_cast
+
+    @staticmethod
+    def SingularColumn(onehot_df, column, keep_max):
 
         # get the most frequent values of the column's lists
 
@@ -54,9 +65,12 @@ class FeatureEngineer(object):
         counts = PD.Series(full_ls).value_counts()
 
         keep_ls = []
-        for idx, val in counts.items():
-            if val >= 5: 
-                keep_ls.append(idx.strip())
+        number_items = 0
+        for val, cnt in counts.items():
+            keep_ls.append(val.strip())
+            number_items += 1
+            if number_items > keep_max:
+                break
 
         #print(keep_ls)
 
