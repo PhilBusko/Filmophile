@@ -8,19 +8,19 @@ MENU LAYOUT STYLES
    min-width: 1024px;       // smallest is ipad screen
 
    align-content: initial !important;   // reset pure-g so min-height takes effect
-}
 
-.nav-column {
-   background: slategray;
+    .nav-column {
+        background-size: 100% 100%;
 
-   .fixed-panel {
-      position: sticky;           // IE, Edge not supported 
-      position: -webkit-sticky;   // Safari
-      top: 6px;
-   }
-}
+        .fixed-panel {
+            position: sticky;           // IE, Edge not supported 
+            position: -webkit-sticky;   // Safari
+            top: 6px;
+        }
+    }
 
-.content-column {
-   background: $contentBackground;
+    .content-column {
+        background-size: 100% 100%;
+    }
 }
 

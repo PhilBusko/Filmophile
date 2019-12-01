@@ -14,6 +14,7 @@ class DataScience extends React.Component {
     state = {
         dataHistory: null,
         votePlot: null,
+        logregPlot: null,
     }
 
     componentDidMount() {
@@ -42,9 +43,23 @@ class DataScience extends React.Component {
             var updateState = {votePlot: jsonPlot};
             this.setState({...this.state, ...updateState});
         }).catch( error => {
-            console.log('Axios Error: ' + 'api/movies/vote_plot/')
+            console.log('Axios Error: api/movies/vote_plot/')
             console.log(error);
         });
+
+        axios({
+            url: 'api/movies/analysis_logreg/',
+            method: 'get',
+            data: { }
+        }).then( success => {
+            var jsonPlot = JSON.parse(success.data);
+            var updateState = {logregPlot: jsonPlot};
+            this.setState({...this.state, ...updateState});
+        }).catch( error => {
+            console.log('Axios Error: api/movies/analysis_logreg/')
+            console.log(error);
+        });
+
     }
 
 
@@ -63,7 +78,6 @@ class DataScience extends React.Component {
                             <TableWrapper tableRows={ this.state.dataHistory }></TableWrapper>
                         }
                         </When>
-
                         <When condition={ !this.state.dataHistory }>
                         { () =>
                             <div>table loading ...</div>
@@ -79,8 +93,22 @@ class DataScience extends React.Component {
                                   config={{ 'staticPlot': true }} />
                         }
                         </When>
-
                         <When condition={ !this.state.votePlot }>
+                        { () =>
+                            <div>plot loading ...</div>
+                        }
+                        </When>
+                    </div>
+
+                    <div className='pure-u-1 grid-spacing'>
+                        <When condition={ !!this.state.logregPlot }>
+                        { () =>
+                            <Plot data={ this.state.logregPlot.data }
+                                  layout={ this.state.logregPlot.layout }
+                                   />
+                        }
+                        </When>
+                        <When condition={ !this.state.logregPlot }>
                         { () =>
                             <div>plot loading ...</div>
                         }

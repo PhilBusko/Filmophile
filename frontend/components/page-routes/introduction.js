@@ -15,6 +15,8 @@ class Introduction extends Component {
     pandasIcon = require('../assets/icons/pandas.png')
     seleniumIcon = require('../assets/icons/selenium.ico')
     sklearnIcon = require('../assets/icons/sklearn.ico')
+    xgboostIcon = require('../assets/icons/xgboost.png')
+    plotlyIcon = require('../assets/icons/plotly.png')
     djangoIcon = require('../assets/icons/django.png')
     postgresIcon = require('../assets/icons/postgres.png')
     reactIcon = require('../assets/icons/react.ico')
@@ -74,8 +76,10 @@ class Introduction extends Component {
                                     icon={ this.seleniumIcon } text='Selenium'></ResourceLink>
                                 <ResourceLink url={'https://scikit-learn.org/stable/'} 
                                     icon={ this.sklearnIcon } text='scikit-learn'></ResourceLink>
-                                <ResourceLink url={'https://www.imdb.com/'} 
-                                    icon={ this.sklearnIcon } text='plot.ly' isLast={ true }></ResourceLink>
+                                <ResourceLink url={'https://xgboost.readthedocs.io/en/latest/index.html#'} 
+                                    icon={ this.xgboostIcon } text='XGBoost'></ResourceLink>
+                                <ResourceLink url={'https://plot.ly/python/'} 
+                                    icon={ this.plotlyIcon } text='plot.ly' isLast={ true }></ResourceLink>
                             </span>
                         </div>
                     </div>

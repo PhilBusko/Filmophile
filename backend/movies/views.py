@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 import app_proj.utility as UT
 import movies.models.models as MM
+import movies.models.analysis as NL
 
 
 @api_view(["GET"])
@@ -17,6 +18,13 @@ def DataHistory(request):
 
 @api_view(["GET"])
 def VotePlot(request):
-    result_dx = MM.Reporter.RunVotePlot()
-    return Response(result_dx)
+    json_tx = MM.Reporter.RunVotePlot()
+    return Response(json_tx)
 
+
+@api_view(["GET"])
+def AnalysisLogReg(request):
+    json_tx = NL.LogisticRegression.GetHardcodedFigure()
+    return Response(json_tx)
+
+    
