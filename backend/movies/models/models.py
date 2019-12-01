@@ -757,3 +757,10 @@ class Reporter(object):
         return fig
 
 
+    @staticmethod
+    def GetWatchedMovies():
+        watched_ids = UserVotes.objects.values('id')
+        tmdb_total = MovieDB_Load.objects.count()
+
+        return watched_ids
+        

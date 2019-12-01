@@ -8,9 +8,14 @@ from django.views.generic import TemplateView
 import movies.views as MV
 
 filmophile_url = [
+    # data science page
     url(r'^data_history/', MV.DataHistory),
     url(r'^vote_plot/', MV.VotePlot),
     url(r'^analysis_logreg/', MV.AnalysisLogReg),
+
+    # browsing pages
+    url(r'^movies_watched/', MV.MoviesWatched),
+
 ]
 
 urlpatterns = [

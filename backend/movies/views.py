@@ -27,4 +27,8 @@ def AnalysisLogReg(request):
     json_tx = NL.LogisticRegression.GetHardcodedFigure()
     return Response(json_tx)
 
-    
+
+@api_view(["GET"])
+def MoviesWatched(request):
+    movies_ls = MM.Reporter.GetWatchedMovies()
+    return Response(movies_ls)
