@@ -11,6 +11,12 @@ import movies.models.analysis as NL
 
 
 @api_view(["GET"])
+def Genres(request):
+   result_ls = MM.Reporter.GetGenres()
+   return Response(result_ls)
+
+
+@api_view(["GET"])
 def DataHistory(request):
    result_dx = MM.Reporter.GetDataHistory()
    return Response(result_dx)

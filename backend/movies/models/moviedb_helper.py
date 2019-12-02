@@ -392,3 +392,10 @@ class MovieDBHelper(object):
 
         raise Exception(f'Language code not found: {code}')
 
+
+    @staticmethod
+    def GetPosterThumbUrl():
+        base_url = 'http://image.tmdb.org/t/p/'
+        thumb_url = f'{base_url}w154'
+        return thumb_url
+

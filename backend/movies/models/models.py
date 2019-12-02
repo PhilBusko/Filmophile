@@ -7,6 +7,7 @@ import pandas as PD
 import numpy as NP
 import django.db as DB
 import app_proj.utility as UT
+import movies.models.moviedb_helper as MH
 
 
 class MasterMovie(DB.models.Model):
@@ -539,6 +540,14 @@ class Reporter(object):
 
 
     @staticmethod
+    def GetGenres():
+        genres = ['Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 
+        'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 
+        'Sci-Fi', 'Sport', 'Thriller', 'War', 'Western']
+        return genres
+
+
+    @staticmethod
     def ConvertToHistogramSeries(data_ls):
         """
         Takes a list of dictionaries with 2 items and converts them to 2 lists.
@@ -759,8 +768,15 @@ class Reporter(object):
 
     @staticmethod
     def GetWatchedMovies():
-        watched_ids = UserVotes.objects.values('id')
-        tmdb_total = MovieDB_Load.objects.count()
+        watched_ids = UserVotes.objects.all().values_list('Movie_ID', flat=True)
+        movies_ls = MasterMovie.objects.filter(Movie_ID__in=watched_ids
+                                        ).order_by('-ScoreImdb').values()
 
-        return watched_ids
-        
+        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
+        for mov in movies_ls:
+            poster_url = mov['Poster']
+            if 'http' not in poster_url:
+                mov['Poster'] = f"{thumb_url}{poster_url}"
+
+        return movies_ls
+

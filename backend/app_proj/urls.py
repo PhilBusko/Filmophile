@@ -8,6 +8,9 @@ from django.views.generic import TemplateView
 import movies.views as MV
 
 filmophile_url = [
+    # general data
+    url(r'^genres/', MV.Genres),
+
     # data science page
     url(r'^data_history/', MV.DataHistory),
     url(r'^vote_plot/', MV.VotePlot),

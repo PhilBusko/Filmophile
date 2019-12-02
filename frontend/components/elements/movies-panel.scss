@@ -1,10 +1,15 @@
 /**************************************************************************************************
-MOVIE PANEL STYLES
+MOVIES PANEL STYLES
 **************************************************************************************************/
 @import '../app_main/styles.scss';
 
-.movie-panel {
-
-    background: white;
+.movies-wrapper {
+    
+    .movie-outer {
+        padding: 12px;
+    }
+    .movie-inner {
+        margin: 4px;
+    }
 }
 

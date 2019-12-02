@@ -5,25 +5,19 @@ CONTENT BLOCK STYLES
 
 .content-wrapper {
 
-    font-family: Georgia, 'Times New Roman', serif;
+    // font formatting
+
+    font-family: Verdana, sans-serif;
     font-size: 16px;
     color: $textColor;
 
-    .grid-spacing {
-        margin: 20px 20px 0px 20px;
-    }
-    .left-panel {
-        display: flex;
-        flex-direction: row;
-    }
-
     .page-title {
         text-align: center;
-        font-size: 200%;
 
-        font-family: Gill Sans, sans-serif;
+        font-family: 'Gill Sans', sans-serif;
         font-weight: bold;
-        color: $textColor;
+        font-size: 200%;
+        text-shadow: -1px 0px 2px $highlight, 1px 0px 2px $highlight, 0px 1px 2px $highlight, 0px -1px 2px $highlight;
     }
     .heading {
 
@@ -35,6 +29,57 @@ CONTENT BLOCK STYLES
     .link-format {
         color: aqua;
         text-decoration: underline;
+    }
+    .strong-font {
+        font-weight: bold;
+    }
+
+    // basic page styling
+
+    .grid-spacing {
+        margin: 20px 20px 0px 20px;
+    }
+    .left-panel {
+        display: flex;
+        flex-direction: row;
+    }
+    .spaced-panel {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .even-panel {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    // browsing page styling
+
+    .sticky-grid {
+        position: sticky;
+        top: 0px;           // sticky by top
+        background: $contentBkgd;
+        border-bottom: 1px solid MediumSlateBlue ;
+    }
+    .spacing-outer {
+        padding: 10px;
+    }
+    .spacing-inner {
+        margin: 10px;
+    }
+    .control-group {
+        background: DarkSlateBlue;
+        border: 1px solid $highlight;
+        border-radius: 5px;
+
+        .control-outer {
+            padding: 4px;
+        }
+        .control-inner {
+            display: inline-block;
+            margin: 4px;
+        }
     }
 }
 

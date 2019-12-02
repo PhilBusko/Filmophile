@@ -3,8 +3,9 @@ GLOBAL STYLES
 **************************************************************************************************/
 
 $navBkgd: slategray;
-$contentBkgd: navy;       // used in resource link background
-$textColor: white;              // used in content-block, and elements
+$contentBkgd: navy;         // used in resource link background
+$textColor: white;          // used in content-block, and elements
+$highlight: DarkMagenta  ; 
 
 
 /**************************************************************************************************
@@ -21,9 +22,11 @@ RESPONSIVENESS
 
 @import '~purecss/build/pure-min.css';
 @import '~purecss/build/grids-responsive-min.css';
+//@import './purecss-extension.css';
+@import '~purecss/build/purecss-extension.css';
 
 // override pure fonts
-.pure-g, .pure-g [class *= "pure-u"], .pure-g [class*=pure-u] {
+.pure-g { //}, .pure-g [class *= "pure-u"], .pure-g [class*=pure-u] {
    font-family: inherit !important;
 }
 
