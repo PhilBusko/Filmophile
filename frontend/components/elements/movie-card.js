@@ -3,9 +3,13 @@ MOVIE CARD ELEMENT
 **************************************************************************************************/
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import { When } from 'react-if';
 import './movie-card.scss'
 
 class MovieCard extends React.Component {
+
+    starEmpty = require('../assets/icons/star_empty.png')
+    starFull = require('../assets/icons/star_full.png')
 
     static propTypes = {
         movie: PropTypes.object.isRequired,
@@ -13,7 +17,15 @@ class MovieCard extends React.Component {
 
     render() {
         let movie = this.props.movie;
-        let indecesRaw = JSON.parse(movie['Indeces']);
+        let indecesRaw = {};
+                    
+        try {
+            indecesRaw = JSON.parse(movie['Indeces']);
+        }
+        catch(error) {
+            console.log('MovieCard: no indices for ' + movie['Title'])
+        }
+
         let indeces = [];
         let imdbHref = 'https://www.imdb.com/title/';
 
@@ -45,6 +57,11 @@ class MovieCard extends React.Component {
                 indeces.push(service);
         }
 
+        let numberStars = 0
+
+        if ('Vote' in movie)
+            numberStars = movie['Vote']
+
         return (
             <div className='movie-card movie-panel'>
                 <div className='poster-spacer'>
@@ -58,9 +75,30 @@ class MovieCard extends React.Component {
                     <div className='spaced-panel'>
                         <span className='small-font'>
                             <a href={ imdbHref } className='imdb-link' target='blank_'>IMDB</a>
-                            <span>: { movie['ScoreImdb'].toFixed(1) }</span>
+                            <span>: { movie['ScoreImdb'] ? movie['ScoreImdb'].toFixed(1) : 'N/A' }</span>
                         </span>
-                        <span>stars</span>
+                        <span>
+                            <When condition={ numberStars === 0 }>
+                                <img src={ this.starEmpty } className='star-icon' alt='Votes'/>
+                                <img src={ this.starEmpty } className='star-icon' alt='Votes'/>
+                                <img src={ this.starEmpty } className='star-icon' alt='Votes'/>
+                            </When>
+                            <When condition={ numberStars === 1 }>
+                                <img src={ this.starFull } className='star-icon' alt='Votes'/>
+                                <img src={ this.starEmpty } className='star-icon' alt='Votes'/>
+                                <img src={ this.starEmpty } className='star-icon' alt='Votes'/>
+                            </When>
+                            <When condition={ numberStars === 2 }>
+                                <img src={ this.starFull } className='star-icon' alt='Votes'/>
+                                <img src={ this.starFull } className='star-icon' alt='Votes'/>
+                                <img src={ this.starEmpty } className='star-icon' alt='Votes'/>
+                            </When>
+                            <When condition={ numberStars === 3 }>
+                                <img src={ this.starFull } className='star-icon' alt='Votes'/>
+                                <img src={ this.starFull } className='star-icon' alt='Votes'/>
+                                <img src={ this.starFull } className='star-icon' alt='Votes'/>
+                            </When>
+                        </span>
                     </div>
                     <div>
                         <span className='small-font'>{ movie['Genres'] }</span>

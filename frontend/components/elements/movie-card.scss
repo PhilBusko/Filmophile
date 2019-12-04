@@ -34,6 +34,11 @@ MOVIE CARD STYLES
             font-size: 88%;
             color: $textColor;
         }
+        .star-icon {
+            height: 20px;
+            margin-right: 1px;
+            cursor: pointer;
+        }
         .service-link, .service-link:visited {
             font-family: Comic Sans MS, Comic Sans, cursive;
             color: crimson;

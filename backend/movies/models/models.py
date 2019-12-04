@@ -5,7 +5,10 @@ MOVIE MODELS
 import os, csv, re, json
 import pandas as PD
 import numpy as NP
+import plotly.graph_objects as GO
+import plotly.figure_factory as FF
 import django.db as DB
+
 import app_proj.utility as UT
 import movies.models.moviedb_helper as MH
 
@@ -113,9 +116,19 @@ class StreamService(DB.models.Model):
 
 
 class UserVotes(DB.models.Model):
+    class Meta:
+        unique_together = [['Movie_ID', 'User']]
     Movie_ID = DB.models.IntegerField()     # if not a foreign key, can reload master table
     User = DB.models.TextField()            # should be foreign key to user
     Vote = DB.models.IntegerField()
+
+
+class UserRecommendations(DB.models.Model):
+    class Meta:
+        unique_together = [['Movie_FK', 'User']]
+    Movie_FK = DB.models.ForeignKey(MasterMovie, on_delete=DB.models.CASCADE) 
+    User = DB.models.TextField()            
+    RecomLevel = DB.models.IntegerField()
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -465,7 +478,7 @@ class Editor(object):
         
         import random as RD
         RD.seed(666)
-        number_votes = 600
+        number_votes = 900
         UserVotes.objects.all().delete()
 
         # assume all movies in master table have a streaming index
@@ -473,10 +486,19 @@ class Editor(object):
         master_query = MasterMovie.objects.filter(ScoreImdb__isnull=False).filter(Genres__isnull=False)
         master_total = master_query.count()
         vote_ls = []
+        unique_id_ls = []
 
         for vt in range(0, number_votes):
             random_idx = RD.randint(0, master_total-1)
             random_movie = master_query.values()[random_idx]
+
+            movie_id = random_movie['Movie_ID']
+
+            if movie_id in unique_id_ls:
+                continue
+
+            unique_id_ls.append(movie_id)
+
             score = random_movie['ScoreImdb']
             genres = random_movie['Genres']
             year = int(random_movie['Year'])
@@ -526,7 +548,7 @@ class Editor(object):
             #print(f"{random_movie['Title']} ({year}) {score} {genres} : {vote}")
 
             new_dx = {
-                'Movie_ID': random_movie['Movie_ID'],
+                'Movie_ID': movie_id,
                 'User': 'main',
                 'Vote': vote,
             }
@@ -541,10 +563,39 @@ class Reporter(object):
 
     @staticmethod
     def GetGenres():
-        genres = ['Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 
-        'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 
-        'Sci-Fi', 'Sport', 'Thriller', 'War', 'Western']
+        genres = [
+            {'key': 1, 'value': 'Action'},
+            {'key': 2, 'value': 'Adventure'},
+            {'key': 3, 'value': 'Animation'},
+            {'key': 4, 'value': 'Biography'},
+            {'key': 5, 'value': 'Comedy'},
+            {'key': 6, 'value': 'Crime'},
+            {'key': 7, 'value': 'Documentary'},
+            {'key': 8, 'value': 'Drama'},
+            {'key': 9, 'value': 'Family'},
+            {'key': 10, 'value': 'Fantasy'},
+            {'key': 11, 'value': 'History'},
+            {'key': 12, 'value': 'Horror'},
+            {'key': 13, 'value': 'Music'},
+            {'key': 14, 'value': 'Mystery'},
+            {'key': 15, 'value': 'Romance'},
+            {'key': 16, 'value': 'Sci-Fi'},
+            {'key': 17, 'value': 'Sport'},
+            {'key': 18, 'value': 'Thriller'},
+            {'key': 19, 'value': 'War'},
+            {'key': 20, 'value': 'Western'},
+        ]
         return genres
+
+
+    @staticmethod
+    def GetRecomLevels():
+        recom_ls = [
+            {'key': 3, 'value': 'Love It'},
+            {'key': 2, 'value': 'Maybe'},
+            {'key': 1, 'value': 'Don\'t Bother'}
+        ]
+        return recom_ls
 
 
     @staticmethod
@@ -742,7 +793,6 @@ class Reporter(object):
 
     @staticmethod
     def GetVoteFigure(vote_xy):
-        import plotly.graph_objects as GO
 
         fig = GO.Figure()
         fig.add_trace(
@@ -772,6 +822,15 @@ class Reporter(object):
         movies_ls = MasterMovie.objects.filter(Movie_ID__in=watched_ids
                                         ).order_by('-ScoreImdb').values()
 
+        # hack until FK is up 
+
+        votes_ls = UserVotes.objects.all().values()
+        for mov in movies_ls:
+            for vt in votes_ls:
+                if mov['Movie_ID'] == vt['Movie_ID']:
+                    mov['Vote'] = vt['Vote']
+                    break
+
         thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
         for mov in movies_ls:
             poster_url = mov['Poster']
@@ -779,4 +838,131 @@ class Reporter(object):
                 mov['Poster'] = f"{thumb_url}{poster_url}"
 
         return movies_ls
+
+
+    @staticmethod
+    def GetToWatchMovies():
+
+        # select_related will load movies from db, which speeds up the function
+
+        recom_ls = list(UserRecommendations.objects.filter(User='main')
+                        .select_related('Movie_FK').all())
+        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
+
+        movie_ls = []
+        for rec in recom_ls:
+            movie_dx = rec.Movie_FK.__dict__
+            state = movie_dx.pop('_state', None)
+            mid = movie_dx.pop('id', None)
+            movie_dx['RecomLevel'] = rec.RecomLevel
+
+            poster_url = movie_dx['Poster']
+            if 'http' not in poster_url:
+                movie_dx['Poster'] = f"{thumb_url}{poster_url}"
+
+            movie_ls.append(movie_dx)
+        
+        movie_ls = sorted(movie_ls, key=lambda mv: (-1)*mv['ScoreImdb'] if mv['ScoreImdb'] else 0)
+
+        return movie_ls
+
+
+    @staticmethod
+    def GetTotalsPlot():
+
+        # get the data
+        # later must filter by active movies
+
+        master_ls = list(MasterMovie.objects.values())
+        year_distrib = {'netflix': [], 'amazon': [], 'hulu': []}
+
+        for mov in master_ls:
+            year = int(mov['Year'])
+            index_dx = json.loads(mov['Indeces'])
+            
+            for key, val in index_dx.items():
+                if key in year_distrib and year >= 1980:
+                    year_distrib[key].append(year)
+
+        # create the plot 
+
+        fig = GO.Figure()
+        fig.add_trace(GO.Histogram(x= year_distrib['amazon'], name='Amazon', marker_color='darkblue', opacity=0.6))
+        fig.add_trace(GO.Histogram(x= year_distrib['netflix'], name='Netflix', marker_color='crimson', opacity=0.7))
+        fig.add_trace(GO.Histogram(x= year_distrib['hulu'], name='Hulu', marker_color='green', opacity=0.8))
+        fig.update_layout(
+            title="Total Movie Count for Each Service",
+            xaxis_title="Year",
+            yaxis_title="Movie Count",
+            width=700,
+            height=500,
+            margin=GO.layout.Margin(t=50, r=20, b=50, l=70, pad=0),
+            paper_bgcolor="LightSteelBlue",
+            barmode='overlay', 
+        )
+
+        # format and send to frontend
+
+        return Reporter.ConvertFigureToJson(fig)
+
+
+    @staticmethod
+    def GetScoresPlot():
+
+        # get the data
+        # later must filter by active movies
+
+        master_ls = list(MasterMovie.objects.values())
+        score_distrib = {'netflix': [], 'amazon': [], 'hulu': []}
+        total_cnt = {'netflix': 0, 'amazon': 0, 'hulu': 0}
+
+        for mov in master_ls:
+            score = mov['ScoreImdb']
+            if score is None:
+                continue
+            
+            index_dx = json.loads(mov['Indeces'])
+            
+            # only keep exclusive content to each service 
+            
+            exclusive = 0
+            for key, val in index_dx.items():
+                if key in score_distrib:
+                    exclusive += 1
+                    
+            if exclusive > 1:
+                continue
+            
+            year = int(mov['Year'])
+            
+            for key, val in index_dx.items():
+                if key in score_distrib and year >= 1980:
+                    score_distrib[key].append(score)
+                    total_cnt[key] += 1
+
+        # create the plot 
+
+        hist_data = [score_distrib['hulu'], score_distrib['netflix'], score_distrib['amazon']]
+        group_labels = ['Hulu', 'Netflix', 'Amazon']
+        colors = ['green', 'crimson', 'darkblue']
+
+        fig = FF.create_distplot(hist_data, group_labels, colors=colors, 
+                                bin_size=.1, show_hist=False, show_rug=False )
+
+        fig.update_layout(
+            title="IMDB Score for Movies Exclusively in Each Service",
+            xaxis_title="IMDB Score",
+            yaxis_title="Percentage",
+            width=700,
+            height=500,
+            margin=GO.layout.Margin(t=60, r=10, b=50, l=70, pad=0),
+            paper_bgcolor="LightSteelBlue",
+            barmode='overlay', 
+            yaxis_tickformat = '%', 
+        )
+        fig.update_xaxes(tickvals=list(range(0, 10, 1)))
+        
+        # format and send to frontend
+
+        return Reporter.ConvertFigureToJson(fig)
 

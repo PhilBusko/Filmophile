@@ -36,9 +36,6 @@ class BrowseWatched extends React.Component {
             url: 'api/movies/movies_watched/',
             method: 'get',
         }).then( success => {
-            console.log(success.data.length)
-            console.log(success.data[0])
-
             this.setState({
                 movies: success.data,
             });
@@ -106,7 +103,7 @@ class BrowseWatched extends React.Component {
                 </div>
 
                 <MoviesPanel movies={ this.getTrimmedMovies() }></MoviesPanel>
-                
+
             </MenuLayout>
         );
     }

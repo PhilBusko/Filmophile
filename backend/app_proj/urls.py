@@ -10,6 +10,11 @@ import movies.views as MV
 filmophile_url = [
     # general data
     url(r'^genres/', MV.Genres),
+    url(r'^recom_levels/', MV.RecomLevels),
+
+    # statistics page
+    url(r'^totals_plot/', MV.TotalsPlot),
+    url(r'^scores_plot/', MV.ScoresPlot),
 
     # data science page
     url(r'^data_history/', MV.DataHistory),
@@ -18,7 +23,7 @@ filmophile_url = [
 
     # browsing pages
     url(r'^movies_watched/', MV.MoviesWatched),
-
+    url(r'^movies_towatch/', MV.MoviesToWatch),
 ]
 
 urlpatterns = [

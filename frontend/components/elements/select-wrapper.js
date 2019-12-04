@@ -13,14 +13,27 @@ class SelectWrapper extends React.Component {
         updateSelection: PropTypes.func.isRequired,
     }
 
+    state = {
+        value: 0,
+    }
+
+    updateValue = (synthEvt) => {
+        // not sure if the state should be maintained within the control
+        // but don't want to send synthetic event to parent
+
+        let newValue = synthEvt.target.value;
+        this.setState({value: newValue});
+        this.props.updateSelection(newValue);
+    }
+
     render() {
         let ctrlId = this.props.label.toLowerCase().replace(' ', '') + '_slct'
         return (
             <div className='select-wrapper'>
                 <label htmlFor={ ctrlId }>{ this.props.label }: </label>
-                <select id={ ctrlId }>
+                <select id={ ctrlId } onChange={ this.updateValue } value={ this.state.value }>
                     {this.props.options.map((opt, idx) => (
-                        <option key={ idx } value={ opt }>{ opt }</option>
+                        <option key={ idx } value={ opt['key'] }>{ opt['value'] }</option>
                     ))}
                 </select>
             </div>

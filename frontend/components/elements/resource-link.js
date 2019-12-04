@@ -25,7 +25,7 @@ class ResourceLink extends React.Component {
         return (
             <div className='resource-wrapper'>
                 <a href={ this.props.url } className='link-panel' target='blank_'>
-                    <img src={ this.props.icon } className='resource-icon' alt='icon'></img>
+                    <img src={ this.props.icon } className='resource-icon' alt='icon'/>
                     <span className='link-format'>{ this.props.text }</span>
                 </a>
                 <When condition={ !this.props.isLast }>

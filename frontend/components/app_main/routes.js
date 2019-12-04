@@ -11,16 +11,22 @@ export const RoutesConfig = [
         order: 1,
     },
     {
-        title: 'Data Science',
-        path: '/data-science',
-        component: PR.DataScience,
+        title: 'Exploration',
+        path: '/exploration',
+        component: PR.Exploration,
         order: 2,
     },
     {
-        title: 'Statistics',
-        path: '/statistics',
-        component: PR.Statistics,
+        title: 'Data Science',
+        path: '/data-science',
+        component: PR.DataScience,
         order: 3,
+    },
+    {
+        title: 'To Watch',
+        path: '/browse-to-watch',
+        component: PR.BrowseToWatch,
+        order: 4,
     },
     {
         title: 'Watched',
