@@ -11,6 +11,7 @@ MENU LAYOUT STYLES
 
     .nav-column {
         background-size: 100% 100%;
+        background: $navBkgd;
 
         .fixed-panel {
             position: sticky;           // IE, Edge not supported 
@@ -23,6 +24,7 @@ MENU LAYOUT STYLES
 
     .content-column {
         background-size: 100% 100%;
+        background: $contentBkgd;
     }
 }
 

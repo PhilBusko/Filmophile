@@ -18,7 +18,7 @@ class MenuLayout extends React.Component {
 
         return (
             <div className='pure-g menu-layout'>
-
+                { /*
                 <div className='pure-u-4-24 pure-u-xl-3-24  nav-column'
                     style={{ backgroundImage: "url(" + this.navigationBkgd + ")" }}>
                     <div className='fixed-panel'>
@@ -28,6 +28,20 @@ class MenuLayout extends React.Component {
 
                 <div className='pure-u-20-24 pure-u-xl-21-24  content-column'
                     style={{ backgroundImage: "url(" + this.contentBkgd + ")" }}>
+                    <ContentBlock>
+                        { this.props.children }
+                    </ContentBlock>
+                    <div style={{ height: '20px' }}></div>
+                </div>
+                */ }
+
+                <div className='pure-u-4-24 pure-u-xl-3-24  nav-column'>
+                    <div className='fixed-panel'>
+                        <NavMenu></NavMenu>
+                    </div>
+                </div>
+
+                <div className='pure-u-20-24 pure-u-xl-21-24  content-column'>
                     <ContentBlock>
                         { this.props.children }
                     </ContentBlock>

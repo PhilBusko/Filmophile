@@ -9,13 +9,13 @@ CONTENT BLOCK STYLES
 
     font-family: Verdana, sans-serif;
     font-size: 16px;
-    color: $textColor;
+    color: $contentText;
 
     .page-title {
         font-family: 'Gill Sans', sans-serif;
         font-weight: bold;
         font-size: 200%;
-        text-shadow: -1px 0px 2px $highlight, 1px 0px 2px $highlight, 0px 1px 2px $highlight, 0px -1px 2px $highlight;
+        text-shadow: -1px 0px 2px $contentHighlight, 1px 0px 2px $contentHighlight, 0px 1px 2px $contentHighlight, 0px -1px 2px $contentHighlight;
         text-align: center;
         white-space: nowrap;
     }
@@ -80,7 +80,7 @@ CONTENT BLOCK STYLES
         position: sticky;
         top: 0px;           
         background: $contentBkgd;
-        border-bottom: 1px solid MediumSlateBlue ;
+        border-bottom: 1px solid $controlBkgd;
     }
     .control-panel {
         display: flex;
@@ -88,33 +88,34 @@ CONTENT BLOCK STYLES
         flex-wrap: wrap;
         justify-content: space-evenly;
         align-items: center;
-    }
-    .control-group {
-        background: $controlBkgd;
-        border: 1px solid $highlight;
-        border-radius: 5px;
+    
+        .control-group {
+            background: $controlBkgd;
+            border: 1px solid $contentHighlight;
+            border-radius: 5px;
 
-        .control-outer {
-            padding: 6px;
+            .control-outer {
+                padding: 6px;
+            }
+            .control-inner {
+                display: inline-block;
+                margin: 6px;
+            }
+            .control-dummy {
+                // use this to push the following controls to next flex line
+                height: 20px;
+                width: 50px;
+                flex-grow: 1;
+            }
         }
-        .control-inner {
-            display: inline-block;
-            margin: 6px;
+        .control-filter {
+            max-width: 650px;
+            flex-shrink: 10;
         }
-        .control-dummy {
-            // use this to push the following controls to next flex line
-            height: 20px;
-            width: 50px;
-            flex-grow: 1;
+        .control-paginator {
+            // use min-width since parent is flex
+            min-width: 495px;
         }
-    }
-    .control-filter {
-        max-width: 650px;
-        flex-shrink: 10;
-    }
-    .control-paginator {
-        // use min-width since parent is flex
-        min-width: 495px;
     }
 }
 

@@ -2,11 +2,37 @@
 GLOBAL STYLES
 **************************************************************************************************/
 
+// Original Theme
+/*
 $navBkgd: slategray;
-$contentBkgd: navy;         // used in resource link background
-$textColor: white;          // used in content-block, and elements
-$highlight: DarkMagenta; 
+$navText: white;
+$navHighlight: goldenrod;
+
+$contentBkgd: navy;
 $controlBkgd: DarkSlateBlue;
+$contentText: white; 
+$contentHighlight: DarkMagenta;
+
+$movieBkgd: DarkSlateGray;
+$movieText: white;
+$movieHighlight: crimson;
+*/
+
+// Timeless & Nautical
+
+$navBkgd: #1e656d; 
+$navText: white;
+$navHighlight: goldenrod;
+
+$contentBkgd: #00293C;
+$controlBkgd: #001023;
+$contentText: white; 
+$contentHighlight: grey;
+
+$movieBkgd: #F1F3CE;
+$movieText: black;
+$movieHighlight: #F62A00;
+
 
 
 /**************************************************************************************************

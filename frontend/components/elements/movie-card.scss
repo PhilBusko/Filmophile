@@ -9,7 +9,8 @@ MOVIE CARD STYLES
     justify-content: space-between;
     height: 200px;
 
-    background: DarkSlateGray; // MediumSlateBlue 
+    background: $movieBkgd;
+    color: $movieText;
 
     .poster-spacer {
         //background: green;
@@ -32,7 +33,7 @@ MOVIE CARD STYLES
         }
         .imdb-link, .imdb-link:visited {
             font-size: 88%;
-            color: $textColor;
+            color: $movieText;
         }
         .star-icon {
             height: 20px;
@@ -41,7 +42,7 @@ MOVIE CARD STYLES
         }
         .service-link, .service-link:visited {
             font-family: Comic Sans MS, Comic Sans, cursive;
-            color: crimson;
+            color: $movieHighlight;
         }
     }
 }

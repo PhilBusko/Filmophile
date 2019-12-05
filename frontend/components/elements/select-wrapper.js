@@ -20,6 +20,7 @@ class SelectWrapper extends React.Component {
     updateValue = (synthEvt) => {
         // not sure if the state should be maintained within the control
         // but don't want to send synthetic event to parent
+        // value is a string by default
 
         let newValue = synthEvt.target.value;
         this.setState({value: newValue});

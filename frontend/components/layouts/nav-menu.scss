@@ -3,9 +3,6 @@ NAVIGATION MENU STYLES
 **************************************************************************************************/
 @import '../app_main/styles.scss';
 
-$linkColor: white;
-$linkColorHighlight: goldenrod;
-
 .navigation-wrapper {
     padding: 8px 8px; 
 
@@ -33,13 +30,13 @@ $linkColorHighlight: goldenrod;
             font-family: Optima, sans-serif;
             font-size: 22px;
             font-weight: bold;
-            color: $linkColor;
+            color: $navText;
             text-decoration: none;
             white-space: nowrap;
         }
         a:hover, a:visited:hover {
-            color: $linkColorHighlight;
-            border: 4px outset $linkColorHighlight;
+            color: $navHighlight;
+            border: 4px outset $navHighlight;
         }
     }  
 }

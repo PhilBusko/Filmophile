@@ -173,7 +173,7 @@ class DataScience extends React.Component {
                             { () =>
                                 <Plot data={ this.state.restrictedClassifiers.data }
                                     layout={ this.state.restrictedClassifiers.layout }
-                                    config={{ 'staticPlot': true }} />
+                                />
                             }
                             </When>
                             <When condition={ !this.state.restrictedClassifiers }>

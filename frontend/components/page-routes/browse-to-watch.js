@@ -58,9 +58,7 @@ class BrowseToWatch extends React.Component {
         });
     }
 
-    getTrimmedMovies = () => {
-        let filtered = this.getFilteredMovies();
-        //console.log('filtered result: ' +filtered.length)
+    getPaginatedMovies = (filtered) => {
         let paginated = filtered.slice(this.state.offset, this.state.offset + PERPAGE)
         return paginated;
     }
@@ -73,15 +71,16 @@ class BrowseToWatch extends React.Component {
 
             //console.log(key + ' : ' + filters[key]);
 
-            if (key === 'recomLevel') 
+            if (key === 'recomLevel') {
                 // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => mv['RecomLevel'] === filters[key] );
+            }
 
-            if (key === 'excludeGenre' && filters[key] !== 'None') 
+            if (key === 'excludeGenre') 
                 // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => (mv['Genres'] ? mv['Genres'] : '').indexOf(filters[key]) === -1 );
 
-            if (key === 'includeGenre' && filters[key] !== 'All') 
+            if (key === 'includeGenre') 
                 // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => (mv['Genres'] ? mv['Genres'] : '').indexOf(filters[key]) !== -1 );
         }
@@ -94,24 +93,37 @@ class BrowseToWatch extends React.Component {
     }
 
     changeRecommendation = (newValue) => {
+        let intValue = parseInt(newValue);
         let filters = this.state.filters;
-        filters['recomLevel'] = newValue;
+        filters['recomLevel'] = intValue;
         this.setState({filters: filters});
     }
 
     excludeGenre = (newValue) => {
-        let filters = this.state.filters;
-        filters['excludeGenre'] = this.state.genres.filter(g => g['key'] === newValue)[0]['value'];
-        this.setState({filters:filters});
+        let intValue = parseInt(newValue);
+        let newFilters = this.state.filters;
+        if (intValue != 0)
+            newFilters['excludeGenre'] = this.state.genres.filter(g => g['key'] === intValue)[0]['value'];
+        else
+            delete newFilters['excludeGenre']
+        this.setState({filters: newFilters});
     }
 
     includeGenre = (newValue) => {
-        let filters = this.state.filters;
-        filters['includeGenre'] = this.state.genres.filter(g => g['key'] === newValue)[0]['value'];
-        this.setState({filters: filters});
+        let intValue = parseInt(newValue);
+        let newFilters = this.state.filters;
+        if (intValue != 0)
+            newFilters['includeGenre'] = this.state.genres.filter(g => g['key'] === intValue)[0]['value'];
+        else
+            delete newFilters['includeGenre']
+        this.setState({filters: newFilters});
     }
 
     render() {
+
+        let filteredMovies = this.getFilteredMovies();
+        let paginatedMovies = this.getPaginatedMovies(filteredMovies);
+
         return (
             <MenuLayout>
                 <div className='spacing-outer sticky-top control-panel'>
@@ -150,14 +162,14 @@ class BrowseToWatch extends React.Component {
 
                     <div className='spacing-inner control-group control-paginator'>
                         <Paginator 
-                            numberEntries={ this.getFilteredMovies().length } 
+                            numberEntries={ filteredMovies.length } 
                             updateCurrentPage={ this.updateOffset }
                         />
                     </div>
 
                 </div>                     
 
-                <MoviesPanel movies={ this.getTrimmedMovies() }></MoviesPanel>
+                <MoviesPanel movies={ paginatedMovies }></MoviesPanel>
 
             </MenuLayout>
         );
