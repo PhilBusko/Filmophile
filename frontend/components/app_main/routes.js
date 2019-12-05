@@ -5,33 +5,33 @@ import * as PR from '../page-routes/_index.js'
 
 export const RoutesConfig = [
     {
-        title: 'Introduction',
-        path: '/',
-        component: PR.Introduction,
+        title: 'Recommended',
+        path: '/recommended-movies',
+        component: PR.BrowseToWatch,
         order: 1,
+    },
+    {
+        title: 'Watched',
+        path: '/watched-movies',
+        component: PR.BrowseWatched,
+        order: 2,
     },
     {
         title: 'Exploration',
         path: '/exploration',
         component: PR.Exploration,
-        order: 2,
+        order: 3,
     },
     {
         title: 'Data Science',
         path: '/data-science',
         component: PR.DataScience,
-        order: 3,
-    },
-    {
-        title: 'To Watch',
-        path: '/browse-to-watch',
-        component: PR.BrowseToWatch,
         order: 4,
     },
     {
-        title: 'Watched',
-        path: '/browse-watched',
-        component: PR.BrowseWatched,
+        title: 'About',
+        path: '/about',
+        component: PR.Introduction,
         order: 5,
     },
 ]

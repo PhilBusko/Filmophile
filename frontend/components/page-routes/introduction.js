@@ -32,23 +32,39 @@ class Introduction extends Component {
 
                     <div className='pure-u-1'>
                         <div className='spacing-inner page-title'>
-                            Phil-mo-phile
+                            About Phil-mo-phile
                         </div>
                     </div>
 
                     <div className='pure-u-1'>
                         <div className='spacing-inner'>
-                            Welcome to Phil's Filmophile site. 
-                            The goal of this site is to aggregate movies and TV shows from different streaming sources
+                            <span className='entry-title'>Webmaster:</span> 
+                            <span>&nbsp;
+                                This site is built by&nbsp;
+                                <a href='' className='link-format'>Phillip Busko</a>.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner'>
+                            <span className='entry-title'>About: </span> 
+                            This site aggregates movies and TV shows from different streaming sources
                             and make them available in one place. 
                             The site was first built for the&nbsp;
                             <a className='link-format' href='https://flatironschool.com/' target='blank_'
                                 style={{'display': 'contents'}}>FlatIron School's</a>
                             &nbsp;Data Science Bootcamp,
-                            but it is a dear project to me, and has been expanded since.
+                            but it is a dear project, and has been expanded since.
+                            It combines three of my pasions: data science, web development, and movies.
                             The site also features a recommendation system which is unlike anything else available
                             on the market.
-                            Credit is given to the following resources:
+                        </div>
+                    </div>
+
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner left-panel'>
+                            <span className='entry-title' style={{ textDecoration: 'underline' }}>Resource & Package Credits</span> 
                         </div>
                     </div>
 

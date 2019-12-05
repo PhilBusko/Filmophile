@@ -45,7 +45,7 @@ class Paginator extends React.Component {
                     nextLabel={ 'Next' }
                     breakLabel={ '...' }
                     marginPagesDisplayed={ 1 } 
-                    pageRangeDisplayed={ 4 }
+                    pageRangeDisplayed={ 2 }
                 />
             </div>
         );

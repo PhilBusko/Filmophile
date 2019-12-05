@@ -129,7 +129,7 @@ class BrowseToWatch extends React.Component {
                 <div className='spacing-outer sticky-top control-panel'>
 
                     <div className='spacing-inner page-title'>
-                        To Watch Movies
+                        Recommended Movies
                     </div>
 
                     <div className='spacing-inner control-group control-filter'>

@@ -70,6 +70,23 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
+                    <div className='pure-u-1 pure-u-xl-20-24'>
+                        <div className='spacing-inner'>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>Overview</div>
+                            <br></br>
+                            <div>
+                                The business model, or the user experience, 
+                                of this project is that first, the user votes on movies and TV shows.
+                                Then tThose votes are used by a machine learning algorithm to make recommendations
+                                for movies that the user hasn't seen yet.
+                                The movies come from streaming services (Netflix, Amazon Prime, etc) where the user has an account. 
+                                The data science components of this project are three-fold: data scraping and cleaning, 
+                                database storage and retireval, and a classification algorithm.
+                            </div>
+                            <br></br>
+                       </div>
+                    </div>
+ 
                     <div className='pure-u-1 pure-u-xl-1-2'>
                         <div className='spacing-inner'>
                             <div className='entry-title' style={{ textDecoration: 'underline' }}>1] Data Scraping & Cleaning</div>
@@ -108,9 +125,23 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
+                    <div className='pure-u-1 '>
+                        <div className='spacing-inner'>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>2] Feature Engineering</div>
+                            <br></br>
+                            <div>
+                                Feature Engineering
+                            </div>
+                            <br></br>
+                            <div>
+                                .
+                            </div>
+                        </div>
+                    </div>
+
                     <div className='pure-u-1 pure-u-lg-1-2'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>2] Target Variable: User Votes</div>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>3] Target Variable: User Votes</div>
                             <br></br>
                             <div>
                                 The recommendation system works based on votes that the user casts for movies and TV shows.
@@ -147,9 +178,9 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-20-24'>
+                    <div className='pure-u-1 pure-u-xl-20-24'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>3] Choosing a Classification Algorithm</div>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>4] Choosing a Classification Algorithm</div>
                             <br></br>
                             <div>
                                 In general there are many suitable supervised learning classification algorithms available.
@@ -186,7 +217,7 @@ class DataScience extends React.Component {
 
                     <div className='pure-u-20-24'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>4] Tuning Support Vector Machine</div>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>5] Tuning Support Vector Machine</div>
                             <br></br>
                             <div>
                                 Future Work
@@ -197,8 +228,6 @@ class DataScience extends React.Component {
                             </div>
                         </div>
                     </div>
-
-
 
                 </div>
             </MenuLayout>
