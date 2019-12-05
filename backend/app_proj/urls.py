@@ -12,14 +12,14 @@ filmophile_url = [
     url(r'^genres/', MV.Genres),
     url(r'^recom_levels/', MV.RecomLevels),
 
-    # statistics page
+    # exploration page
     url(r'^totals_plot/', MV.TotalsPlot),
     url(r'^scores_plot/', MV.ScoresPlot),
 
     # data science page
     url(r'^data_history/', MV.DataHistory),
     url(r'^vote_plot/', MV.VotePlot),
-    url(r'^analysis_logreg/', MV.AnalysisLogReg),
+    url(r'^restricted_classifiers/', MV.RestrictedClassifiers),
 
     # browsing pages
     url(r'^movies_watched/', MV.MoviesWatched),

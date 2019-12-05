@@ -3,42 +3,46 @@ TABLE-WRAPPER STYLES
 **************************************************************************************************/
 @import '../app_main/styles.scss';
 
-$tableBorder: black;
+$tableBorder: DarkGray;
 
 .table-wrapper {
-   margin: 10px;
-   //background: $tableBackground;
+    display: inline-table;
+    margin: 10px;
+    background: $controlBkgd;
 
-   .table-header {
-      text-align: left;
-      white-space: unset; 
-      font-weight: bold;
-   }
-   .table-text {
-      text-align: left;
-      //white-space: unset; 
-      word-wrap: break-word;
-   }
+    .table-header {
+        text-align: left;
+        white-space: unset; 
+        font-weight: bold;
+    }
+    .table-text {
+        text-align: left;
+        //white-space: unset; 
+        word-wrap: break-word;
+    }
+    .center-text {
+        text-align: center;
+    }
 
-   .ReactTable {
-      border-color: $tableBorder;
-    //  border: none;
-   }
-   .ReactTable .rt-thead.-header {
-      box-shadow: none;
-      border-bottom: 1px solid $tableBorder;
-    //  border-top: 1px solid $tableBorder;
-    //  border-right: 1px solid $tableBorder;
-    //  border-left: 1px solid $tableBorder;
-   }
-   .ReactTable .rt-thead .rt-th {
-      border-right-color: $tableBorder;
-   }
-   .ReactTable .rt-tbody .rt-tr-group {
-      border-bottom-color: $tableBorder;
-   }
-   .ReactTable .rt-tbody .rt-td {
-      border-right-color: $tableBorder;
-   }
+    .ReactTable {
+        border-color: $tableBorder;
+        //  border: none;
+    }
+    .ReactTable .rt-thead.-header {
+        box-shadow: none;
+        border-bottom: 1px solid $tableBorder;
+        //  border-top: 1px solid $tableBorder;
+        //  border-right: 1px solid $tableBorder;
+        //  border-left: 1px solid $tableBorder;
+    }
+    .ReactTable .rt-thead .rt-th {
+        border-right-color: $tableBorder;
+    }
+    .ReactTable .rt-tbody .rt-tr-group {
+        border-bottom-color: $tableBorder;
+    }
+    .ReactTable .rt-tbody .rt-td {
+        border-right-color: $tableBorder;
+    }
 }
 

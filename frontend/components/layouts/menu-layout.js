@@ -31,6 +31,7 @@ class MenuLayout extends React.Component {
                     <ContentBlock>
                         { this.props.children }
                     </ContentBlock>
+                    <div style={{ height: '20px' }}></div>
                 </div>
 
             </div>

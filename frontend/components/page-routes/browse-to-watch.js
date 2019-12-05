@@ -74,12 +74,15 @@ class BrowseToWatch extends React.Component {
             //console.log(key + ' : ' + filters[key]);
 
             if (key === 'recomLevel') 
+                // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => mv['RecomLevel'] === filters[key] );
 
             if (key === 'excludeGenre' && filters[key] !== 'None') 
+                // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => (mv['Genres'] ? mv['Genres'] : '').indexOf(filters[key]) === -1 );
 
             if (key === 'includeGenre' && filters[key] !== 'All') 
+                // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => (mv['Genres'] ? mv['Genres'] : '').indexOf(filters[key]) !== -1 );
         }
 
@@ -111,52 +114,48 @@ class BrowseToWatch extends React.Component {
     render() {
         return (
             <MenuLayout>
-                <div className='pure-g sticky-grid spacing-outer'>
-                    <div className='pure-u-6-24'>
-                        <div className='page-title spacing-inner'>
-                            To Watch Movies
-                        </div>
+                <div className='spacing-outer sticky-top control-panel'>
+
+                    <div className='spacing-inner page-title'>
+                        To Watch Movies
                     </div>
 
-                    <div className='pure-u-10-24'>
-                        <div className='control-group spacing-inner'>
-                            <div className='left-panel control-outer'>
-                                <div className='control-inner'>
-                                    <SelectWrapper 
-                                        options={ this.state.recomLevels } 
-                                        label={ 'Recommendation Type' } 
-                                        updateSelection={ this.changeRecommendation }
-                                    />
-                                </div>
-                                <div className='control-dummy'>
-                                </div>
-                                <div className='control-inner'>
-                                    <SelectWrapper 
-                                        options={ [{'key': 0, 'value': 'None'}].concat(this.state.genres) } 
-                                        label={ 'Exclude Genre' } 
-                                        updateSelection={ this.excludeGenre }
-                                    />
-                                </div>
-                                <div className='control-inner'>
-                                    <SelectWrapper 
-                                        options={ [{'key': 0, 'value': 'All'}].concat(this.state.genres) } 
-                                        label={ 'Include Genre' } 
-                                        updateSelection={ this.includeGenre }
-                                    />
-                                </div>
+                    <div className='spacing-inner control-group control-filter'>
+                        <div className='left-panel control-outer'>
+                            <div className='control-inner'>
+                                <SelectWrapper 
+                                    options={ this.state.recomLevels } 
+                                    label={ 'Recommendation Type' } 
+                                    updateSelection={ this.changeRecommendation }
+                                />
+                            </div>
+                            <div className='control-dummy'>
+                            </div>
+                            <div className='control-inner'>
+                                <SelectWrapper 
+                                    options={ [{'key': 0, 'value': 'None'}].concat(this.state.genres) } 
+                                    label={ 'Exclude Genre' } 
+                                    updateSelection={ this.excludeGenre }
+                                />
+                            </div>
+                            <div className='control-inner'>
+                                <SelectWrapper 
+                                    options={ [{'key': 0, 'value': 'All'}].concat(this.state.genres) } 
+                                    label={ 'Include Genre' } 
+                                    updateSelection={ this.includeGenre }
+                                />
                             </div>
                         </div>
                     </div>
 
-                    <div className='pure-u-8-24'>
-                        <div className='control-group spacing-inner'>
-                            <Paginator 
-                                numberEntries={ this.getFilteredMovies().length } 
-                                updateCurrentPage={ this.updateOffset }
-                            />
-                        </div>
+                    <div className='spacing-inner control-group control-paginator'>
+                        <Paginator 
+                            numberEntries={ this.getFilteredMovies().length } 
+                            updateCurrentPage={ this.updateOffset }
+                        />
                     </div>
-                </div>
+
+                </div>                     
 
                 <MoviesPanel movies={ this.getTrimmedMovies() }></MoviesPanel>
 

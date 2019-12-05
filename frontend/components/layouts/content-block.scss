@@ -12,12 +12,12 @@ CONTENT BLOCK STYLES
     color: $textColor;
 
     .page-title {
-        text-align: center;
-
         font-family: 'Gill Sans', sans-serif;
         font-weight: bold;
         font-size: 200%;
         text-shadow: -1px 0px 2px $highlight, 1px 0px 2px $highlight, 0px 1px 2px $highlight, 0px -1px 2px $highlight;
+        text-align: center;
+        white-space: nowrap;
     }
     .heading {
         font-family: 'Gill Sans', sans-serif;
@@ -35,11 +35,14 @@ CONTENT BLOCK STYLES
     .strong-font {
         font-weight: bold;
     }
+    .small-font {
+        font-size: 88%;
+    }
 
     // basic page styling
 
     .spacing-outer {
-        padding: 10px 10px 20px 10px;
+        padding: 10px;
     }
     .spacing-inner {
         margin: 10px;
@@ -67,17 +70,27 @@ CONTENT BLOCK STYLES
         flex-direction: row;
         justify-content: space-evenly;
     }
+    .loading-icon {
+        height: 48px;
+    }
 
     // browsing page styling
 
-    .sticky-grid {
+    .sticky-top {
         position: sticky;
-        top: 0px;           // sticky by top
+        top: 0px;           
         background: $contentBkgd;
         border-bottom: 1px solid MediumSlateBlue ;
     }
+    .control-panel {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+    }
     .control-group {
-        background: DarkSlateBlue;
+        background: $controlBkgd;
         border: 1px solid $highlight;
         border-radius: 5px;
 
@@ -94,6 +107,14 @@ CONTENT BLOCK STYLES
             width: 50px;
             flex-grow: 1;
         }
+    }
+    .control-filter {
+        max-width: 650px;
+        flex-shrink: 10;
+    }
+    .control-paginator {
+        // use min-width since parent is flex
+        min-width: 495px;
     }
 }
 

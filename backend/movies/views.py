@@ -49,8 +49,8 @@ def VotePlot(request):
     return Response(json_tx)
 
 @api_view(["GET"])
-def AnalysisLogReg(request):
-    json_tx = NL.LogisticRegression.GetHardcodedFigure()
+def RestrictedClassifiers(request):
+    json_tx = MM.Reporter.GetRestrictedClassifiers()
     return Response(json_tx)
 
 

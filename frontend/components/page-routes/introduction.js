@@ -28,30 +28,32 @@ class Introduction extends Component {
     render() {
         return (
             <MenuLayout>
-                <div className='pure-g'>
+                <div className='pure-g spacing-outer'>
 
-                    <div className='pure-u-1 page-title grid-spacing'>
-                        <div className=''>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner page-title'>
                             Phil-mo-phile
                         </div>
                     </div>
 
-                    <div className='pure-u-1 grid-spacing'>
-                        Welcome to Phil's Filmophile site. 
-                        The goal of this site is to aggregate movies and TV shows from different streaming sources
-                        and make them available in one place. 
-                        The site was first built for the&nbsp;
-                        <a className='link-format' href='https://flatironschool.com/' target='blank_'
-                            style={{'display': 'contents'}}>FlatIron School's</a>
-                        &nbsp;Data Science Bootcamp,
-                        but it is a dear project to me, and has been expanded since.
-                        The site also features a recommendation system which is unlike anything else available
-                        on the market.
-                        Credit is given to the following resources:
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner'>
+                            Welcome to Phil's Filmophile site. 
+                            The goal of this site is to aggregate movies and TV shows from different streaming sources
+                            and make them available in one place. 
+                            The site was first built for the&nbsp;
+                            <a className='link-format' href='https://flatironschool.com/' target='blank_'
+                                style={{'display': 'contents'}}>FlatIron School's</a>
+                            &nbsp;Data Science Bootcamp,
+                            but it is a dear project to me, and has been expanded since.
+                            The site also features a recommendation system which is unlike anything else available
+                            on the market.
+                            Credit is given to the following resources:
+                        </div>
                     </div>
 
-                    <div className='pure-u-1 grid-spacing'>
-                        <div className='left-panel'>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Data Sources:</span> 
                             <span>
                                 <ResourceLink url={'https://www.themoviedb.org'} 
@@ -64,8 +66,8 @@ class Introduction extends Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1 grid-spacing'>
-                        <div className='left-panel'>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Data Science:</span> 
                             <span>
                                 <ResourceLink url={'https://jupyter.org/'} 
@@ -84,8 +86,8 @@ class Introduction extends Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1 grid-spacing'>
-                        <div className='left-panel'>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Backend:</span> 
                             <span>
                                 <ResourceLink url={'https://www.djangoproject.com/'} 
@@ -96,8 +98,8 @@ class Introduction extends Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1 grid-spacing'>
-                        <div className='left-panel'>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Frontend:</span> 
                             <span>
                                 <ResourceLink url={'https://reactjs.org/'} 
@@ -112,8 +114,8 @@ class Introduction extends Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1 grid-spacing'>
-                        <div className='left-panel'>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Deployment:</span> 
                             <span>
                                 <ResourceLink url={'https://github.com/PhilBusko/Filmophile'} 

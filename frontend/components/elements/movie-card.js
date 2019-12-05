@@ -8,8 +8,8 @@ import './movie-card.scss'
 
 class MovieCard extends React.Component {
 
-    starEmpty = require('../assets/icons/star_empty.png')
-    starFull = require('../assets/icons/star_full.png')
+    starEmpty = require('../assets/controls/star_empty.png')
+    starFull = require('../assets/controls/star_full.png')
 
     static propTypes = {
         movie: PropTypes.object.isRequired,

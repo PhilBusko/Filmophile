@@ -1,5 +1,5 @@
 /**************************************************************************************************
-STATISTICS PAGE
+EXPLORATION PAGE
 **************************************************************************************************/
 import * as React from 'react';
 import axios from 'axios';
@@ -8,6 +8,8 @@ import Plot from 'react-plotly.js';
 import MenuLayout from '../layouts/menu-layout'
 
 class Exploration extends React.Component {
+
+    loadingIcon = require('../assets/controls/loading_cat.gif')
 
     state = {
         totalsPlot: null,
@@ -67,7 +69,9 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !totalsPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}}></div>
+                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
+                                </div>
                             </When>
                         </div>
                     </div>
@@ -83,7 +87,9 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !scoresPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}}></div>
+                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
+                                </div>
                             </When>
                         </div>
                     </div>
