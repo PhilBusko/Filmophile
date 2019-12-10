@@ -1,12 +1,13 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 FILMOPHILE VIEWS
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import app_proj.utility as UT
 import movies.models.models as MM
+import movies.models.exploration as XT
 import movies.models.analysis as NL
 
 
@@ -23,17 +24,47 @@ def RecomLevels(request):
    return Response(result_ls)
 
 
-# statistics page 
+# exploration page 
+
+@api_view(["GET"])
+def YearPlot(request):
+    json_ls = XT.Explore.GetYearPlot()
+    return Response(json_ls)
+
+@api_view(["GET"])
+def CountriesPlot(request):
+    json_ls = XT.Explore.GetCountriesPlot()
+    return Response(json_ls)
+
+@api_view(["GET"])
+def GenresPlot(request):
+    json_ls = XT.Explore.GetGenresPlot()
+    return Response(json_ls)
+
+@api_view(["GET"])
+def GenresMoviePlot(request):
+    json_ls = XT.Explore.GetGenresMoviePlot()
+    return Response(json_ls)
+
+@api_view(["GET"])
+def RoiPlot(request):
+    json_ls = XT.Explore.GetRoiPlot()
+    return Response(json_ls)
+
+@api_view(["GET"])
+def ScoreProfitPlot(request):
+    json_ls = XT.Explore.GetScoreProfitPlot()
+    return Response(json_ls)
 
 @api_view(["GET"])
 def TotalsPlot(request):
-    json_tx = MM.Reporter.GetTotalsPlot()
-    return Response(json_tx)
+    json_ls = XT.Explore.GetTotalsPlot()
+    return Response(json_ls)
 
 @api_view(["GET"])
 def ScoresPlot(request):
-    json_tx = MM.Reporter.GetScoresPlot()
-    return Response(json_tx)
+    json_ls = XT.Explore.GetScoresPlot()
+    return Response(json_ls)
 
 
 # data science page

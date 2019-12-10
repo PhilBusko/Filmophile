@@ -31,7 +31,7 @@ export const RoutesConfig = [
     {
         title: 'About',
         path: '/about',
-        component: PR.Introduction,
+        component: PR.About,
         order: 5,
     },
 ]

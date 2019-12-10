@@ -62,14 +62,6 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1'>
-                        <div className='spacing-inner'>
-                            <span className='entry-title'>Non-Technical Presentation: </span>
-                            <a href='https://docs.google.com/presentation/d/1aqI7jCI6Vg6Tp6t-_Gk7SuNp51bvD_885ZGPFv6b-ZY/edit?usp=sharing'
-                                className='link-format' target='blank_'>Google Slides</a>
-                        </div>
-                    </div>
-
                     <div className='pure-u-1 pure-u-xl-20-24'>
                         <div className='spacing-inner'>
                             <div className='entry-title' style={{ textDecoration: 'underline' }}>Overview</div>

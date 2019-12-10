@@ -11,6 +11,8 @@ CONTENT BLOCK STYLES
     font-size: 16px;
     color: $contentText;
 
+    // font types
+
     .page-title {
         font-family: 'Gill Sans', sans-serif;
         font-weight: bold;
@@ -74,7 +76,7 @@ CONTENT BLOCK STYLES
         height: 48px;
     }
 
-    // browsing page styling
+    // page-specific styling
 
     .sticky-top {
         position: sticky;

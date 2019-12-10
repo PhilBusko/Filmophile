@@ -155,6 +155,100 @@ class FeatureEngineer(object):
         return (feature_df, target_df)
 
 
+    @staticmethod
+    def CreateSyntheticVotes():
+        
+        import random as RD
+        RD.seed(666)
+        number_votes = 900
+        UserVotes.objects.all().delete()
+
+        # assume all movies in master table have a streaming index
+
+        master_query = MasterMovie.objects.filter(ScoreImdb__isnull=False).filter(Genres__isnull=False)
+        master_total = master_query.count()
+        vote_ls = []
+        unique_id_ls = []
+
+        for vt in range(0, number_votes):
+            random_idx = RD.randint(0, master_total-1)
+            random_movie = master_query.values()[random_idx]
+
+            movie_id = random_movie['Movie_ID']
+
+            if movie_id in unique_id_ls:
+                continue
+
+            unique_id_ls.append(movie_id)
+
+            score = random_movie['ScoreImdb']
+            genres = random_movie['Genres']
+            year = int(random_movie['Year'])
+            bias = 0
+
+            # set bias based on score, genre, year
+
+            if score < 3:
+                bias -= 40
+            elif score < 5:
+                bias -= 20
+            elif score < 6:
+                bias -= 10
+            elif score < 7:
+                bias += 0
+            elif score < 8:
+                bias += 5
+            elif score < 9:
+                bias += 15
+            else:
+                bias += 20
+
+            if any(g in genres for g in ['Thriller', 'Fantasy', 'Sci-Fi', 'Mystery', 'Crime']):
+                bias += 10
+
+            if any(g in genres for g in ['Comedy', 'Family', 'Documentary', 'Music', 'Biography', 'Sport']):
+                bias -= 10
+
+            if year <= 1980:
+                bias -= 10
+            elif year <= 2000:
+                bias += 0
+            else:
+                bias += 5
+
+            # should be 10% of 3, 30% of 2, 60% of 1
+
+            random_100 = RD.randint(1, 100) + bias
+
+            if random_100 <= 60:
+                vote = 1
+            elif random_100 <= 90:
+                vote = 2
+            else:
+                vote = 3
+
+            #print(f"{random_movie['Title']} ({year}) {score} {genres} : {vote}")
+
+            new_dx = {
+                'Movie_ID': movie_id,
+                'User': 'main',
+                'Vote': vote,
+            }
+            vote_ls.append(new_dx)
+
+        data_obj_ls = [UserVotes(**r) for r in vote_ls]
+        UserVotes.objects.bulk_create(data_obj_ls)
+
+
+    @staticmethod
+    def GetRestrictedClassifiers():
+        # this is a complex plot with 6 different classifers, so hardcoding makes sense
+
+        return '{"data": [{"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [16787], "type": "bar", "xaxis": "x", "yaxis": "y"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [2762, 2496, 11529], "type": "bar", "xaxis": "x2", "yaxis": "y2"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [14617, 1986, 184], "type": "bar", "xaxis": "x3", "yaxis": "y3"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [15993, 753, 41], "type": "bar", "xaxis": "x4", "yaxis": "y4"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [10649, 3062, 3076], "type": "bar", "xaxis": "x5", "yaxis": "y5"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [16787], "type": "bar", "xaxis": "x6", "yaxis": "y6"}], "layout": {"annotations": [{"font": {"size": 16}, "showarrow": false, "text": "Logistic Regression", "x": 0.14444444444444446, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Naive Bayes", "x": 0.5, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Nearest Neighbor", "x": 0.8555555555555556, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Random Forest", "x": 0.14444444444444446, "xanchor": "center", "xref": "paper", "y": 0.45, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "SVM", "x": 0.5, "xanchor": "center", "xref": "paper", "y": 0.45, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "XGBoost", "x": 0.8555555555555556, "xanchor": "center", "xref": "paper", "y": 0.45, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "User Votes", "x": 0.5, "xanchor": "center", "xref": "paper", "y": -0.06, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Predicted Movies Count", "textangle": -90, "x": -0.05, "xanchor": "center", "xref": "paper", "y": 0.4, "yanchor": "bottom", "yref": "paper"}], "xaxis": {"anchor": "y", "domain": [0.0, 0.2888888888888889], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis": {"anchor": "x", "domain": [0.55, 1.0], "range": [0, 17000]}, "xaxis2": {"anchor": "y2", "domain": [0.35555555555555557, 0.6444444444444445], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis2": {"anchor": "x2", "domain": [0.55, 1.0], "range": [0, 17000]}, "xaxis3": {"anchor": "y3", "domain": [0.7111111111111111, 1.0], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis3": {"anchor": "x3", "domain": [0.55, 1.0], "range": [0, 17000]}, "xaxis4": {"anchor": "y4", "domain": [0.0, 0.2888888888888889], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis4": {"anchor": "x4", "domain": [0.0, 0.45], "range": [0, 17000]}, "xaxis5": {"anchor": "y5", "domain": [0.35555555555555557, 0.6444444444444445], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis5": {"anchor": "x5", "domain": [0.0, 0.45], "range": [0, 17000]}, "xaxis6": {"anchor": "y6", "domain": [0.7111111111111111, 1.0], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis6": {"anchor": "x6", "domain": [0.0, 0.45], "range": [0, 17000]}, "template": {"data": {"barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}}, "type": "barpolar"}], "bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}}, "type": "bar"}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "choropleth": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "choropleth"}], "contourcarpet": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "contourcarpet"}], "contour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "contour"}], "heatmapgl": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "heatmapgl"}], "heatmap": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "heatmap"}], "histogram2dcontour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "histogram2dcontour"}], "histogram2d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "histogram2d"}], "histogram": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "histogram"}], "mesh3d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "mesh3d"}], "parcoords": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "parcoords"}], "pie": [{"automargin": true, "type": "pie"}], "scatter3d": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter3d"}], "scattercarpet": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattercarpet"}], "scattergeo": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergeo"}], "scattergl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergl"}], "scattermapbox": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermapbox"}], "scatterpolargl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolargl"}], "scatterpolar": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolar"}], "scatter": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter"}], "scatterternary": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterternary"}], "surface": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "surface"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}]}, "layout": {"annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]], "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}, "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "geo": {"bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white"}, "hoverlabel": {"align": "left"}, "hovermode": "closest", "mapbox": {"style": "light"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "ternary": {"aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "title": {"x": 0.05}, "xaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}, "yaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}}}, "title": {"text": "Predicted Movie Counts for Each Algorithm", "x": 0.5, "y": 0.99, "xanchor": "center", "yanchor": "top"}, "width": 900, "height": 700, "margin": {"b": 50, "l": 70, "pad": 0, "r": 20, "t": 50}, "paper_bgcolor": "LightSteelBlue", "showlegend": false}}'
+
+
+
+
 class LogisticRegression(object):
 
 

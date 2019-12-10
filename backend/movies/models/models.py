@@ -473,91 +473,6 @@ class Editor(object):
         return master_dx
 
 
-    @staticmethod
-    def CreateSyntheticVotes():
-        
-        import random as RD
-        RD.seed(666)
-        number_votes = 900
-        UserVotes.objects.all().delete()
-
-        # assume all movies in master table have a streaming index
-
-        master_query = MasterMovie.objects.filter(ScoreImdb__isnull=False).filter(Genres__isnull=False)
-        master_total = master_query.count()
-        vote_ls = []
-        unique_id_ls = []
-
-        for vt in range(0, number_votes):
-            random_idx = RD.randint(0, master_total-1)
-            random_movie = master_query.values()[random_idx]
-
-            movie_id = random_movie['Movie_ID']
-
-            if movie_id in unique_id_ls:
-                continue
-
-            unique_id_ls.append(movie_id)
-
-            score = random_movie['ScoreImdb']
-            genres = random_movie['Genres']
-            year = int(random_movie['Year'])
-            bias = 0
-
-            # set bias based on score, genre, year
-
-            if score < 3:
-                bias -= 40
-            elif score < 5:
-                bias -= 20
-            elif score < 6:
-                bias -= 10
-            elif score < 7:
-                bias += 0
-            elif score < 8:
-                bias += 5
-            elif score < 9:
-                bias += 15
-            else:
-                bias += 20
-
-            if any(g in genres for g in ['Thriller', 'Fantasy', 'Sci-Fi', 'Mystery', 'Crime']):
-                bias += 10
-
-            if any(g in genres for g in ['Comedy', 'Family', 'Documentary', 'Music', 'Biography', 'Sport']):
-                bias -= 10
-
-            if year <= 1980:
-                bias -= 10
-            elif year <= 2000:
-                bias += 0
-            else:
-                bias += 5
-
-            # should be 10% of 3, 30% of 2, 60% of 1
-
-            random_100 = RD.randint(1, 100) + bias
-
-            if random_100 <= 60:
-                vote = 1
-            elif random_100 <= 90:
-                vote = 2
-            else:
-                vote = 3
-
-            #print(f"{random_movie['Title']} ({year}) {score} {genres} : {vote}")
-
-            new_dx = {
-                'Movie_ID': movie_id,
-                'User': 'main',
-                'Vote': vote,
-            }
-            vote_ls.append(new_dx)
-
-        data_obj_ls = [UserVotes(**r) for r in vote_ls]
-        UserVotes.objects.bulk_create(data_obj_ls)
-
-
 class Reporter(object):
 
 
@@ -599,6 +514,17 @@ class Reporter(object):
 
 
     @staticmethod
+    def ConvertFigureToJson(figure):
+        from plotly.utils import PlotlyJSONEncoder
+
+        redata = json.loads(json.dumps(figure.data, cls=PlotlyJSONEncoder))
+        relayout = json.loads(json.dumps(figure.layout, cls=PlotlyJSONEncoder))
+        fig_json=json.dumps({'data': redata,'layout': relayout})
+
+        return fig_json
+
+
+    @staticmethod
     def ConvertToHistogramSeries(data_ls):
         """
         Takes a list of dictionaries with 2 items and converts them to 2 lists.
@@ -614,17 +540,6 @@ class Reporter(object):
             y_ls.append(y)
         
         return (x_ls, y_ls)
-
-
-    @staticmethod
-    def ConvertFigureToJson(figure):
-        from plotly.utils import PlotlyJSONEncoder
-
-        redata = json.loads(json.dumps(figure.data, cls=PlotlyJSONEncoder))
-        relayout = json.loads(json.dumps(figure.layout, cls=PlotlyJSONEncoder))
-        fig_json=json.dumps({'data': redata,'layout': relayout})
-
-        return fig_json
 
 
     @staticmethod
@@ -865,111 +780,4 @@ class Reporter(object):
         movie_ls = sorted(movie_ls, key=lambda mv: (-1)*mv['ScoreImdb'] if mv['ScoreImdb'] else 0)
 
         return movie_ls
-
-
-    @staticmethod
-    def GetTotalsPlot():
-
-        # get the data
-        # later must filter by active movies
-
-        master_ls = list(MasterMovie.objects.values())
-        year_distrib = {'netflix': [], 'amazon': [], 'hulu': []}
-
-        for mov in master_ls:
-            year = int(mov['Year'])
-            index_dx = json.loads(mov['Indeces'])
-            
-            for key, val in index_dx.items():
-                if key in year_distrib and year >= 1980:
-                    year_distrib[key].append(year)
-
-        # create the plot 
-
-        fig = GO.Figure()
-        fig.add_trace(GO.Histogram(x= year_distrib['amazon'], name='Amazon', marker_color='darkblue', opacity=0.6))
-        fig.add_trace(GO.Histogram(x= year_distrib['netflix'], name='Netflix', marker_color='crimson', opacity=0.7))
-        fig.add_trace(GO.Histogram(x= year_distrib['hulu'], name='Hulu', marker_color='green', opacity=0.8))
-        fig.update_layout(
-            title="Total Movie Count for Each Service",
-            xaxis_title="Year",
-            yaxis_title="Movie Count",
-            width=700,
-            height=500,
-            margin=GO.layout.Margin(t=50, r=20, b=50, l=70, pad=0),
-            paper_bgcolor="LightSteelBlue",
-            barmode='overlay', 
-        )
-
-        # format and send to frontend
-
-        return Reporter.ConvertFigureToJson(fig)
-
-
-    @staticmethod
-    def GetScoresPlot():
-
-        # get the data
-        # later must filter by active movies
-
-        master_ls = list(MasterMovie.objects.values())
-        score_distrib = {'netflix': [], 'amazon': [], 'hulu': []}
-        total_cnt = {'netflix': 0, 'amazon': 0, 'hulu': 0}
-
-        for mov in master_ls:
-            score = mov['ScoreImdb']
-            if score is None:
-                continue
-            
-            index_dx = json.loads(mov['Indeces'])
-            
-            # only keep exclusive content to each service 
-            
-            exclusive = 0
-            for key, val in index_dx.items():
-                if key in score_distrib:
-                    exclusive += 1
-                    
-            if exclusive > 1:
-                continue
-            
-            year = int(mov['Year'])
-            
-            for key, val in index_dx.items():
-                if key in score_distrib and year >= 1980:
-                    score_distrib[key].append(score)
-                    total_cnt[key] += 1
-
-        # create the plot 
-
-        hist_data = [score_distrib['hulu'], score_distrib['netflix'], score_distrib['amazon']]
-        group_labels = ['Hulu', 'Netflix', 'Amazon']
-        colors = ['green', 'crimson', 'darkblue']
-
-        fig = FF.create_distplot(hist_data, group_labels, colors=colors, 
-                                bin_size=.1, show_hist=False, show_rug=False )
-
-        fig.update_layout(
-            title="IMDB Score for Movies Exclusively in Each Service",
-            xaxis_title="IMDB Score",
-            yaxis_title="Percentage",
-            width=700,
-            height=500,
-            margin=GO.layout.Margin(t=60, r=10, b=50, l=70, pad=0),
-            paper_bgcolor="LightSteelBlue",
-            barmode='overlay', 
-            yaxis_tickformat = '%', 
-        )
-        fig.update_xaxes(tickvals=list(range(0, 10, 1)))
-        
-        # format and send to frontend
-
-        return Reporter.ConvertFigureToJson(fig)
-
-
-    @staticmethod
-    def GetRestrictedClassifiers():
-        # this is a complex plot with 6 different classifers, so hardcoding makes sense
-
-        return '{"data": [{"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [16787], "type": "bar", "xaxis": "x", "yaxis": "y"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [2762, 2496, 11529], "type": "bar", "xaxis": "x2", "yaxis": "y2"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [14617, 1986, 184], "type": "bar", "xaxis": "x3", "yaxis": "y3"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [15993, 753, 41], "type": "bar", "xaxis": "x4", "yaxis": "y4"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [10649, 3062, 3076], "type": "bar", "xaxis": "x5", "yaxis": "y5"}, {"marker": {"color": ["crimson", "seagreen", "gold"]}, "x": [1, 2, 3], "y": [16787], "type": "bar", "xaxis": "x6", "yaxis": "y6"}], "layout": {"annotations": [{"font": {"size": 16}, "showarrow": false, "text": "Logistic Regression", "x": 0.14444444444444446, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Naive Bayes", "x": 0.5, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Nearest Neighbor", "x": 0.8555555555555556, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Random Forest", "x": 0.14444444444444446, "xanchor": "center", "xref": "paper", "y": 0.45, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "SVM", "x": 0.5, "xanchor": "center", "xref": "paper", "y": 0.45, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "XGBoost", "x": 0.8555555555555556, "xanchor": "center", "xref": "paper", "y": 0.45, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "User Votes", "x": 0.5, "xanchor": "center", "xref": "paper", "y": -0.06, "yanchor": "bottom", "yref": "paper"}, {"font": {"size": 16}, "showarrow": false, "text": "Predicted Movies Count", "textangle": -90, "x": -0.05, "xanchor": "center", "xref": "paper", "y": 0.4, "yanchor": "bottom", "yref": "paper"}], "xaxis": {"anchor": "y", "domain": [0.0, 0.2888888888888889], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis": {"anchor": "x", "domain": [0.55, 1.0], "range": [0, 17000]}, "xaxis2": {"anchor": "y2", "domain": [0.35555555555555557, 0.6444444444444445], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis2": {"anchor": "x2", "domain": [0.55, 1.0], "range": [0, 17000]}, "xaxis3": {"anchor": "y3", "domain": [0.7111111111111111, 1.0], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis3": {"anchor": "x3", "domain": [0.55, 1.0], "range": [0, 17000]}, "xaxis4": {"anchor": "y4", "domain": [0.0, 0.2888888888888889], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis4": {"anchor": "x4", "domain": [0.0, 0.45], "range": [0, 17000]}, "xaxis5": {"anchor": "y5", "domain": [0.35555555555555557, 0.6444444444444445], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis5": {"anchor": "x5", "domain": [0.0, 0.45], "range": [0, 17000]}, "xaxis6": {"anchor": "y6", "domain": [0.7111111111111111, 1.0], "tickvals": [1, 2, 3], "range": [0.4, 3.6]}, "yaxis6": {"anchor": "x6", "domain": [0.0, 0.45], "range": [0, 17000]}, "template": {"data": {"barpolar": [{"marker": {"line": {"color": "#E5ECF6", "width": 0.5}}, "type": "barpolar"}], "bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}}, "type": "bar"}], "carpet": [{"aaxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "baxis": {"endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f"}, "type": "carpet"}], "choropleth": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "choropleth"}], "contourcarpet": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "contourcarpet"}], "contour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "contour"}], "heatmapgl": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "heatmapgl"}], "heatmap": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "heatmap"}], "histogram2dcontour": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "histogram2dcontour"}], "histogram2d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "histogram2d"}], "histogram": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "histogram"}], "mesh3d": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "type": "mesh3d"}], "parcoords": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "parcoords"}], "pie": [{"automargin": true, "type": "pie"}], "scatter3d": [{"line": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter3d"}], "scattercarpet": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattercarpet"}], "scattergeo": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergeo"}], "scattergl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattergl"}], "scattermapbox": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scattermapbox"}], "scatterpolargl": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolargl"}], "scatterpolar": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterpolar"}], "scatter": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatter"}], "scatterternary": [{"marker": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "type": "scatterternary"}], "surface": [{"colorbar": {"outlinewidth": 0, "ticks": ""}, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "type": "surface"}], "table": [{"cells": {"fill": {"color": "#EBF0F8"}, "line": {"color": "white"}}, "header": {"fill": {"color": "#C8D4E3"}, "line": {"color": "white"}}, "type": "table"}]}, "layout": {"annotationdefaults": {"arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1}, "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}}, "colorscale": {"diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]], "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]]}, "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "geo": {"bgcolor": "white", "lakecolor": "white", "landcolor": "#E5ECF6", "showlakes": true, "showland": true, "subunitcolor": "white"}, "hoverlabel": {"align": "left"}, "hovermode": "closest", "mapbox": {"style": "light"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": {"angularaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "radialaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "scene": {"xaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "yaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}, "zaxis": {"backgroundcolor": "#E5ECF6", "gridcolor": "white", "gridwidth": 2, "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white"}}, "shapedefaults": {"line": {"color": "#2a3f5f"}}, "ternary": {"aaxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "baxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}, "bgcolor": "#E5ECF6", "caxis": {"gridcolor": "white", "linecolor": "white", "ticks": ""}}, "title": {"x": 0.05}, "xaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}, "yaxis": {"automargin": true, "gridcolor": "white", "linecolor": "white", "ticks": "", "title": {"standoff": 15}, "zerolinecolor": "white", "zerolinewidth": 2}}}, "title": {"text": "Predicted Movie Counts for Each Algorithm", "x": 0.5, "y": 0.99, "xanchor": "center", "yanchor": "top"}, "width": 900, "height": 700, "margin": {"b": 50, "l": 70, "pad": 0, "r": 20, "t": 50}, "paper_bgcolor": "LightSteelBlue", "showlegend": false}}'
 
