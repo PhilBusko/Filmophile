@@ -92,12 +92,11 @@ class About extends Component {
                     </div>
 
                     <div className='pure-u-1'>
-                        <div className='spacing-inner left-panel'>
-                            <span className='entry-title' style={{ textDecoration: 'underline' }}>Resource & Package Credits</span> 
+                        <div className='spacing-inner subheading'>
+                            Resource & Package Credits
                         </div>
                     </div>
-
-                    <div className='pure-u-1'>
+                    <div className='pure-u-1 '>
                         <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Data Sources:</span> 
                             <span>
@@ -109,9 +108,6 @@ class About extends Component {
                                     icon={ this.imdbIcon } text='IMDB' isLast={ true }></ResourceLink>
                             </span>
                         </div>
-                    </div>
-
-                    <div className='pure-u-1'>
                         <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Data Science:</span> 
                             <span>
@@ -129,9 +125,6 @@ class About extends Component {
                                     icon={ this.plotlyIcon } text='plot.ly' isLast={ true }></ResourceLink>
                             </span>
                         </div>
-                    </div>
-
-                    <div className='pure-u-1'>
                         <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Backend:</span> 
                             <span>
@@ -141,9 +134,6 @@ class About extends Component {
                                     icon={ this.postgresIcon } text='PostgreSQL' isLast={ true }></ResourceLink>
                             </span>
                         </div>
-                    </div>
-
-                    <div className='pure-u-1'>
                         <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Frontend:</span> 
                             <span>
@@ -157,9 +147,6 @@ class About extends Component {
                                     icon={ this.webpackIcon } text='webpack' isLast={ true }></ResourceLink>
                             </span>
                         </div>
-                    </div>
-
-                    <div className='pure-u-1'>
                         <div className='spacing-inner left-panel'>
                             <span className='entry-title'>Deployment:</span> 
                             <span>

@@ -719,7 +719,7 @@ class Reporter(object):
             xaxis_title="Number of Stars",
             yaxis_title="Movie Count",
             width=400,
-            height=400,
+            height=300,
             margin=GO.layout.Margin(t=50, r=20, b=50, l=70, pad=0),
             paper_bgcolor="LightSteelBlue",
         )

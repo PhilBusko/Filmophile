@@ -65,7 +65,6 @@ class DataScience extends React.Component {
                     </div>
 
                     <div className='pure-u-1 pure-u-xl-3-24'> </div>
-
                     <div className='pure-u-1 pure-u-xl-18-24'>
                         <div className='spacing-inner' style={{ marginBottom: '20px' }}>
                             This website provides movie recommendations for streaming services. 
@@ -81,8 +80,8 @@ class DataScience extends React.Component {
                     </div>
  
                     <div className='pure-u-1'>
-                        <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>1] Data Extraction & Cleaning</div>
+                        <div className='spacing-inner subheading'>
+                            1] Data Extraction & Cleaning
                         </div>
                     </div>
                     <div className='pure-u-1 pure-u-xl-1-2'>
@@ -130,8 +129,8 @@ class DataScience extends React.Component {
                     </div>
 
                     <div className='pure-u-1'>
-                        <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>2] Feature Engineering</div>
+                        <div className='spacing-inner subheading'>
+                            2] Feature Engineering
                         </div>
                     </div>
                     <div className='pure-u-1 pure-u-xl-1-2'>
@@ -185,8 +184,8 @@ class DataScience extends React.Component {
                     </div>
 
                     <div className='pure-u-1'>
-                        <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>3] Target Variable - User Scores</div>
+                        <div className='spacing-inner subheading'>
+                            3] Target Variable - User Scores
                         </div>
                     </div>
                     <div className='pure-u-1 pure-u-lg-1-2'>
@@ -198,7 +197,7 @@ class DataScience extends React.Component {
                                 Because the user has three different scores available, 
                                 the movie recommendations also come in three types: Love It, Maybe, and Don't Bother.
                                 <br></br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;The user score is used as the algorithm's target variable. 
+                                &nbsp;&nbsp;&nbsp;&nbsp;The user score is the algorithm's target variable. 
                                 That is, the algorithm uses the movies' features to find a pattern 
                                 that will match how the user scored the movies. 
                                 Each user will score movies differently, 
@@ -218,33 +217,36 @@ class DataScience extends React.Component {
                             }
                             </When>
                             <When condition={ !this.state.votePlot }>
-                                <div style={{ width: '400px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '400px', height: '300px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
                     </div>
 
-
-
-
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner subheading'>
+                            4] Choosing a Classification Algorithm
+                        </div>
+                    </div>
                     <div className='pure-u-1 pure-u-xl-20-24'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>4] Choosing a Classification Algorithm</div>
-                            <br></br>
                             <div>
                                 In general there are many suitable supervised learning classification algorithms available.
-                                The typical process is to start with a baseline algorithm (like logistic regression), 
+                                The typical process is to start with a baseline algorithm, like logistic regression, 
                                 and then move to more complex options in search of higher accuracy or other metrics. 
                                 However, this project was met with an additional restriction: 
-                                several algorithms' predictions are totally unacceptable because they are extremely imbalanced.
+                                several algorithms' predictions are not usable because they are extremely imbalanced.
+                                Therefore the first question to answer becomes which algorithm to use. 
                             </div>
                             <br></br>
                             <div>
-                                The adjacent plot shows this imbalance for 6 popular classifiers. 
-                                These classifiers have been run with their base configuration from scikit-learn, 
+                                In the search for general algorithm predictions, 6 well-known classifiers were used. 
+                                The classifiers were run with their base configuration from scikit-learn; 
                                 meaning there is no tuning, grid search, etc.
-                                By inspecting the plots, it becomes evident that SVM is the only reasonable option to proceed with. 
+                                As shown on the adjacent graph, most algorithms do not perform well with this dataset, 
+                                with 4 of 6 being completely unusable.
+                                Therefore, SVM is the only viable option to proceed with. 
                             </div>
                         </div>
                     </div>
@@ -258,17 +260,22 @@ class DataScience extends React.Component {
                             }
                             </When>
                             <When condition={ !this.state.restrictedClassifiers }>
-                                <div style={{ width: '1000px', height: '700px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '800px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
                     </div>
 
+
+
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner subheading'>
+                            5] Tuning Support Vector Machine
+                        </div>
+                    </div>
                     <div className='pure-u-20-24'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>5] Tuning Support Vector Machine</div>
-                            <br></br>
                             <div>
                                 Future Work
                             </div>

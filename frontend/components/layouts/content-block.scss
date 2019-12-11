@@ -20,11 +20,18 @@ CONTENT BLOCK STYLES
         text-shadow: -1px 0px 2px $contentHighlight, 1px 0px 2px $contentHighlight, 0px 1px 2px $contentHighlight, 0px -1px 2px $contentHighlight;
         text-align: center;
         white-space: nowrap;
+        text-transform: uppercase;
     }
     .heading {
         font-family: 'Gill Sans', sans-serif;
         font-weight: bold;
-        font-size: 140%;
+        font-size: 160%;
+    }
+    .subheading {
+        font-family: 'Gill Sans', sans-serif;
+        font-weight: bold;
+        font-size: 120%;
+        text-decoration: underline;
     }
     .entry-title {
         font-weight: bold;
@@ -49,6 +56,9 @@ CONTENT BLOCK STYLES
     .spacing-inner {
         margin: 12px;
     }
+    .spacing-inner-large {
+        margin: 20px;
+    }
     .center-both {
         display: flex;
         flex-direction: row;
@@ -71,6 +81,7 @@ CONTENT BLOCK STYLES
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
+        flex-wrap: wrap;
     }
     .loading-icon {
         height: 48px;

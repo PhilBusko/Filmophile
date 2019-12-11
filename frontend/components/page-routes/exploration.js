@@ -108,7 +108,6 @@ class Exploration extends React.Component {
         return (
             <MenuLayout>
                 <div className='pure-g spacing-outer'>
-
                     <div className='pure-u-1'>
                         <div className='spacing-inner page-title'>
                             Exploration
@@ -120,9 +119,9 @@ class Exploration extends React.Component {
                             Movie Industry Graphs
                         </div>
                     </div>
+                    <div className='pure-u-1 even-panel spacing-outer'>
 
-                    <div className='pure-u-1 pure-u-xxl-1-2'>
-                        <div className='spacing-inner center-both'>
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.yearsPlot }>
                                 { () =>
                                     <Plot 
@@ -132,14 +131,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.yearsPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
-                    <div className='pure-u-1 pure-u-xxl-1-2'>
-                        <div className='spacing-inner center-both'>
+
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.countriesPlot }>
                                 { () =>
                                     <Plot 
@@ -149,15 +147,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.countriesPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
 
-                    <div className='pure-u-1 pure-u-xxl-7-12'>
-                        <div className='spacing-inner center-both' style={{margin: '30px 0px'}}>
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.genresPlot }>
                                 { () =>
                                     <Plot 
@@ -167,14 +163,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.genresPlot }>
-                                <div style={{ width: '800px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '700px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
-                    <div className='pure-u-1 pure-u-xxl-5-12'>
-                        <div className='spacing-inner center-both' style={{margin: '30px 0px'}}>
+
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.genresMoviePlot }>
                                 { () =>
                                     <Plot 
@@ -184,15 +179,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.genresMoviePlot }>
-                                <div style={{ width: '600px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '500px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
 
-                    <div className='pure-u-1 pure-u-xxl-7-12'>
-                        <div className='spacing-inner center-both' style={{margin: '30px 0px 0px 0px'}}>
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.roiPlot }>
                                 { () =>
                                     <Plot 
@@ -202,14 +195,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.roiPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '700px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
-                    <div className='pure-u-1 pure-u-xxl-5-12'>
-                        <div className='spacing-inner center-both' style={{margin: '30px 0px'}}>
+
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.scoreProfitPlot }>
                                 { () =>
                                     <Plot 
@@ -219,7 +211,7 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.scoreProfitPlot }>
-                                <div style={{ width: '600px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '500px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
@@ -231,9 +223,9 @@ class Exploration extends React.Component {
                             Streaming Service Graphs
                         </div>
                     </div>
+                    <div className='pure-u-1 even-panel spacing-outer'>
 
-                    <div className='pure-u-1 pure-u-xxxl-1-2'>
-                        <div className='spacing-inner center-both'>
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.totalsPlot }>
                                 { () =>
                                     <Plot 
@@ -243,14 +235,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.totalsPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
-                    <div className='pure-u-1 pure-u-xxxl-1-2'>
-                        <div className='spacing-inner center-both'>
+
+                        <div className='spacing-inner-large center-both'>
                             <When condition={ !!this.state.scoresPlot }>
                                 { () =>
                                     <Plot 
@@ -260,13 +251,13 @@ class Exploration extends React.Component {
                                 }
                             </When>
                             <When condition={ !this.state.scoresPlot }>
-                                <div style={{ width: '700px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
                                     <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
                                 </div>
                             </When>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </MenuLayout>
         );
