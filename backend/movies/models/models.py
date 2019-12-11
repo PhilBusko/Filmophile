@@ -10,7 +10,7 @@ import plotly.figure_factory as FF
 import django.db as DB
 
 import app_proj.utility as UT
-import movies.models.moviedb_helper as MH
+import movies.extract.moviedb_helper as MH
 
 
 class MasterMovie(DB.models.Model):
@@ -711,13 +711,11 @@ class Reporter(object):
 
         fig = GO.Figure()
         fig.add_trace(
-            GO.Bar(
-                x= vote_xy[0],
-                y= vote_xy[1],
-                marker_color=['crimson', 'seagreen', 'gold']
+            GO.Bar( x=vote_xy[0], y=vote_xy[1],
+                    marker_color=['crimson', 'seagreen', 'gold']
             ))
         fig.update_layout(
-            title="User Movie Votes",
+            title="User Movie Scores",
             xaxis_title="Number of Stars",
             yaxis_title="Movie Count",
             width=400,

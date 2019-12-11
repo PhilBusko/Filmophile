@@ -81,7 +81,7 @@ def VotePlot(request):
 
 @api_view(["GET"])
 def RestrictedClassifiers(request):
-    json_tx = MM.Reporter.GetRestrictedClassifiers()
+    json_tx = NL.FeatureEngineer.GetRestrictedClassifiers()
     return Response(json_tx)
 
 

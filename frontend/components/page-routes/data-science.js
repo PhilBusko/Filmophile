@@ -12,6 +12,8 @@ import TableWrapper from '../elements/table-wrapper'
 class DataScience extends React.Component {
 
     loadingIcon = require('../assets/controls/loading_cat.gif')
+    dataClean = require('../assets/backgrounds/data-clean.png')
+    multihotDiagram = require('../assets/backgrounds/multihot.png')
 
     state = {
         dataHistory: null,
@@ -62,43 +64,53 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1 pure-u-xl-20-24'>
-                        <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>Overview</div>
-                            <br></br>
-                            <div>
-                                The business model, or the user experience, 
-                                of this project is that first, the user votes on movies and TV shows.
-                                Then tThose votes are used by a machine learning algorithm to make recommendations
-                                for movies that the user hasn't seen yet.
-                                The movies come from streaming services (Netflix, Amazon Prime, etc) where the user has an account. 
-                                The data science components of this project are three-fold: data scraping and cleaning, 
-                                database storage and retireval, and a classification algorithm.
-                            </div>
-                            <br></br>
+                    <div className='pure-u-1 pure-u-xl-3-24'> </div>
+
+                    <div className='pure-u-1 pure-u-xl-18-24'>
+                        <div className='spacing-inner' style={{ marginBottom: '20px' }}>
+                            This website provides movie recommendations for streaming services. 
+                            For that, it needs movie data, user scores, and a customized algorithm. 
+                            The algorithm will take the user's scores and create a model based on the movie information. 
+                            So for example, if the user tends to give high scores to Fantasy movies,
+                            but low scores to Horror movies, 
+                            then the algorithm's recommendations will reflect that. 
+                            Altogether, this site showcases three aspects of data science: 
+                            data extraction and cleaning, database storage and retrieval, and a classification algorithm. 
+                            This page provides greater detail for how the recommendation model is trained.
                        </div>
                     </div>
  
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner'>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>1] Data Extraction & Cleaning</div>
+                        </div>
+                    </div>
                     <div className='pure-u-1 pure-u-xl-1-2'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>1] Data Scraping & Cleaning</div>
-                            <br></br>
                             <div>
-                                There are 3 sources of data used in this project. 
-                                The Movie Database (TMDB) is the primary data source, and it's movie-id is the project's movie-id.
+                                There are 3 data sources used in this project. 
+                                The Movie Database (TMDB) is the primary data source, and it's movie-id is used as the unique movie id.
                                 The Reelgood site provides the information about which movies and shows are currently available on streaming services.
                                 The Internet Movie Database (IMDB) provides complimentary movie data, such as IMDB Score. 
                                 The TMDB data is obtained through their very nice web-API.
-                                The Reelgood and IMDB data are obtained by scraping the sites.
+                                The Reelgood and IMDB data are obtained by scraping.
                             </div>
                             <br></br>
                             <div>
                                 The adjacent table shows all of the features used in the recommendation algorithm. 
-                                It also shows a breakdown for each source of how much of each feature is available.
-                                The Union-All column shows the occurence of final data as used in the project. 
-                                A column marked with a * denotes that the final data relies on majority values from the data sources. 
-                                So even if one data source has values for a particular movie, 
-                                those values may not show up in the final feature if they are not corroborated by the other sources.
+                                It also shows for each source how much of each feature is available.
+                                The Union-All column shows the availability of final data for the project. 
+                                Typically the final value used from the disparate sources is just the highest value. 
+                                For example, if TMDB gives a runtime of 87 mins, and IMDB gives 82 mins, 
+                                then 87 mins is taken as the final value. 
+                                However, a column marked with a * denotes that the final value relies on weighted values from all the data sources. 
+                                A value has to occur at least twice in common to qualify as a final data value.
+                                The following diagram shows an example of this. 
+                            </div>
+                            <br></br>
+                            <div className='center-both'>
+                                <img src={ this.dataClean } style={{ height: '130px', marginTop: '10px'}}
+                                    alt='Example cleaning of categorical list data.'></img>
                             </div>
                         </div>
                     </div>
@@ -117,39 +129,82 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
-                    <div className='pure-u-1 '>
+                    <div className='pure-u-1'>
                         <div className='spacing-inner'>
                             <div className='entry-title' style={{ textDecoration: 'underline' }}>2] Feature Engineering</div>
-                            <br></br>
+                        </div>
+                    </div>
+                    <div className='pure-u-1 pure-u-xl-1-2'>
+                        <div className='spacing-inner'>
                             <div>
-                                Feature Engineering
+                                <span className='entry-title'>Numeric: </span>
+                                The numeric features are year, run time, budget, gross, imdb-score, imdb-votes. 
+                                These features require no engineering, and will only be standardized later.
                             </div>
                             <br></br>
                             <div>
-                                .
+                                <span className='entry-title'>Categorical: </span>
+                                The categorical features are rating, companies, country, language, crew, cast. 
+                                Most of these features can be one-hot encoded with no problems.
+                                These features have a scalar value, 
+                                and their unique values are numbered in the low hundreds.  
+                                Meaning, that when one-hot encoded, they won't create an untenable number of columns.
+                                <br></br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;However, the columns Crew and Cast are different. 
+                                These features have list values, so they include the credits for director, producer, etc. 
+                                Each list can have up to 3 entries.
+                                These features are first filtered and before they are one-hot encoded, 
+                                their unique values only number in the hundreds.
                             </div>
+                            <br></br>
+                        </div>
+                    </div>
+                    <div className='pure-u-1 pure-u-xl-1-2'>
+                        <div className='spacing-inner'>
+                            <span className='entry-title'>Categorical for MultiHot Encoding: </span>
+                            The feature for multihot encoding is Genres.
+                            Multihot encoding refers to the onehot encoding of a list variable. 
+                            The hot-columns have a 1 if their row includes the value that the column corresponds to,
+                            and a 0 otherwise.
+                            Though a pandas dataframe has a standard&nbsp;
+                            <a href='https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.get_dummies.html' 
+                                className='link-format' target='blank_'>onehot encoder</a>,
+                            there is no implementation for a multihot encoder. 
+                            I ultimately used&nbsp;
+                            <a href='https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MultiLabelBinarizer.html' 
+                                className='link-format' target='blank_'>MultiLabelBinarizer</a>
+                            &nbsp;to implement the solution.
+                            The following diagram shows an example multihot encode.
+                        </div>
+                    </div>
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner center-both'>
+                            <img src={ this.multihotDiagram } alt='Multihot Encoding' 
+                                style={{ height: '210px' }}></img>
                         </div>
                     </div>
 
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner'>
+                            <div className='entry-title' style={{ textDecoration: 'underline' }}>3] Target Variable - User Scores</div>
+                        </div>
+                    </div>
                     <div className='pure-u-1 pure-u-lg-1-2'>
                         <div className='spacing-inner'>
-                            <div className='entry-title' style={{ textDecoration: 'underline' }}>3] Target Variable: User Votes</div>
-                            <br></br>
                             <div>
-                                The recommendation system works based on votes that the user casts for movies and TV shows.
-                                Vote 1 means they hate it, 2 means it's ok, and 3 means they love it. 
-                                The classification algorithm uses these votes as the target variable when training the model. 
-                                The predictions made by the algorithm are then used as the recommendation level, 
-                                for example, a predicted class of 3 means that the user will probably really like the movie.
-                                One advantage of this system over the conventional mass-marketing&nbsp;
-                                <a className='link-format' href='https://en.wikipedia.org/wiki/Recommender_system'>recommender system</a> is
-                                that it's personalized to the user.
-                                A disadvantage of this system is that it requires hundreds of votes to produce useful results.
-                            </div>
-                            <br></br>
-                            <div>
-                                The adjacent plot shows a sample distribution of user votes for movies.
-                                The takeaway here is that the training target variable has a considerable imbalance.
+                                The user-score is a value from 1 to 3 that the site's user assigns to any movies they've seen.
+                                It's an indication of how much they liked the movie:
+                                1 means they hate it, 2 means it's ok, and 3 means they loved it. 
+                                Because the user has three different scores available, 
+                                the movie recommendations also come in three types: Love It, Maybe, and Don't Bother.
+                                <br></br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;The user score is used as the algorithm's target variable. 
+                                That is, the algorithm uses the movies' features to find a pattern 
+                                that will match how the user scored the movies. 
+                                Each user will score movies differently, 
+                                so each user has a specific model trained for them. 
+                                The adjacent plot shows a sample distribution of a user's scores for movies.
+                                Notice that the target variable has a considerable imbalance.
                             </div>
                         </div>
                     </div>
@@ -169,6 +224,9 @@ class DataScience extends React.Component {
                             </When>
                         </div>
                     </div>
+
+
+
 
                     <div className='pure-u-1 pure-u-xl-20-24'>
                         <div className='spacing-inner'>

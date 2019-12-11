@@ -53,6 +53,31 @@ class About extends Component {
 
                     <div className='pure-u-1'>
                         <div className='spacing-inner'>
+                            <span className='entry-title'>Recommendation System: </span> 
+                            Though the site features a recommendation engine for movies,
+                            it is not the same as the classic&nbsp;
+                            <a className='link-format' href='https://en.wikipedia.org/wiki/Recommender_system' target='blank_'>recommender system</a>
+                            &nbsp;as found on Netflix, Amazon, Ebay, etc.
+                            The classic system requires knowledge of hundreds of users, as well as hundreds of products they bought/viewed.
+                            It then uses matrix multiplication to draw inferences about other products 
+                            the users may be interested in. 
+                            This system is ubiquitous because it doesn't require the user to score anything,
+                            the inferences are drawn based on the user's behavior on the site.
+                            <br></br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;The goal of this site is to have a much more precise measure 
+                            of how a user prefers their movies. 
+                            So instead, a classification algorithm is used.
+                            The model is trained on all movies that the user has scored.
+                            The algorithm then makes recommendations for all the movies the user hasn't seen yet.
+                            It's my belief that this produces better recommendations than the classic engine.
+                            Though it may be more precise, 
+                            it also comes with the cost of forcing the user to score hundreds of movies 
+                            before they can get very good recommendations.
+                       </div>
+                    </div>
+
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner'>
                             <span className='entry-title'>Webmaster: </span> 
                             <a href='https://www.linkedin.com/in/phillipbusko' className='link-format' target='blank_'>Phillip Busko</a>
                         </div>

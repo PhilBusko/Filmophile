@@ -23,7 +23,7 @@ class Exploration extends React.Component {
     }
 
     componentDidMount() {
-        let DELAY = 700;
+        let DELAY = 800;
 
         axios({
             url: 'api/movies/years_plot/',
@@ -226,7 +226,6 @@ class Exploration extends React.Component {
                         </div>
                     </div>
 
-
                     <div className='pure-u-1'>
                         <div className='spacing-inner heading'>
                             Streaming Service Graphs
@@ -250,7 +249,6 @@ class Exploration extends React.Component {
                             </When>
                         </div>
                     </div>
-
                     <div className='pure-u-1 pure-u-xxxl-1-2'>
                         <div className='spacing-inner center-both'>
                             <When condition={ !!this.state.scoresPlot }>
