@@ -97,7 +97,7 @@ class DataScience extends React.Component {
                             <br></br>
                             <div>
                                 The adjacent table shows all of the features used in the recommendation algorithm. 
-                                It also shows for each source how much of each feature is available.
+                                It also shows for each source the percentage that is available of each feature.
                                 The Union-All column shows the availability of final data for the project. 
                                 Typically the final value used from the disparate sources is just the highest value. 
                                 For example, if TMDB gives a runtime of 87 mins, and IMDB gives 82 mins, 
