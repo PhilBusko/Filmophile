@@ -83,9 +83,6 @@ CONTENT BLOCK STYLES
         justify-content: space-evenly;
         flex-wrap: wrap;
     }
-    .loading-icon {
-        height: 48px;
-    }
 
     // page-specific styling
 
@@ -95,6 +92,7 @@ CONTENT BLOCK STYLES
         background: $contentBkgd;
         border-bottom: 1px solid $controlBkgd;
     }
+
     .control-panel {
         display: flex;
         flex-direction: row;
@@ -129,6 +127,27 @@ CONTENT BLOCK STYLES
             // use min-width since parent is flex
             min-width: 495px;
         }
+    }
+
+    .small-plot {
+        width: 500px;
+        height: 400px;
+        border: 1px solid $contentHighlight;
+    }
+    .medium-plot {
+        width: 600px;
+        height: 400px;
+        border: 1px solid $contentHighlight;
+    }
+    .large-plot {
+        width: 700px;
+        height: 400px;
+        border: 1px solid $contentHighlight;
+    }
+    .jumbo-plot {
+        width: 800px;
+        height: 500px;
+        border: 1px solid $contentHighlight;
     }
 }
 

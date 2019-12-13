@@ -3,7 +3,7 @@ SELECT WRAPPER ELEMENT
 **************************************************************************************************/
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import './select-wrapper.scss'
+import './inputs.scss'
 
 class SelectWrapper extends React.Component {
 
@@ -30,7 +30,7 @@ class SelectWrapper extends React.Component {
     render() {
         let ctrlId = this.props.label.toLowerCase().replace(' ', '') + '_slct'
         return (
-            <div className='select-wrapper'>
+            <div className='input-wrapper'>
                 <label htmlFor={ ctrlId }>{ this.props.label }: </label>
                 <select id={ ctrlId } onChange={ this.updateValue } value={ this.state.value }>
                     {this.props.options.map((opt, idx) => (

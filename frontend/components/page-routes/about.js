@@ -3,7 +3,7 @@ ABOUT PAGE
 **************************************************************************************************/
 import React, { Component } from 'react';
 import MenuLayout from '../layouts/menu-layout'
-import ResourceLink from '../elements/resource-link'
+import { ResourceLink } from '../elements'
 
 class About extends Component {
 

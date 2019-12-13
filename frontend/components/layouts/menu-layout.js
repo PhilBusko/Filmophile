@@ -8,13 +8,13 @@ import './menu-layout.scss'
 
 class MenuLayout extends React.Component {
 
-    navigationBkgd = require('../assets/backgrounds/navigation.png')
-    contentBkgd = require('../assets/backgrounds/content.png')
+    navigationBkgd = require('../assets/images/navigation.png')
+    contentBkgd = require('../assets/images/content.png')
 
     render() {
 
         if (Math.random() > 0.5)
-            this.navigationBkgd = require('../assets/backgrounds/navigation2.png')
+            this.navigationBkgd = require('../assets/images/navigation2.png')
 
         return (
             <div className='pure-g menu-layout'>
@@ -45,7 +45,7 @@ class MenuLayout extends React.Component {
                     <ContentBlock>
                         { this.props.children }
                     </ContentBlock>
-                    <div style={{ height: '20px' }}></div>
+                    <div style={{ height: '30px' }}></div>
                 </div>
 
             </div>

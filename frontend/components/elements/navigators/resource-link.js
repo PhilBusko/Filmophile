@@ -4,8 +4,6 @@ RESOURCE LINK ELEMENT
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { When } from 'react-if';
-
-//import Helper from '../app_main/helpers'
 import './resource-link.scss'
 
 class ResourceLink extends React.Component {
@@ -23,7 +21,7 @@ class ResourceLink extends React.Component {
 
     render() {
         return (
-            <div className='resource-wrapper'>
+            <div className='link-wrapper'>
                 <a href={ this.props.url } className='link-panel' target='blank_'>
                     <img src={ this.props.icon } className='resource-icon' alt='icon'/>
                     <span className='link-format'>{ this.props.text }</span>

@@ -4,13 +4,12 @@ MOVIE CARD ELEMENT
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { When } from 'react-if';
-import './movie-card.scss'
 
 class MovieCard extends React.Component {
 
-    starEmpty = require('../assets/controls/star_empty_black.png')
-    starEmptyBlack = require('../assets/controls/star_empty_black.png')
-    starFull = require('../assets/controls/star_full.png')
+    starEmpty = require('../../assets/controls/star_empty_black.png')
+    starEmptyBlack = require('../../assets/controls/star_empty_black.png')
+    starFull = require('../../assets/controls/star_full.png')
 
     static propTypes = {
         movie: PropTypes.object.isRequired,

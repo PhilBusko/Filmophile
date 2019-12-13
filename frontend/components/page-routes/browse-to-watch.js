@@ -6,9 +6,7 @@ import axios from 'axios';
 //import { When } from 'react-if';
 
 import MenuLayout from '../layouts/menu-layout'
-import SelectWrapper from '../elements/select-wrapper'
-import Paginator, { PERPAGE } from '../elements/paginator'
-import MoviesPanel from '../elements/movies-panel'
+import { SelectWrapper, Paginator, PERPAGE, MoviesPanel } from '../elements'
 
 class BrowseToWatch extends React.Component {
 

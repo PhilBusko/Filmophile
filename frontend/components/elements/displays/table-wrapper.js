@@ -3,17 +3,30 @@ TABLE WRAPPER ELEMENT
 **************************************************************************************************/
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import { When } from 'react-if';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
-import Helper from '../app_main/helpers'
+import LoadingIcon from './loading-icon'
 import './table-wrapper.scss'
 
 class TableWrapper extends React.Component {
 
     static propTypes = {
-        tableRows: PropTypes.arrayOf(PropTypes.object).isRequired,
+        tableRows: PropTypes.array.isRequired,
+        sizeClass: PropTypes.string.isRequired,
     }
-     
+
+    getTitleWords = (original) => {
+        let format = original.replace('_', ' ');
+        format = format.replace(/\b\w/g, l => l.toUpperCase());
+        return format;
+    }
+
+    isFloat = (input) => {
+        let test = Number(input);
+        return !Number.isNaN(test);
+    }
+
     getColumnsDef = () => {
         let tableRows = this.props.tableRows;
         let dataProps = tableRows.length > 0 ? Object.getOwnPropertyNames(tableRows[0]) : [];
@@ -22,9 +35,9 @@ class TableWrapper extends React.Component {
             return []
 
         dataProps.forEach( prop => {
-            let numberClass = Helper.isFloat(tableRows[0][prop]) ? ' center-text' : '';
+            let numberClass = this.isFloat(tableRows[0][prop]) ? ' center-text' : '';
             let newCol = {
-                Header: Helper.getTitleWords(prop),
+                Header: this.getTitleWords(prop),
                 headerClassName: 'table-header' + numberClass,
                 accessor: prop,
                 className: 'table-text' + numberClass,
@@ -55,14 +68,25 @@ class TableWrapper extends React.Component {
     render() {
         return (
             <div className='table-wrapper'>
-                <ReactTable
-                    data={ this.props.tableRows }
-                    columns={ this.getColumnsDef() }
-                    minRows={ 1 }
-                    showPagination={ false }
-                    sortable={ false }
-                    resizable={ false }
-                />
+
+                <When condition={ this.props.tableRows.length > 0 }>
+                { () =>
+                    <ReactTable
+                        data={ this.props.tableRows }
+                        columns={ this.getColumnsDef() }
+                        minRows={ 1 }
+                        showPagination={ false }
+                        sortable={ false }
+                        resizable={ false }
+                    />
+                }
+                </When>
+                <When condition={ this.props.tableRows.length == 0 }>
+                    <div className={ this.props.sizeClass }>
+                        <LoadingIcon/>
+                    </div>
+                </When>
+
             </div>
         );
     }

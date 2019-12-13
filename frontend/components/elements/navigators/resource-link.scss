@@ -1,0 +1,35 @@
+/**************************************************************************************************
+RESOURCE LINK STYLES
+**************************************************************************************************/
+@import '../../app_main/styles.scss';
+
+.link-wrapper {
+    margin-bottom: 6px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+
+    .link-panel {
+        margin: 0px 10px;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+
+
+        .link-format {
+
+        }
+
+        .resource-icon {
+            height: 26px;
+            margin-right: 8px;
+            background: $contentBkgd;
+        }
+    }
+    .separator {
+        margin: 0px 8px;
+        font-size: 140%;
+        color: $contentText;
+    }
+}
+

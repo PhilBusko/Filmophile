@@ -4,21 +4,18 @@ RULES-LOADER PAGE
 import * as React from 'react';
 import axios from 'axios';
 import { When } from 'react-if';
-import Plot from 'react-plotly.js';
-
 import MenuLayout from '../layouts/menu-layout'
-import TableWrapper from '../elements/table-wrapper'
+import { PlotWrapper, TableWrapper } from '../elements'
 
 class DataScience extends React.Component {
 
-    loadingIcon = require('../assets/controls/loading_cat.gif')
-    dataClean = require('../assets/backgrounds/data-clean.png')
-    multihotDiagram = require('../assets/backgrounds/multihot.png')
+    dataClean = require('../assets/images/data-clean.png')
+    multihotDiagram = require('../assets/images/multihot.png')
 
     state = {
-        dataHistory: null,
-        votePlot: null,
-        restrictedClassifiers: null,
+        dataHistory: [],
+        votePlot: {},
+        restrictedClassifiers: {},
         svmTune: [{
                 'Hyper-Parameter': '-baseline-',
                 'Best Value': '-', 
@@ -152,16 +149,7 @@ class DataScience extends React.Component {
                     </div>
                     <div className='pure-u-1 pure-u-xl-1-2'>
                         <div className='spacing-inner small-font'>
-                            <When condition={ !!this.state.dataHistory }>
-                            { () =>
-                                <TableWrapper tableRows={ this.state.dataHistory }></TableWrapper>
-                            }
-                            </When>
-                            <When condition={ !this.state.dataHistory }>
-                                <div style={{ width: '510px', height: '460px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <TableWrapper tableRows={ this.state.dataHistory } sizeClass='medium-plot'/>
                         </div>
                     </div>
 
@@ -248,18 +236,7 @@ class DataScience extends React.Component {
                     </div>
                     <div className='pure-u-1 pure-u-lg-1-2'>
                         <div className='spacing-inner'>
-                            <When condition={ !!this.state.votePlot }>
-                            { () =>
-                                <Plot data={ this.state.votePlot.data }
-                                    layout={ this.state.votePlot.layout }
-                                    config={{ 'staticPlot': true }} />
-                            }
-                            </When>
-                            <When condition={ !this.state.votePlot }>
-                                <div style={{ width: '400px', height: '300px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.votePlot } sizeClass='small-plot' isStatic={ true } />
                         </div>
                     </div>
 
@@ -291,18 +268,7 @@ class DataScience extends React.Component {
                     </div>
                     <div className='pure-u-1'>
                         <div className='spacing-inner center-both'>
-                            <When condition={ !!this.state.restrictedClassifiers }>
-                            { () =>
-                                <Plot data={ this.state.restrictedClassifiers.data }
-                                    layout={ this.state.restrictedClassifiers.layout }
-                                />
-                            }
-                            </When>
-                            <When condition={ !this.state.restrictedClassifiers }>
-                                <div style={{ width: '800px', height: '500px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.restrictedClassifiers } sizeClass='jumbo-plot' isStatic={ true }/>
                         </div>
                     </div>
 
@@ -342,23 +308,14 @@ class DataScience extends React.Component {
                                 chosen as the most frequent best value among all the trials.
                                 Each grid search is run using cross-validation with 5-folds, 
                                 and the accuracy reported is the cross-validation test accuracy. 
-                                Since cross-validation is used, a pipeline in in order.
+                                Since cross-validation is used, a pipeline in in order to prevent data leakage.
                                 The pipeline contains an imputer, a scaler, and an estimator. 
                             </div>
                         </div>
                     </div>
                     <div className='pure-u-1-2'>
                         <div className='spacing-inner small-font'>
-                            <When condition={ !!this.state.svmTune }>
-                            { () =>
-                                <TableWrapper tableRows={ this.state.svmTune }></TableWrapper>
-                            }
-                            </When>
-                            <When condition={ !this.state.svmTune }>
-                                <div style={{ width: '510px', height: '460px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <TableWrapper tableRows={ this.state.svmTune } sizeClass='small-plot'/>
                         </div>
                     </div>
 

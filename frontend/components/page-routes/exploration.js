@@ -3,35 +3,34 @@ EXPLORATION PAGE
 **************************************************************************************************/
 import * as React from 'react';
 import axios from 'axios';
-import { When } from 'react-if';
-import Plot from 'react-plotly.js';
 import MenuLayout from '../layouts/menu-layout'
+import { PlotWrapper } from '../elements';
 
 class Exploration extends React.Component {
 
-    loadingIcon = require('../assets/controls/loading_cat.gif')
-
     state = {
-        yearsPlot: null,
-        countriesPlot: null,
-        genresPlot: null,
-        genresMoviePlot: null,
-        roiPlot: null,
-        scoreProfitPlot: null,
-        totalsPlot: null,
-        scoresPlot: null,
+        yearsPlot: {},
+        countriesPlot: {},
+        genresPlot: {},
+        genresMoviePlot: {},
+        roiPlot: {},
+        scoreProfitPlot: {},
+        totalsPlot: {},
+        scoresPlot: {},
     }
 
     componentDidMount() {
         let DELAY = 800;
 
-        axios({
-            url: 'api/movies/years_plot/',
-        }).then( success => {
-            this.setState({ yearsPlot: JSON.parse(success.data) });
-        }).catch( error => {
-            console.log(error);
-        });
+        setTimeout( () => {
+            axios({
+                url: 'api/movies/years_plot/',
+            }).then( success => {
+                this.setState({ yearsPlot: JSON.parse(success.data) });
+            }).catch( error => {
+                console.log(error);
+            });
+        }, 0);
 
         setTimeout( () => {
             axios({
@@ -51,7 +50,7 @@ class Exploration extends React.Component {
             }).catch( error => {
                 console.log(error);
             });
-        }, DELAY * 2);
+        }, DELAY * 5);
 
         setTimeout( () => {
             axios({
@@ -81,7 +80,7 @@ class Exploration extends React.Component {
             }).catch( error => {
                 console.log(error);
             });
-        }, DELAY * 5);
+        }, DELAY * 2);
 
         setTimeout( () => {
             axios({
@@ -122,99 +121,24 @@ class Exploration extends React.Component {
                     <div className='pure-u-1 even-panel spacing-outer'>
 
                         <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.yearsPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.yearsPlot.data }
-                                        layout={ this.state.yearsPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.yearsPlot }>
-                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.yearsPlot } sizeClass='medium-plot'/>
+                        </div>
+                        <div className='spacing-inner-large center-both'>
+                            <PlotWrapper plotConfig={ this.state.countriesPlot } sizeClass='medium-plot'/>
                         </div>
 
                         <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.countriesPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.countriesPlot.data }
-                                        layout={ this.state.countriesPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.countriesPlot }>
-                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.genresPlot } sizeClass='large-plot' isStatic={ true } />
+                        </div>
+                        <div className='spacing-inner-large center-both'>
+                            <PlotWrapper plotConfig={ this.state.genresMoviePlot } sizeClass='small-plot' isStatic={ true } />
                         </div>
 
                         <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.genresPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.genresPlot.data }
-                                        layout={ this.state.genresPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.genresPlot }>
-                                <div style={{ width: '700px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.roiPlot } sizeClass='large-plot'/>
                         </div>
-
                         <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.genresMoviePlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.genresMoviePlot.data }
-                                        layout={ this.state.genresMoviePlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.genresMoviePlot }>
-                                <div style={{ width: '500px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
-                        </div>
-
-                        <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.roiPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.roiPlot.data }
-                                        layout={ this.state.roiPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.roiPlot }>
-                                <div style={{ width: '700px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
-                        </div>
-
-                        <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.scoreProfitPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.scoreProfitPlot.data }
-                                        layout={ this.state.scoreProfitPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.scoreProfitPlot }>
-                                <div style={{ width: '500px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.scoreProfitPlot } sizeClass='small-plot'/>
                         </div>
                     </div>
 
@@ -226,35 +150,10 @@ class Exploration extends React.Component {
                     <div className='pure-u-1 even-panel spacing-outer'>
 
                         <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.totalsPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.totalsPlot.data }
-                                        layout={ this.state.totalsPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.totalsPlot }>
-                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.totalsPlot } sizeClass='medium-plot'/>
                         </div>
-
                         <div className='spacing-inner-large center-both'>
-                            <When condition={ !!this.state.scoresPlot }>
-                                { () =>
-                                    <Plot 
-                                        data={ this.state.scoresPlot.data }
-                                        layout={ this.state.scoresPlot.layout }
-                                    />
-                                }
-                            </When>
-                            <When condition={ !this.state.scoresPlot }>
-                                <div style={{ width: '600px', height: '400px', border: '1px solid MediumSlateBlue'}} className='center-both'>
-                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
-                                </div>
-                            </When>
+                            <PlotWrapper plotConfig={ this.state.scoresPlot } sizeClass='medium-plot'/>
                         </div>
 
                     </div>
