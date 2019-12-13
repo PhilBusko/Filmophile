@@ -19,6 +19,43 @@ class DataScience extends React.Component {
         dataHistory: null,
         votePlot: null,
         restrictedClassifiers: null,
+        svmTune: [{
+                'Hyper-Parameter': '-baseline-',
+                'Best Value': '-', 
+                'Accuracy': 54.2,
+            }, {
+                'Hyper-Parameter': 'learning_rate',
+                'Best Value': 'invscaling', 
+                'Accuracy': 58.5,
+            }, {
+                'Hyper-Parameter': 'eta0',
+                'Best Value': '0.01', 
+                'Accuracy': 59.5,
+            }, {
+                'Hyper-Parameter': 'power_t',
+                'Best Value': '-', 
+                'Accuracy': '-',
+            }, {
+                'Hyper-Parameter': 'max_iter',
+                'Best Value': '200', 
+                'Accuracy': 59.6,
+            }, {
+                'Hyper-Parameter': 'loss',
+                'Best Value': 'epsilon_insensitive', 
+                'Accuracy': 60.5,
+            }, {
+                'Hyper-Parameter': 'penalty (regularization)',
+                'Best Value': '-', 
+                'Accuracy': '-',
+            }, {
+                'Hyper-Parameter': 'class_weight',
+                'Best Value': '-', 
+                'Accuracy': '-',
+            }, {
+                'Hyper-Parameter': '-final-',
+                'Best Value': '-', 
+                'Accuracy': 60.5,
+        }],
     }
 
     componentDidMount() {
@@ -196,8 +233,10 @@ class DataScience extends React.Component {
                                 1 means they hate it, 2 means it's ok, and 3 means they loved it. 
                                 Because the user has three different scores available, 
                                 the movie recommendations also come in three types: Love It, Maybe, and Don't Bother.
-                                <br></br>
-                                &nbsp;&nbsp;&nbsp;&nbsp;The user score is the algorithm's target variable. 
+                            </div>
+                            <br></br>
+                            <div>
+                                The user score is the algorithm's target variable. 
                                 That is, the algorithm uses the movies' features to find a pattern 
                                 that will match how the user scored the movies. 
                                 Each user will score movies differently, 
@@ -234,7 +273,7 @@ class DataScience extends React.Component {
                             <div>
                                 In general there are many suitable supervised learning classification algorithms available.
                                 The typical process is to start with a baseline algorithm, like logistic regression, 
-                                and then move to more complex options in search of higher accuracy or other metrics. 
+                                and then move to more complex models in search of higher accuracy or other metrics. 
                                 However, this project was met with an additional restriction: 
                                 several algorithms' predictions are not usable because they are extremely imbalanced.
                                 Therefore the first question to answer becomes which algorithm to use. 
@@ -267,24 +306,92 @@ class DataScience extends React.Component {
                         </div>
                     </div>
 
-
-
                     <div className='pure-u-1'>
                         <div className='spacing-inner subheading'>
                             5] Tuning Support Vector Machine
                         </div>
                     </div>
-                    <div className='pure-u-20-24'>
+                    <div className='pure-u-1-2'>
                         <div className='spacing-inner'>
                             <div>
-                                Future Work
+                                The algorithm used is scikit-learn's&nbsp;
+                                <a href='https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html' 
+                                    className='link-format' target='blank_'>SVM Classifier</a>.
+                                It can be tuned once the movies data has been updated, 
+                                and a test user has scored many movies.
+                                To tune the algorithm, a series of grid searches was run.
+                                Each grid search only varied one hyper-parameter.
+                                The list of hyper-parameters tested is shown in the adjacent table in order. 
                             </div>
                             <br></br>
                             <div>
-                                . 
+                                Of course, its important to be strategic about the order in which the parameters are run. 
+                                Generally, one starts with the learning rate, 
+                                and reducing the number of trees/iterations to prevent overfitting.
+                                Hyper-parameters run in the middle will vary with each algorithm. 
+                                Towards the end, bring in regularization, 
+                                as it is a finer correction term in the loss function.
+                                Lastly, try class balancing methods. 
+                                I keep these last because I've found they do not increase accuracy.
+                            </div>
+                            <br></br>
+                            <div>
+                                For each grid search of a hyper-parameter, at least 50 trials were run.
+                                Each trial has a different seed, and produces its own best value.
+                                The best value for a hyper-parameter is 
+                                chosen as the most frequent best value among all the trials.
+                                Each grid search is run using cross-validation with 5-folds, 
+                                and the accuracy reported is the cross-validation test accuracy. 
+                                Since cross-validation is used, a pipeline in in order.
+                                The pipeline contains an imputer, a scaler, and an estimator. 
                             </div>
                         </div>
                     </div>
+                    <div className='pure-u-1-2'>
+                        <div className='spacing-inner small-font'>
+                            <When condition={ !!this.state.svmTune }>
+                            { () =>
+                                <TableWrapper tableRows={ this.state.svmTune }></TableWrapper>
+                            }
+                            </When>
+                            <When condition={ !this.state.svmTune }>
+                                <div style={{ width: '510px', height: '460px', border: '1px solid MediumSlateBlue'}} className='center-both'>
+                                    <img src={ this.loadingIcon } className='loading-icon' alt='loading'/>
+                                </div>
+                            </When>
+                        </div>
+                    </div>
+
+                    <div className='pure-u-1'>
+                        <div className='spacing-inner subheading'>
+                            6] Conclusion
+                        </div>
+                    </div>
+                    <div className='pure-u-1 pure-u-xl-1-2'>
+                        <div className='spacing-inner'>
+                            <div>
+                                The tuned algorithm showed about 6% better accuracy over the baseline.
+                                The algorithm then trains on each user's movie scores, 
+                                and produces a model for that user.
+                                The model then runs the movies the user hasn't score yet 
+                                and its predictions are the movie recommendations.
+                            </div>
+                            <br></br>
+                            <div>
+                                We expect the "perceived accuracy" of each user's recommendations 
+                                to vary from one user to another.
+                                This is because each user will score movies differently,
+                                and the algorithm will respond accordingly.
+                                We also expect the accuracy to increase with the number of movies 
+                                scored by the user, with at least a few hundred movies necessary 
+                                for recommendations to be satisfactory.
+                                This is because the algorithm, with the given features,&nbsp;
+                                <u>is able to capture some ground truth</u> about
+                                the user's taste in movies.
+                            </div>
+                        </div>
+                    </div>
+                    <div className='pure-u-1' style={{ height: '90px' }}></div>
 
                 </div>
             </MenuLayout>
