@@ -3,7 +3,6 @@ RULES-LOADER PAGE
 **************************************************************************************************/
 import * as React from 'react';
 import axios from 'axios';
-import { When } from 'react-if';
 import MenuLayout from '../layouts/menu-layout'
 import { PlotWrapper, TableWrapper } from '../elements'
 

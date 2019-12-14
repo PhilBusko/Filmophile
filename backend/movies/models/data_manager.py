@@ -1,138 +1,21 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-MOVIE MODELS
+DATA MANAGER
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 import os, csv, re, json
 import pandas as PD
 import numpy as NP
+import django.db as DB
 import plotly.graph_objects as GO
 import plotly.figure_factory as FF
-import django.db as DB
 
 import app_proj.utility as UT
+import movies.models.tables as TB
 import movies.extract.moviedb_helper as MH
 
 
-class MasterMovie(DB.models.Model):
-    Movie_ID = DB.models.IntegerField(unique=True)
-    Title = DB.models.TextField()
-    OriginalTitle = DB.models.TextField()
-    Year = DB.models.TextField()
-    Rating = DB.models.TextField(null=True)
-    Companies = DB.models.TextField(null=True)
-    Country = DB.models.TextField(null=True)
-    Language = DB.models.TextField(null=True)
-    RunTime = DB.models.IntegerField(null=True)
-    Crew = DB.models.TextField(null=True)
-    Cast = DB.models.TextField(null=True)
-    Poster = DB.models.TextField(null=True)
-    Genres = DB.models.TextField(null=True)
-    #Collection = DB.models.TextField(null=True)
-    Synopsis = DB.models.TextField(null=True)
-    Budget = DB.models.IntegerField(null=True)
-    Gross = DB.models.IntegerField(null=True)
-    ScoreImdb = DB.models.FloatField(null=True)
-    VotesImdb = DB.models.IntegerField(null=True)
-    Indeces = DB.models.TextField(null=True)
-
-
-class MovieDB_Load(DB.models.Model):
-    TmdbId = DB.models.IntegerField(unique=True, default=-1)
-    Title = DB.models.TextField()
-    OriginalTitle = DB.models.TextField()
-    Year = DB.models.TextField()
-    #Rating = DB.models.TextField()
-    Companies = DB.models.TextField(null=True)
-    Country = DB.models.TextField(null=True)
-    Language = DB.models.TextField(null=True)
-    RunTime = DB.models.FloatField(null=True)
-    Crew = DB.models.TextField(null=True)
-    Cast = DB.models.TextField(null=True)
-    Poster = DB.models.TextField(null=True)
-    Genres = DB.models.TextField(null=True)
-    Collection = DB.models.TextField(null=True)
-    Synopsis = DB.models.TextField(null=True)
-    Budget = DB.models.FloatField(null=True)
-    Gross = DB.models.FloatField(null=True)
-    Score = DB.models.TextField(null=True)
-    Votes = DB.models.TextField(null=True)
-    ImdbId = DB.models.TextField(null=True)
-
-
-class Reelgood_Load(DB.models.Model):
-    class Meta:
-        unique_together = [['Title', 'Year']]
-    #Reelgood_Id = DB.models.TextField()
-    Title = DB.models.TextField()
-    #OriginalTitle = DB.models.TextField()
-    Year = DB.models.TextField()
-    Rating = DB.models.TextField(null=True)
-    #Companies = DB.models.TextField()
-    Country = DB.models.TextField(null=True)
-    #Language = DB.models.TextField()
-    Duration = DB.models.FloatField(null=True)
-    #Crew = DB.models.TextField()
-    #Cast = DB.models.TextField()
-    Poster = DB.models.TextField()
-    Genres = DB.models.TextField(null=True)
-    Tags = DB.models.TextField(null=True)
-    Synopsis = DB.models.TextField()
-    #Budget = DB.models.IntegerField(default=0)
-    #Gross = DB.models.IntegerField(default=0)
-    ImdbScore = DB.models.FloatField(null=True)
-    RtScore = DB.models.TextField(null=True)
-    Services = DB.models.TextField()
-
-
-class IMDB_Load(DB.models.Model):
-    ImdbId = DB.models.TextField(unique=True, default='tt')
-    Title = DB.models.TextField()
-    OriginalTitle = DB.models.TextField(null=True)
-    Year = DB.models.TextField()
-    Rating = DB.models.TextField(null=True)
-    Companies = DB.models.TextField(null=True)
-    Country = DB.models.TextField(null=True)
-    Language = DB.models.TextField(null=True)
-    Duration = DB.models.IntegerField(null=True)
-    Directors = DB.models.TextField(null=True)
-    Writers = DB.models.TextField(null=True)
-    Actors = DB.models.TextField(null=True)
-    #Poster = DB.models.TextField()
-    Genres = DB.models.TextField(null=True)
-    #Collection = DB.models.TextField()
-    Synopsis = DB.models.TextField(null=True)
-    Budget = DB.models.TextField(null=True)
-    GrossUs = DB.models.TextField(null=True)
-    GrossWorldwide = DB.models.TextField(null=True)
-    Score = DB.models.FloatField(null=True)
-    Votes = DB.models.IntegerField(null=True)
-
-
-class StreamService(DB.models.Model):
-    Movie_ID = DB.models.IntegerField()
-    Service = DB.models.TextField()
-    ServiceKey = DB.models.TextField()
-    Active = DB.models.BooleanField()
-
-
-class UserVotes(DB.models.Model):
-    class Meta:
-        unique_together = [['Movie_ID', 'User']]
-    Movie_ID = DB.models.IntegerField()     # if not a foreign key, can reload master table
-    User = DB.models.TextField()            # should be foreign key to user
-    Vote = DB.models.IntegerField()
-
-
-class UserRecommendations(DB.models.Model):
-    class Meta:
-        unique_together = [['Movie_FK', 'User']]
-    Movie_FK = DB.models.ForeignKey(MasterMovie, on_delete=DB.models.CASCADE) 
-    User = DB.models.TextField()            
-    RecomLevel = DB.models.IntegerField()
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-DATABASE CLASSES 
+DATABASE EDITOR 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -142,13 +25,13 @@ class Editor(object):
     @staticmethod
     def DeleteTable(table_name):
         if table_name == 'MasterMovie' or table_name == 'All':
-            MasterMovie.objects.all().delete()
+            TB.MasterMovie.objects.all().delete()
         if table_name == 'MovieDB_Load' or table_name == 'All':
-            MovieDB_Load.objects.all().delete()
+            TB.MovieDB_Load.objects.all().delete()
         if table_name == 'Reelgood_Load' or table_name == 'All':
-            Reelgood_Load.objects.all().delete()
+            TB.Reelgood_Load.objects.all().delete()
         if table_name == 'IMDB_Load' or table_name == 'All':
-            IMDB_Load.objects.all().delete()
+            TB.IMDB_Load.objects.all().delete()
 
 
     @staticmethod
@@ -473,8 +356,14 @@ class Editor(object):
         return master_dx
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+DATABASE REPORTER 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
 class Reporter(object):
 
+    # BROWSE PAGES
 
     @staticmethod
     def GetGenres():
@@ -514,6 +403,59 @@ class Reporter(object):
 
 
     @staticmethod
+    def GetWatchedMovies():
+        watched_ids = TB.UserVotes.objects.all().values_list('Movie_ID', flat=True)
+        movies_ls = TB.MasterMovie.objects.filter(Movie_ID__in=watched_ids
+                                        ).order_by('-ScoreImdb').values()
+
+        # hack until FK is up 
+
+        votes_ls = TB.UserVotes.objects.all().values()
+        for mov in movies_ls:
+            for vt in votes_ls:
+                if mov['Movie_ID'] == vt['Movie_ID']:
+                    mov['Vote'] = vt['Vote']
+                    break
+
+        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
+        for mov in movies_ls:
+            poster_url = mov['Poster']
+            if 'http' not in poster_url:
+                mov['Poster'] = f"{thumb_url}{poster_url}"
+
+        return movies_ls
+
+
+    @staticmethod
+    def GetToWatchMovies():
+
+        # select_related will load movies from db, which speeds up the function
+
+        recom_ls = list(TB.UserRecommendations.objects.filter(User='main')
+                        .select_related('Movie_FK').all())
+        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
+
+        movie_ls = []
+        for rec in recom_ls:
+            movie_dx = rec.Movie_FK.__dict__
+            state = movie_dx.pop('_state', None)
+            mid = movie_dx.pop('id', None)
+            movie_dx['RecomLevel'] = rec.RecomLevel
+
+            poster_url = movie_dx['Poster']
+            if 'http' not in poster_url:
+                movie_dx['Poster'] = f"{thumb_url}{poster_url}"
+
+            movie_ls.append(movie_dx)
+        
+        movie_ls = sorted(movie_ls, key=lambda mv: (-1)*mv['ScoreImdb'] if mv['ScoreImdb'] else 0)
+
+        return movie_ls
+
+
+    # PLOTS & TABLES
+
+    @staticmethod
     def ConvertFigureToJson(figure):
         from plotly.utils import PlotlyJSONEncoder
 
@@ -542,13 +484,15 @@ class Reporter(object):
         return (x_ls, y_ls)
 
 
+    # EXPLORATION & DATA SCIENCE
+
     @staticmethod
     def GetDataHistory():
         history_ls = []
-        tmdb_total = MovieDB_Load.objects.count()
-        imdb_total = IMDB_Load.objects.count()
-        reelgood_total = Reelgood_Load.objects.count() 
-        master_total = MasterMovie.objects.count()
+        tmdb_total = TB.MovieDB_Load.objects.count()
+        imdb_total = TB.IMDB_Load.objects.count()
+        reelgood_total = TB.Reelgood_Load.objects.count() 
+        master_total = TB.MasterMovie.objects.count()
 
         new_dx = {
             'Feature': 'Title',
@@ -572,100 +516,100 @@ class Reporter(object):
         new_dx = {
             'Feature': 'Rating',
             'TMDB': 0,
-            'IMDB': IMDB_Load.objects.filter(Rating__isnull=False).
+            'IMDB': TB.IMDB_Load.objects.filter(Rating__isnull=False).
                     exclude(Rating__in=['Not Rated', 'Unrated', 'Approved', 'Passed']).count(),
-            'Reelgood': Reelgood_Load.objects.filter(Rating__isnull=False).count(),
-            'Union-All': MasterMovie.objects.filter(Rating__isnull=False).count(),
+            'Reelgood': TB.Reelgood_Load.objects.filter(Rating__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Rating__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Companies',
-            'TMDB': MovieDB_Load.objects.filter(Companies__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Companies__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Companies__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Companies__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(Companies__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Companies__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Country',
-            'TMDB': MovieDB_Load.objects.filter(Country__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Country__isnull=False).count(),
-            'Reelgood': Reelgood_Load.objects.filter(Country__isnull=False).count(),
-            'Union-All': MasterMovie.objects.filter(Country__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Country__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Country__isnull=False).count(),
+            'Reelgood': TB.Reelgood_Load.objects.filter(Country__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Country__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Language',
-            'TMDB': MovieDB_Load.objects.filter(Language__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Language__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Language__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Language__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(Language__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Language__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'RunTime',
-            'TMDB': MovieDB_Load.objects.filter(RunTime__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Duration__isnull=False).count(),
-            'Reelgood': Reelgood_Load.objects.filter(Duration__isnull=False).count(),
-            'Union-All': MasterMovie.objects.filter(RunTime__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(RunTime__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Duration__isnull=False).count(),
+            'Reelgood': TB.Reelgood_Load.objects.filter(Duration__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(RunTime__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Crew*',
-            'TMDB': MovieDB_Load.objects.filter(Crew__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Directors__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Crew__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Directors__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(Crew__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Crew__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Cast*',
-            'TMDB': MovieDB_Load.objects.filter(Cast__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Actors__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Cast__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Actors__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(Cast__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Cast__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Genres*',
-            'TMDB': MovieDB_Load.objects.filter(Genres__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Genres__isnull=False).count(),
-            'Reelgood': Reelgood_Load.objects.filter(Genres__isnull=False).count(),
-            'Union-All': MasterMovie.objects.filter(Genres__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Genres__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Genres__isnull=False).count(),
+            'Reelgood': TB.Reelgood_Load.objects.filter(Genres__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Genres__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Budget',
-            'TMDB': MovieDB_Load.objects.filter(Budget__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(Budget__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Budget__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Budget__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(Budget__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Budget__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'Gross',
-            'TMDB': MovieDB_Load.objects.filter(Gross__isnull=False).count(),
-            'IMDB': IMDB_Load.objects.filter(GrossWorldwide__isnull=False).count(),
+            'TMDB': TB.MovieDB_Load.objects.filter(Gross__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(GrossWorldwide__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(Gross__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Gross__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
         new_dx = {
             'Feature': 'ImdbScore',
             'TMDB': 0,
-            'IMDB': IMDB_Load.objects.filter(Score__isnull=False).count(),
+            'IMDB': TB.IMDB_Load.objects.filter(Score__isnull=False).count(),
             'Reelgood': 0,
-            'Union-All': MasterMovie.objects.filter(ScoreImdb__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(ScoreImdb__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
@@ -673,8 +617,8 @@ class Reporter(object):
             'Feature': 'StreamingId',
             'TMDB': 0,
             'IMDB': 0,
-            'Reelgood': Reelgood_Load.objects.filter(Services__isnull=False).count(),
-            'Union-All': MasterMovie.objects.filter(Indeces__isnull=False).count(),
+            'Reelgood': TB.Reelgood_Load.objects.filter(Services__isnull=False).count(),
+            'Union-All': TB.MasterMovie.objects.filter(Indeces__isnull=False).count(),
         }
         history_ls.append(new_dx)
 
@@ -700,7 +644,7 @@ class Reporter(object):
 
     @staticmethod
     def GetVoteCounts():
-        vote_hist = list(   UserVotes.objects.all().values('Vote').
+        vote_hist = list(   TB.UserVotes.objects.all().values('Vote').
                             annotate(total=DB.models.Count('Vote')).
                             order_by('Vote') )
         return vote_hist
@@ -727,55 +671,4 @@ class Reporter(object):
         fig.update_yaxes(tickvals=list(range(0, 1000, 100)))
 
         return fig
-
-
-    @staticmethod
-    def GetWatchedMovies():
-        watched_ids = UserVotes.objects.all().values_list('Movie_ID', flat=True)
-        movies_ls = MasterMovie.objects.filter(Movie_ID__in=watched_ids
-                                        ).order_by('-ScoreImdb').values()
-
-        # hack until FK is up 
-
-        votes_ls = UserVotes.objects.all().values()
-        for mov in movies_ls:
-            for vt in votes_ls:
-                if mov['Movie_ID'] == vt['Movie_ID']:
-                    mov['Vote'] = vt['Vote']
-                    break
-
-        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
-        for mov in movies_ls:
-            poster_url = mov['Poster']
-            if 'http' not in poster_url:
-                mov['Poster'] = f"{thumb_url}{poster_url}"
-
-        return movies_ls
-
-
-    @staticmethod
-    def GetToWatchMovies():
-
-        # select_related will load movies from db, which speeds up the function
-
-        recom_ls = list(UserRecommendations.objects.filter(User='main')
-                        .select_related('Movie_FK').all())
-        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
-
-        movie_ls = []
-        for rec in recom_ls:
-            movie_dx = rec.Movie_FK.__dict__
-            state = movie_dx.pop('_state', None)
-            mid = movie_dx.pop('id', None)
-            movie_dx['RecomLevel'] = rec.RecomLevel
-
-            poster_url = movie_dx['Poster']
-            if 'http' not in poster_url:
-                movie_dx['Poster'] = f"{thumb_url}{poster_url}"
-
-            movie_ls.append(movie_dx)
-        
-        movie_ls = sorted(movie_ls, key=lambda mv: (-1)*mv['ScoreImdb'] if mv['ScoreImdb'] else 0)
-
-        return movie_ls
 

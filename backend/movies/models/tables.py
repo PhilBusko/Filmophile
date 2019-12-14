@@ -2,15 +2,7 @@
 MOVIE MODELS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-import os, csv, re, json
-import pandas as PD
-import numpy as NP
-import plotly.graph_objects as GO
-import plotly.figure_factory as FF
 import django.db as DB
-
-import app_proj.utility as UT
-import movies.models.moviedb_helper as MH
 
 
 class MasterMovie(DB.models.Model):

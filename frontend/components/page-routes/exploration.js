@@ -26,6 +26,7 @@ class Exploration extends React.Component {
             axios({
                 url: 'api/movies/years_plot/',
             }).then( success => {
+                //console.log(success.data);
                 this.setState({ yearsPlot: JSON.parse(success.data) });
             }).catch( error => {
                 console.log(error);

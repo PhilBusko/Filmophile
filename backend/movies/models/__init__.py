@@ -1,9 +1,13 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-MOVIES/MODELS/INIT.py
+MODELS INIT
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-from .models import MasterMovie
-from .models import MovieDB_Load
-from .models import Reelgood_Load
-from .models import IMDB_Load
+from .tables import MasterMovie
+from .tables import MovieDB_Load
+from .tables import Reelgood_Load
+from .tables import IMDB_Load
+
+from .tables import StreamService
+from .tables import UserVotes
+from .tables import UserRecommendations
 

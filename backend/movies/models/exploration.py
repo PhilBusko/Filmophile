@@ -11,7 +11,8 @@ import plotly.subplots as SB
 
 import app_proj.settings as ST
 import app_proj.utility as UT
-import movies.models.models as MD
+import movies.models.tables as TB
+import movies.models.data_manager as DM
 
 
 class Explore(object):
@@ -22,7 +23,7 @@ class Explore(object):
 
         # prepare data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         master_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
 
@@ -35,7 +36,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     # INDUSTRY 
@@ -45,7 +46,7 @@ class Explore(object):
 
         # prepare data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         master_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
 
@@ -71,7 +72,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -79,7 +80,7 @@ class Explore(object):
 
         # prepare data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         master_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
 
@@ -127,7 +128,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -135,7 +136,7 @@ class Explore(object):
 
         # prepare data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         master_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
 
@@ -172,7 +173,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -180,7 +181,7 @@ class Explore(object):
 
         # prepare data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         master_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
 
@@ -221,7 +222,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -229,7 +230,7 @@ class Explore(object):
 
         # get the data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         roi_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
 
@@ -315,7 +316,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -323,7 +324,7 @@ class Explore(object):
 
         # prepare data
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         master_df = PD.DataFrame(master_ls)
         master_df = master_df.drop(columns=['id', 'OriginalTitle', 'Poster', 'Synopsis', 'Indeces'])
         scoreprofit_df = master_df.dropna(axis=0, subset=['Budget', 'Gross', 'ScoreImdb'])
@@ -352,9 +353,9 @@ class Explore(object):
                                 hoverlabel={'namelength': 0}))
 
         fig.update_layout(
-            title="IMDB Score vs Profit",
+            title="ITBB Score vs Profit",
             xaxis_title="Profit ($ dollars)",
-            yaxis_title="IMDB Score",
+            yaxis_title="ITBB Score",
             width=500,
             height=400,
             margin=GO.layout.Margin(t=50, r=20, b=50, l=60, pad=0),
@@ -364,7 +365,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     # SERVICES 
@@ -375,7 +376,7 @@ class Explore(object):
         # get the data
         # later must filter by active movies
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         year_distrib = {'netflix': [], 'amazon': [], 'hulu': []}
 
         for mov in master_ls:
@@ -408,7 +409,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -417,7 +418,7 @@ class Explore(object):
         # get the data
         # later must filter by active movies
 
-        master_ls = list(MD.MasterMovie.objects.values())
+        master_ls = list(TB.MasterMovie.objects.values())
         score_distrib = {'netflix': [], 'amazon': [], 'hulu': []}
         total_cnt = {'netflix': 0, 'amazon': 0, 'hulu': 0}
 
@@ -455,8 +456,8 @@ class Explore(object):
                                 bin_size=.1, show_hist=False, show_rug=False )
 
         fig.update_layout(
-            title="IMDB Score for Movies Exclusively in Each Service",
-            xaxis_title="IMDB Score",
+            title="ITBB Score for Movies Exclusively in Each Service",
+            xaxis_title="ITBB Score",
             yaxis_title="Percentage",
             width=600,
             height=400,
@@ -469,5 +470,5 @@ class Explore(object):
         
         # format and send to frontend
 
-        return MD.Reporter.ConvertFigureToJson(fig)
+        return DM.Reporter.ConvertFigureToJson(fig)
 
