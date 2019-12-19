@@ -11,7 +11,7 @@ import movies.models.exploration as XT
 import movies.models.analysis as NL
 
 
-# general views
+# browsing pages
 
 @api_view(["GET"])
 def Genres(request):
@@ -22,6 +22,16 @@ def Genres(request):
 def RecomLevels(request):
    result_ls = DM.Reporter.GetRecomLevels()
    return Response(result_ls)
+
+@api_view(["GET"])
+def MoviesWatched(request):
+    movies_ls = DM.Reporter.GetWatchedMovies()
+    return Response(movies_ls)
+
+@api_view(["GET"])
+def MoviesToWatch(request):
+    movies_ls = DM.Reporter.GetToWatchMovies()
+    return Response(movies_ls)
 
 
 # exploration page 
@@ -83,17 +93,4 @@ def VotePlot(request):
 def RestrictedClassifiers(request):
     json_tx = NL.FeatureEngineer.GetRestrictedClassifiers()
     return Response(json_tx)
-
-
-# browsing pages
-
-@api_view(["GET"])
-def MoviesWatched(request):
-    movies_ls = DM.Reporter.GetWatchedMovies()
-    return Response(movies_ls)
-
-@api_view(["GET"])
-def MoviesToWatch(request):
-    movies_ls = DM.Reporter.GetToWatchMovies()
-    return Response(movies_ls)
 

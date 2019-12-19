@@ -353,9 +353,9 @@ class Explore(object):
                                 hoverlabel={'namelength': 0}))
 
         fig.update_layout(
-            title="ITBB Score vs Profit",
+            title="IMDB Score vs Profit",
             xaxis_title="Profit ($ dollars)",
-            yaxis_title="ITBB Score",
+            yaxis_title="IMDB Score",
             width=500,
             height=400,
             margin=GO.layout.Margin(t=50, r=20, b=50, l=60, pad=0),
@@ -456,8 +456,8 @@ class Explore(object):
                                 bin_size=.1, show_hist=False, show_rug=False )
 
         fig.update_layout(
-            title="ITBB Score for Movies Exclusively in Each Service",
-            xaxis_title="ITBB Score",
+            title="IMDB Score for Movies Exclusively in Each Service",
+            xaxis_title="IMDB Score",
             yaxis_title="Percentage",
             width=600,
             height=400,

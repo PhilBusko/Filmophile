@@ -16,10 +16,10 @@ class Paginator extends React.Component {
         numberEntries: PropTypes.number.isRequired,  
         updateCurrentPage: PropTypes.func.isRequired,
     }
-    
+
     getPageCount = () => {
         let pageCount = this.props.numberEntries / PERPAGE;
-        return pageCount;
+        return Math.ceil(pageCount);
     }
 
     handlePageClick = (data) => {
@@ -34,18 +34,24 @@ class Paginator extends React.Component {
         return (
             <div className='paginator-wrapper'>
                 <ReactPaginate
-                    onPageChange={ this.handlePageClick }
                     pageCount={ this.getPageCount() }
+                    pageRangeDisplayed={ 2 }
+                    marginPagesDisplayed={ 1 } 
+                    onPageChange={ this.handlePageClick }
 
                     containerClassName={ 'paginate-panel' }
-                    activeClassName={ 'active' }
-                    breakClassName={ 'break-me' }
+                    pageLinkClassName={ 'center-both page-class' }
+                    activeLinkClassName={ 'active' }
+                    breakLinkClassName={ 'break-me center-both control-class' }
 
-                    previousLabel={ 'Prev' }
-                    nextLabel={ 'Next' }
+                    previousClassName={ 'center-both ' }
+                    previousLinkClassName={ 'control-class' }
+                    nextClassName={ 'center-both ' }
+                    nextLinkClassName={ 'control-class' }
+
+                    previousLabel={ '<<' }
+                    nextLabel={ '>>' }
                     breakLabel={ '...' }
-                    marginPagesDisplayed={ 1 } 
-                    pageRangeDisplayed={ 2 }
                 />
             </div>
         );

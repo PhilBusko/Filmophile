@@ -119,7 +119,7 @@ class Exploration extends React.Component {
                             Movie Industry Graphs
                         </div>
                     </div>
-                    <div className='pure-u-1 even-panel spacing-outer'>
+                    <div className='pure-u-1 graph-panel spacing-outer'>
 
                         <div className='spacing-inner-large center-both'>
                             <PlotWrapper plotConfig={ this.state.yearsPlot } sizeClass='medium-plot'/>
@@ -148,7 +148,7 @@ class Exploration extends React.Component {
                             Streaming Service Graphs
                         </div>
                     </div>
-                    <div className='pure-u-1 even-panel spacing-outer'>
+                    <div className='pure-u-1 graph-panel spacing-outer'>
 
                         <div className='spacing-inner-large center-both'>
                             <PlotWrapper plotConfig={ this.state.totalsPlot } sizeClass='medium-plot'/>

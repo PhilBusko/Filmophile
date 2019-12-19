@@ -48,7 +48,7 @@ CONTENT BLOCK STYLES
         font-size: 88%;
     }
 
-    // basic page styling
+    // general page styling
 
     .spacing-outer {
         padding: 12px;
@@ -70,6 +70,7 @@ CONTENT BLOCK STYLES
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        align-items: center;
     }
     .spaced-panel {
         display: flex;
@@ -81,10 +82,33 @@ CONTENT BLOCK STYLES
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
-        flex-wrap: wrap;
+        align-items: center;
+    }
+    .panel-new-line {
+        flex-basis: 100%;       // takes up a whole row
+        height: 0;
     }
 
-    // page-specific styling
+    .control-island {
+        // display: flex;
+        // flex-direction: row;
+        // flex-wrap: wrap;
+        // justify-content: left;
+    
+        background: $controlBkgd;
+        border: 1px solid $contentHighlight;
+        border-radius: 5px;
+    }
+    .control-outer {
+        padding: 6px;
+
+        .control-inner {
+            display: inline-block;
+            margin: 8px;
+        }
+    }
+
+    // specific page styling
 
     .sticky-top {
         position: sticky;
@@ -93,40 +117,12 @@ CONTENT BLOCK STYLES
         border-bottom: 1px solid $controlBkgd;
     }
 
-    .control-panel {
+    .graph-panel {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
         justify-content: space-evenly;
         align-items: center;
-    
-        .control-group {
-            background: $controlBkgd;
-            border: 1px solid $contentHighlight;
-            border-radius: 5px;
-
-            .control-outer {
-                padding: 6px;
-            }
-            .control-inner {
-                display: inline-block;
-                margin: 6px;
-            }
-            .control-dummy {
-                // use this to push the following controls to next flex line
-                height: 20px;
-                width: 50px;
-                flex-grow: 1;
-            }
-        }
-        .control-filter {
-            max-width: 650px;
-            flex-shrink: 10;
-        }
-        .control-paginator {
-            // use min-width since parent is flex
-            min-width: 495px;
-        }
+        flex-wrap: wrap;
     }
 
     .small-plot {

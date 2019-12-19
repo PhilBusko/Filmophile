@@ -5,12 +5,17 @@ PAGINATOR STYLES
 
 .paginator-wrapper {
 
+    // use min-width since parent is flex
+    min-width: 470px;
+
+
     // shitty react-paginate dev gets all package styling from bootstrap
 
     .paginate-panel {
         display: flex;
         flex-direction: row;
         justify-content: center;
+        align-items: baseline;
         
         font-size: 120%;
 
@@ -20,14 +25,25 @@ PAGINATOR STYLES
         margin-block-end: 0px;
         padding-inline-start: 0px;
 
-        li {
-            display: inline;
-            margin: 10px;
+        .page-class {
+            min-width: 50px;
+            min-height: 28px;
+            margin: 4px;
+
+            border: 1px solid $contentHighlight;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .control-class {
+            min-width: 42px;
+            min-height: 28px;
             cursor: pointer;
         }
         .active {
             font-weight: bold;
-            cursor: not-allowed;          
+            border: 1px solid $contentText;
+            //text-decoration: underline;
+            cursor: not-allowed; 
         }
         .disabled {
             opacity: 0.65; 

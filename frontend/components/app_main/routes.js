@@ -34,5 +34,11 @@ export const RoutesConfig = [
         component: PR.About,
         order: 5,
     },
+    {
+        title: 'Admin',
+        path: '/admin',
+        component: PR.Admin,
+        order: 10,
+    },
 ]
 

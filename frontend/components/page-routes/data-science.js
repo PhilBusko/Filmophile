@@ -307,7 +307,7 @@ class DataScience extends React.Component {
                                 chosen as the most frequent best value among all the trials.
                                 Each grid search is run using cross-validation with 5-folds, 
                                 and the accuracy reported is the cross-validation test accuracy. 
-                                Since cross-validation is used, a pipeline in in order to prevent data leakage.
+                                Since cross-validation is used, a pipeline is in order to prevent data leakage.
                                 The pipeline contains an imputer, a scaler, and an estimator. 
                             </div>
                         </div>

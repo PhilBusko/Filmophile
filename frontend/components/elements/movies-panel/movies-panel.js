@@ -30,7 +30,7 @@ class MoviesPanel extends React.Component {
                     </When>
                     <When condition={ this.props.movies.length == 0 }>
                         <div style={{ width: '100%', height: '700px'}} className='center-both'>
-                            <img src={ '' } className='loading-icon' alt='loading'/>
+                            <LoadingIcon/>
                         </div>
                     </When>
                 </div>

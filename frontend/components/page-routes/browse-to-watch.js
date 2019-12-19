@@ -3,10 +3,8 @@ BROWSE TO-WATCH MOVIES PAGE
 **************************************************************************************************/
 import * as React from 'react';
 import axios from 'axios';
-//import { When } from 'react-if';
-
 import MenuLayout from '../layouts/menu-layout'
-import { SelectWrapper, Paginator, PERPAGE, MoviesPanel } from '../elements'
+import { SelectWrapper, Paginator, PERPAGE, MoviesPanel, TextWrapper } from '../elements'
 
 class BrowseToWatch extends React.Component {
 
@@ -81,6 +79,11 @@ class BrowseToWatch extends React.Component {
             if (key === 'includeGenre') 
                 // eslint-disable-next-line
                 filterMovies = filterMovies.filter( mv => (mv['Genres'] ? mv['Genres'] : '').indexOf(filters[key]) !== -1 );
+
+            if (key === 'filterTitle') 
+                // eslint-disable-next-line
+                filterMovies = filterMovies.filter( mv => mv['Title'].toLowerCase().indexOf(filters[key].toLowerCase()) >= 0 );
+            
         }
 
         return filterMovies;
@@ -104,7 +107,7 @@ class BrowseToWatch extends React.Component {
             newFilters['excludeGenre'] = this.state.genres.filter(g => g['key'] === intValue)[0]['value'];
         else
             delete newFilters['excludeGenre']
-        this.setState({filters: newFilters});
+        this.setState({ filters: newFilters });
     }
 
     includeGenre = (newValue) => {
@@ -114,7 +117,17 @@ class BrowseToWatch extends React.Component {
             newFilters['includeGenre'] = this.state.genres.filter(g => g['key'] === intValue)[0]['value'];
         else
             delete newFilters['includeGenre']
-        this.setState({filters: newFilters});
+        this.setState({ filters: newFilters });
+    }
+
+    filterTitle = (newText) => {
+        let strValue = newText.toString();
+        let newFilters = this.state.filters;
+        if (strValue.length >= 3)
+            newFilters['filterTitle'] = strValue;
+        else
+            delete newFilters['filterTitle']
+        this.setState({ filters: newFilters });
     }
 
     render() {
@@ -124,48 +137,56 @@ class BrowseToWatch extends React.Component {
 
         return (
             <MenuLayout>
-                <div className='spacing-outer sticky-top control-panel'>
+                <div className='left-panel spacing-outer sticky-top'>
 
-                    <div className='spacing-inner page-title'>
-                        Recommended Movies
-                    </div>
-
-                    <div className='spacing-inner control-group control-filter'>
-                        <div className='left-panel control-outer'>
-                            <div className='control-inner'>
-                                <SelectWrapper 
-                                    options={ this.state.recomLevels } 
-                                    label={ 'Recommendation Type' } 
-                                    updateSelection={ this.changeRecommendation }
-                                />
+                    <div> 
+                        <div className='spacing-inner'>
+                            <div className='page-title'>
+                                Recommendations
                             </div>
-                            <div className='control-dummy'>
-                            </div>
-                            <div className='control-inner'>
-                                <SelectWrapper 
-                                    options={ [{'key': 0, 'value': 'None'}].concat(this.state.genres) } 
-                                    label={ 'Exclude Genre' } 
-                                    updateSelection={ this.excludeGenre }
-                                />
-                            </div>
-                            <div className='control-inner'>
-                                <SelectWrapper 
-                                    options={ [{'key': 0, 'value': 'All'}].concat(this.state.genres) } 
-                                    label={ 'Include Genre' } 
-                                    updateSelection={ this.includeGenre }
+                        </div>
+                        <div className='spacing-inner control-island control-outer'>
+                            <div className='control -inner'>
+                                <Paginator 
+                                    numberEntries={ filteredMovies.length } 
+                                    updateCurrentPage={ this.updateOffset }
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className='spacing-inner control-group control-paginator'>
-                        <Paginator 
-                            numberEntries={ filteredMovies.length } 
-                            updateCurrentPage={ this.updateOffset }
-                        />
+                    <div className='spacing-inner control-island control-outer'>
+                        <div className='control-inner'>
+                            <SelectWrapper 
+                                options={ this.state.recomLevels } 
+                                label={ 'Recommendation Type' } 
+                                updateSelection={ this.changeRecommendation }
+                            />
+                        </div>
+                        <div className='control-inner'>
+                            <TextWrapper 
+                                label={ 'Search' } 
+                                updateText={ this.filterTitle }
+                            />
+                        </div>
+                        <div className='panel-new-line'></div>
+                        <div className='control-inner'>
+                            <SelectWrapper 
+                                options={ [{'key': 0, 'value': 'None'}].concat(this.state.genres) } 
+                                label={ 'Exclude Genre' } 
+                                updateSelection={ this.excludeGenre }
+                            />
+                        </div>
+                        <div className='control-inner'>
+                            <SelectWrapper 
+                                options={ [{'key': 0, 'value': 'All'}].concat(this.state.genres) } 
+                                label={ 'Include Genre' } 
+                                updateSelection={ this.includeGenre }
+                            />
+                        </div>
                     </div>
 
-                </div>                     
+                </div>
 
                 <MoviesPanel movies={ paginatedMovies }></MoviesPanel>
 

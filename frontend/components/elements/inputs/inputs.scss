@@ -6,19 +6,17 @@ SELECT WRAPPER STYLES
 .input-wrapper {
     margin-right: 20px;
     
-    // general input styles
-
     label {
 
     }
 
-    // specific input styles
-
     select {
         color: black;
     }
-    .text-format {
-        
+
+    .input-format {
+        width: 110px;
+        color: black;
     }
 }
 
