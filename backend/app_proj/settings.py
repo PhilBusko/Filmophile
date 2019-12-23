@@ -72,6 +72,7 @@ DATABASES = {
 
 ROOT_URLCONF = 'app_proj.urls'
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'app_proj/static/')
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
