@@ -88,11 +88,11 @@ LIVE SERVER SETTINGS
 
 SECRET_KEY = '2wsrwy%9h)gwl-$6jkk&*@f$+qp0@8dim%rmvz3#qmmp%q#(0m'
 
-DEBUG = True
+DEBUG = False #True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
-WSGI_APPLICATION = 'app_proj.setup.wsgi.application'
+WSGI_APPLICATION = 'app_proj.server.wsgi.application'
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

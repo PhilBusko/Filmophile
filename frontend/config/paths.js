@@ -83,7 +83,7 @@ module.exports = {
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
 
-  statsRoot: resolveApp('../backend/app_proj/setup'),
+  statsRoot: resolveApp('../backend/app_proj/server'),
 };
 
 module.exports.moduleFileExtensions = moduleFileExtensions;

@@ -47,7 +47,7 @@ class About extends Component {
                                 style={{'display': 'contents'}}>FlatIron School's</a>
                             &nbsp;Data Science Bootcamp,
                             but it is a dear project, and has been expanded since.
-                            It combines three of my pasions: data science, web development, and movies.
+                            It combines three of my passions: data science, web development, and movies.
                         </div>
                     </div>
 
