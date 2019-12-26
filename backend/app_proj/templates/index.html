@@ -3,13 +3,86 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Django Title</title>
-	</head>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width' />
+		<title>Philmofile</title>
+    </head>
+
+    <style>
+
+        html {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+        }
+        
+        #root {
+            width: 100%;
+            height: 100vh;
+        }    
+        
+        .center-both {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+        
+        .background-format {
+            height: 100vh;
+            background: LightSlateGrey;
+            color: white;
+        }
+        
+        .left-panel {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+        
+        .loading-text {
+            font-size: 250%;
+        }
+        
+        .loading-icon {
+            height: 50px;
+            margin: 0px 20px;
+        }
+        
+        .progress-icon {
+            font-size: 350%;
+        }
+        
+    </style>
+
 	<body>
 
-		<div id="root">REACT CONTENT</div>
+		<div id='root'>
+            
+            <div class='center-both background-format'>
+                <div class='center-both'>
+                    <div class='left-panel'>
+                        <span class='loading-text'>React.js </span>
+                        <img src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0xMS41IC0xMC4yMzE3NCAyMyAyMC40NjM0OCI+CiAgPHRpdGxlPlJlYWN0IExvZ288L3RpdGxlPgogIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIyLjA1IiBmaWxsPSIjNjFkYWZiIi8+CiAgPGcgc3Ryb2tlPSIjNjFkYWZiIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPgogICAgPGVsbGlwc2Ugcng9IjExIiByeT0iNC4yIi8+CiAgICA8ZWxsaXBzZSByeD0iMTEiIHJ5PSI0LjIiIHRyYW5zZm9ybT0icm90YXRlKDYwKSIvPgogICAgPGVsbGlwc2Ugcng9IjExIiByeT0iNC4yIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjApIi8+CiAgPC9nPgo8L3N2Zz4K'
+                            class='loading-icon'/>
+                        <span class='loading-text'>Loading </span>
+                    </div>
+                    <div>
+                        <span class='progress-icon'>. . . . . . .</span>
+                    </div>    
+                </div>
+            </div>
+            
+        </div>
 
 		{% render_bundle 'runtime~main' %}
 
@@ -18,16 +91,16 @@
 		{% render_bundle 'main' %}
 
 		<!--
-		<img src="http://localhost:3000/static/media/logo.5d5d9eef.svg" class="runlogo">
-		<script src="http://localhost:3000/static/js/bundle.js"></script>
-		<script src="http://localhost:3000/static/js/0.chunk.js"></script>
-		<script src="http://localhost:3000/static/js/main.chunk.js"></script>
+		<img src='http://localhost:3000/static/media/logo.5d5d9eef.svg' class='runlogo'>
+		<script src='http://localhost:3000/static/js/bundle.js'></script>
+		<script src='http://localhost:3000/static/js/0.chunk.js'></script>
+		<script src='http://localhost:3000/static/js/main.chunk.js'></script>
 		-->
 
 	</body>
 </html>
 
-<script type="text/javascript">
+<script type='text/javascript'>
 
 window.onload = testLoad;
 
@@ -38,18 +111,3 @@ function testLoad() {
 
 </script>
 
-<style>
-
-html {
-	margin: 0;
-	padding: 0;
-}
-
-body {
-	margin: 0;
-	padding: 0;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
-</style>

@@ -15,7 +15,6 @@ import movies.models.analysis as NL
 
 @api_view(["GET"])
 def Genres(request):
-    #print("Genres")
     result_ls = DM.Reporter.GetGenres()
     return Response(result_ls)
 
