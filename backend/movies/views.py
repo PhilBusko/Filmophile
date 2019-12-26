@@ -15,8 +15,9 @@ import movies.models.analysis as NL
 
 @api_view(["GET"])
 def Genres(request):
-   result_ls = DM.Reporter.GetGenres()
-   return Response(result_ls)
+    #print("Genres")
+    result_ls = DM.Reporter.GetGenres()
+    return Response(result_ls)
 
 @api_view(["GET"])
 def RecomLevels(request):

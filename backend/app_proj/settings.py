@@ -88,7 +88,7 @@ LIVE SERVER SETTINGS
 
 SECRET_KEY = '2wsrwy%9h)gwl-$6jkk&*@f$+qp0@8dim%rmvz3#qmmp%q#(0m'
 
-DEBUG = False #True
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -179,7 +179,7 @@ CORS_ORIGIN_WHITELIST = [
 WEBPACK_LOADER = {
     'DEFAULT': {
             'BUNDLE_DIR_NAME': 'bundles/',
-            'STATS_FILE': os.path.join(BASE_DIR, 'app_proj/setup/webpack-stats.dev.json'),
+            'STATS_FILE': os.path.join(BASE_DIR, 'app_proj/server/webpack-stats.dev.json'),
         }
 }
 

@@ -7,6 +7,13 @@ from django.views.generic import TemplateView
 
 import movies.views as MV
 
+def template_view(request):
+    print('template_view')
+    #t = TemplateView.as_view(template_name="index.html")
+    #print(t)
+    return None
+
+
 filmophile_url = [
     # general data
     url(r'^genres/', MV.Genres),
@@ -32,10 +39,12 @@ filmophile_url = [
     url(r'^restricted_classifiers/', MV.RestrictedClassifiers),
 ]
 
+
 urlpatterns = [
    url(r'^api/movies/', include((filmophile_url, 'movies'))),
 
    # base template goes last
+   #url(r'^', template_view),
    url(r'^', TemplateView.as_view(template_name="index.html")),
 ]
 
