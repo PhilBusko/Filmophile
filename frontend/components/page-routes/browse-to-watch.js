@@ -18,38 +18,29 @@ class BrowseToWatch extends React.Component {
 
     componentDidMount() {
         axios({
-            url: 'api/movies/recom_levels/',
-            method: 'get',
+            url: 'api/recommend/recom_levels/',
         }).then( success => {
-            this.setState({
-                recomLevels: success.data,
-            });
+            this.setState({ recomLevels: success.data });
         }).catch( error => {
-            console.log('Axios Error: api/movies/recom_levels/')
+            console.log('Axios Error: api/recommend/recom_levels/')
             console.log(error);
         });
 
         axios({
-            url: 'api/movies/genres/',
-            method: 'get',
+            url: 'api/recommend/genres/',
         }).then( success => {
-            this.setState({
-                genres: success.data,
-            });
+            this.setState({ genres: success.data });
         }).catch( error => {
-            console.log('Axios Error: api/movies/genres/')
+            console.log('Axios Error: api/recommend/genres/')
             console.log(error);
         });
 
         axios({
-            url: 'api/movies/movies_towatch/',
-            method: 'get',
+            url: 'api/recommend/movies_towatch/',
         }).then( success => {
-            this.setState({
-                movies: success.data,
-            });
+            this.setState({ movies: success.data });
         }).catch( error => {
-            console.log('Axios Error: api/movies/movies_towatch/')
+            console.log('Axios Error: api/recommend/movies_towatch/')
             console.log(error);
         });
     }
@@ -127,7 +118,10 @@ class BrowseToWatch extends React.Component {
             newFilters['filterTitle'] = strValue;
         else
             delete newFilters['filterTitle']
-        this.setState({ filters: newFilters });
+        this.setState({ 
+            filters: newFilters,
+            offset: 0, 
+        });
     }
 
     render() {

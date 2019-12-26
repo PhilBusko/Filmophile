@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     # custom apps
     'movies',
+    'recommend',
 ]
 
 MIDDLEWARE = [

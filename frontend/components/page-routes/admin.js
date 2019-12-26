@@ -3,9 +3,9 @@ ADMIN PAGE
 **************************************************************************************************/
 import * as React from 'react';
 import axios from 'axios';
-
 import MenuLayout from '../layouts/menu-layout'
 import { SelectWrapper} from '../elements'
+
 
 class Admin extends React.Component {
 
@@ -13,14 +13,19 @@ class Admin extends React.Component {
     }
 
     componentDidMount() {
-        axios({
-            url: 'api/movies/recom_levels/',
-        }).then( success => {
-            this.setState({ recomLevels: success.data });
-        }).catch( error => {
-            console.log('Axios Error: api/movies/recom_levels/')
-            console.log(error);
-        });
+        let DELAY = 800;
+
+        setTimeout( () => {
+            axios({
+                url: 'api/movies/years_plot/',
+            }).then( success => {
+                //console.log(success.data);
+                this.setState({ yearsPlot: JSON.parse(success.data) });
+            }).catch( error => {
+                console.log(error);
+            });
+        }, 0);
+        
     }
 
     render() {
@@ -52,3 +57,4 @@ class Admin extends React.Component {
 }
 
 export default Admin;
+

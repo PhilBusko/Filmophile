@@ -1,37 +1,11 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 FILMOPHILE VIEWS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 import app_proj.utility as UT
 import movies.models.data_manager as DM
 import movies.models.exploration as XT
-import movies.models.analysis as NL
-
-
-# browsing pages
-
-@api_view(["GET"])
-def Genres(request):
-    result_ls = DM.Reporter.GetGenres()
-    return Response(result_ls)
-
-@api_view(["GET"])
-def RecomLevels(request):
-   result_ls = DM.Reporter.GetRecomLevels()
-   return Response(result_ls)
-
-@api_view(["GET"])
-def MoviesWatched(request):
-    movies_ls = DM.Reporter.GetWatchedMovies()
-    return Response(movies_ls)
-
-@api_view(["GET"])
-def MoviesToWatch(request):
-    movies_ls = DM.Reporter.GetToWatchMovies()
-    return Response(movies_ls)
 
 
 # exploration page 
@@ -77,20 +51,10 @@ def ScoresPlot(request):
     return Response(json_ls)
 
 
-# data science page
+# admin page
 
 @api_view(["GET"])
-def DataHistory(request):
-   result_dx = DM.Reporter.GetDataHistory()
+def TableCounts(request):
+   result_dx = DM.Reporter.GetTableCounts()
    return Response(result_dx)
-
-@api_view(["GET"])
-def VotePlot(request):
-    json_tx = DM.Reporter.RunVotePlot()
-    return Response(json_tx)
-
-@api_view(["GET"])
-def RestrictedClassifiers(request):
-    json_tx = NL.FeatureEngineer.GetRestrictedClassifiers()
-    return Response(json_tx)
 

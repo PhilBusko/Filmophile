@@ -1,17 +1,13 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 DATA MANAGER
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 import os, csv, re, json
 import pandas as PD
 import numpy as NP
 import django.db as DB
-import plotly.graph_objects as GO
-import plotly.figure_factory as FF
 
 import app_proj.utility as UT
 import movies.models.tables as TB
-import movies.extract.moviedb_helper as MH
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -366,128 +362,13 @@ class Reporter(object):
     # BROWSE PAGES
 
     @staticmethod
-    def GetGenres():
-        genres = [
-            {'key': 1, 'value': 'Action'},
-            {'key': 2, 'value': 'Adventure'},
-            {'key': 3, 'value': 'Animation'},
-            {'key': 4, 'value': 'Biography'},
-            {'key': 5, 'value': 'Comedy'},
-            {'key': 6, 'value': 'Crime'},
-            {'key': 7, 'value': 'Documentary'},
-            {'key': 8, 'value': 'Drama'},
-            {'key': 9, 'value': 'Family'},
-            {'key': 10, 'value': 'Fantasy'},
-            {'key': 11, 'value': 'History'},
-            {'key': 12, 'value': 'Horror'},
-            {'key': 13, 'value': 'Music'},
-            {'key': 14, 'value': 'Mystery'},
-            {'key': 15, 'value': 'Romance'},
-            {'key': 16, 'value': 'Sci-Fi'},
-            {'key': 17, 'value': 'Sport'},
-            {'key': 18, 'value': 'Thriller'},
-            {'key': 19, 'value': 'War'},
-            {'key': 20, 'value': 'Western'},
-        ]
-        return genres
+    def GetTableCounts():
 
 
-    @staticmethod
-    def GetRecomLevels():
-        recom_ls = [
-            {'key': 3, 'value': 'Love It'},
-            {'key': 2, 'value': 'Maybe'},
-            {'key': 1, 'value': 'Don\'t Bother'}
-        ]
-        return recom_ls
+        dict([(name, cls) for name, cls in TB.__dict__.items() if isinstance(cls, type)])
 
 
-    @staticmethod
-    def GetWatchedMovies():
-        watched_ids = TB.UserVotes.objects.all().values_list('Movie_ID', flat=True)
-        movies_ls = TB.MasterMovie.objects.filter(Movie_ID__in=watched_ids
-                                        ).order_by('-ScoreImdb').values()
 
-        # hack until FK is up 
-
-        votes_ls = TB.UserVotes.objects.all().values()
-        for mov in movies_ls:
-            for vt in votes_ls:
-                if mov['Movie_ID'] == vt['Movie_ID']:
-                    mov['Vote'] = vt['Vote']
-                    break
-
-        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
-        for mov in movies_ls:
-            poster_url = mov['Poster']
-            if 'http' not in poster_url:
-                mov['Poster'] = f"{thumb_url}{poster_url}"
-
-        return movies_ls
-
-
-    @staticmethod
-    def GetToWatchMovies():
-
-        # select_related will load movies from db, which speeds up the function
-
-        recom_ls = list(TB.UserRecommendations.objects.filter(User='main')
-                        .select_related('Movie_FK').all())
-        thumb_url = MH.MovieDBHelper.GetPosterThumbUrl()
-
-        movie_ls = []
-        for rec in recom_ls:
-            movie_dx = rec.Movie_FK.__dict__
-            state = movie_dx.pop('_state', None)
-            mid = movie_dx.pop('id', None)
-            movie_dx['RecomLevel'] = rec.RecomLevel
-
-            poster_url = movie_dx['Poster']
-            if 'http' not in poster_url:
-                movie_dx['Poster'] = f"{thumb_url}{poster_url}"
-
-            movie_ls.append(movie_dx)
-        
-        movie_ls = sorted(movie_ls, key=lambda mv: (-1)*mv['ScoreImdb'] if mv['ScoreImdb'] else 0)
-
-        return movie_ls
-
-
-    # PLOTS & TABLES
-
-    @staticmethod
-    def ConvertFigureToJson(figure):
-        from plotly.utils import PlotlyJSONEncoder
-
-        redata = json.loads(json.dumps(figure.data, cls=PlotlyJSONEncoder))
-        relayout = json.loads(json.dumps(figure.layout, cls=PlotlyJSONEncoder))
-        fig_json=json.dumps({'data': redata,'layout': relayout})
-
-        return fig_json
-
-
-    @staticmethod
-    def ConvertToHistogramSeries(data_ls):
-        """
-        Takes a list of dictionaries with 2 items and converts them to 2 lists.
-        """
-        x_ls = []
-        y_ls = []
-
-        for dt in data_ls:
-            x = dt[list(dt.keys())[0]]
-            y = dt[list(dt.keys())[1]]
-
-            x_ls.append(x)
-            y_ls.append(y)
-        
-        return (x_ls, y_ls)
-
-
-    # EXPLORATION & DATA SCIENCE
-
-    @staticmethod
-    def GetDataHistory():
         history_ls = []
         tmdb_total = TB.MovieDB_Load.objects.count()
         imdb_total = TB.IMDB_Load.objects.count()
@@ -523,104 +404,7 @@ class Reporter(object):
         }
         history_ls.append(new_dx)
 
-        new_dx = {
-            'Feature': 'Companies',
-            'TMDB': TB.MovieDB_Load.objects.filter(Companies__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Companies__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(Companies__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
 
-        new_dx = {
-            'Feature': 'Country',
-            'TMDB': TB.MovieDB_Load.objects.filter(Country__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Country__isnull=False).count(),
-            'Reelgood': TB.Reelgood_Load.objects.filter(Country__isnull=False).count(),
-            'Union-All': TB.MasterMovie.objects.filter(Country__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Language',
-            'TMDB': TB.MovieDB_Load.objects.filter(Language__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Language__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(Language__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'RunTime',
-            'TMDB': TB.MovieDB_Load.objects.filter(RunTime__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Duration__isnull=False).count(),
-            'Reelgood': TB.Reelgood_Load.objects.filter(Duration__isnull=False).count(),
-            'Union-All': TB.MasterMovie.objects.filter(RunTime__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Crew*',
-            'TMDB': TB.MovieDB_Load.objects.filter(Crew__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Directors__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(Crew__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Cast*',
-            'TMDB': TB.MovieDB_Load.objects.filter(Cast__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Actors__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(Cast__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Genres*',
-            'TMDB': TB.MovieDB_Load.objects.filter(Genres__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Genres__isnull=False).count(),
-            'Reelgood': TB.Reelgood_Load.objects.filter(Genres__isnull=False).count(),
-            'Union-All': TB.MasterMovie.objects.filter(Genres__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Budget',
-            'TMDB': TB.MovieDB_Load.objects.filter(Budget__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(Budget__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(Budget__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Gross',
-            'TMDB': TB.MovieDB_Load.objects.filter(Gross__isnull=False).count(),
-            'IMDB': TB.IMDB_Load.objects.filter(GrossWorldwide__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(Gross__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'ImdbScore',
-            'TMDB': 0,
-            'IMDB': TB.IMDB_Load.objects.filter(Score__isnull=False).count(),
-            'Reelgood': 0,
-            'Union-All': TB.MasterMovie.objects.filter(ScoreImdb__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'StreamingId',
-            'TMDB': 0,
-            'IMDB': 0,
-            'Reelgood': TB.Reelgood_Load.objects.filter(Services__isnull=False).count(),
-            'Union-All': TB.MasterMovie.objects.filter(Indeces__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
 
         # normalize the values, done here to simplify the above code
 
@@ -631,44 +415,3 @@ class Reporter(object):
             row['Union-All'] = round(row['Union-All'] / master_total * 100, 1)
 
         return history_ls
-
-
-    @staticmethod
-    def RunVotePlot():
-        vote_md_ls = Reporter.GetVoteCounts()
-        vote_xy = Reporter.ConvertToHistogramSeries(vote_md_ls)
-        figure = Reporter.GetVoteFigure(vote_xy)
-        json = Reporter.ConvertFigureToJson(figure)
-        return json
-
-
-    @staticmethod
-    def GetVoteCounts():
-        vote_hist = list(   TB.UserVotes.objects.all().values('Vote').
-                            annotate(total=DB.models.Count('Vote')).
-                            order_by('Vote') )
-        return vote_hist
-
-
-    @staticmethod
-    def GetVoteFigure(vote_xy):
-
-        fig = GO.Figure()
-        fig.add_trace(
-            GO.Bar( x=vote_xy[0], y=vote_xy[1],
-                    marker_color=['crimson', 'seagreen', 'gold']
-            ))
-        fig.update_layout(
-            title="User Movie Scores",
-            xaxis_title="Number of Stars",
-            yaxis_title="Movie Count",
-            width=400,
-            height=300,
-            margin=GO.layout.Margin(t=50, r=20, b=50, l=70, pad=0),
-            paper_bgcolor="LightSteelBlue",
-        )
-        fig.update_xaxes(tickvals=vote_xy[0])
-        fig.update_yaxes(tickvals=list(range(0, 1000, 100)))
-
-        return fig
-

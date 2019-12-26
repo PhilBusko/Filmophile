@@ -1,5 +1,5 @@
 /**************************************************************************************************
-RULES-LOADER PAGE
+DATA SCIENCE PAGE
 **************************************************************************************************/
 import * as React from 'react';
 import axios from 'axios';
@@ -56,7 +56,7 @@ class DataScience extends React.Component {
 
     componentDidMount() {
         axios({
-            url: 'api/movies/data_history/',
+            url: 'api/recommend/data_history/',
             method: 'get',
         }).then( success => {
             //console.log(success.data);
@@ -66,7 +66,7 @@ class DataScience extends React.Component {
         });
 
         axios({
-            url: 'api/movies/vote_plot/',
+            url: 'api/recommend/score_plot/',
             method: 'get',
         }).then( success => {
             var jsonPlot = JSON.parse(success.data);
@@ -76,7 +76,7 @@ class DataScience extends React.Component {
         });
 
         axios({
-            url: 'api/movies/restricted_classifiers/',
+            url: 'api/recommend/restricted_classifiers/',
             method: 'get',
         }).then( success => {
             var jsonPlot = JSON.parse(success.data);

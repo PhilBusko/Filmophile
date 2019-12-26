@@ -1,7 +1,6 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 EXPLORATION LOGIC
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 import os, json, time
 import pandas as PD
 import numpy as NP
@@ -9,7 +8,6 @@ import plotly.graph_objects as GO
 import plotly.figure_factory as FF
 import plotly.subplots as SB
 
-import app_proj.settings as ST
 import app_proj.utility as UT
 import movies.models.tables as TB
 import movies.models.data_manager as DM
@@ -36,7 +34,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     # INDUSTRY 
@@ -72,7 +70,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -128,7 +126,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -173,7 +171,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -222,7 +220,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -316,7 +314,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -365,7 +363,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     # SERVICES 
@@ -409,7 +407,7 @@ class Explore(object):
 
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 
 
     @staticmethod
@@ -470,5 +468,5 @@ class Explore(object):
         
         # format and send to frontend
 
-        return DM.Reporter.ConvertFigureToJson(fig)
+        return UT.ConvertFigureToJson(fig)
 

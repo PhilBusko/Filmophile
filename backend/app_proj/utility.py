@@ -55,4 +55,22 @@ def GetFileNames(baseDir):
 def MakeDir(p_newPath):
     if not os.path.exists(p_newPath):
         os.makedirs(p_newPath)
-   
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+DATA HELPERS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+def ConvertFigureToJson(figure):
+    """
+    Takes a plotly figure object and converts it to json for frontend.
+    """
+    import json
+    from plotly.utils import PlotlyJSONEncoder
+
+    redata = json.loads(json.dumps(figure.data, cls=PlotlyJSONEncoder))
+    relayout = json.loads(json.dumps(figure.layout, cls=PlotlyJSONEncoder))
+    fig_json=json.dumps({'data': redata,'layout': relayout})
+
+    return fig_json
+
