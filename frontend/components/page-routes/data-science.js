@@ -147,7 +147,7 @@ class DataScience extends React.Component {
                         </div>
                     </div>
                     <div className='pure-u-1 pure-u-xl-1-2'>
-                        <div className='spacing-inner small-font'>
+                        <div className='spacing-inner'>
                             <TableWrapper tableRows={ this.state.dataHistory } sizeClass='medium-plot'/>
                         </div>
                     </div>
@@ -313,7 +313,7 @@ class DataScience extends React.Component {
                         </div>
                     </div>
                     <div className='pure-u-1-2'>
-                        <div className='spacing-inner small-font'>
+                        <div className='spacing-inner'>
                             <TableWrapper tableRows={ this.state.svmTune } sizeClass='small-plot'/>
                         </div>
                     </div>

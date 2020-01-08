@@ -1,5 +1,5 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-FILMOPHILE VIEWS
+RECOMMENDATION VIEWS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -7,7 +7,7 @@ import app_proj.utility as UT
 import recommend.models.analysis as NL
 
 
-# browsing pages
+# BROWSING PAGES
 
 @api_view(["GET"])
 def Genres(request):
@@ -30,12 +30,12 @@ def MoviesToWatch(request):
     return Response(movies_ls)
 
 
-# data science page
+# DATA SCIENCE PAGE
 
 @api_view(["GET"])
 def DataHistory(request):
-   result_dx = NL.General.GetDataHistory()
-   return Response(result_dx)
+    result_dx = NL.General.GetDataHistory()
+    return Response(result_dx)
 
 @api_view(["GET"])
 def ScorePlot(request):
@@ -48,10 +48,32 @@ def RestrictedClassifiers(request):
     return Response(json_tx)
 
 
-# admin page
+# ADMIN PAGE
 
 @api_view(["GET"])
 def TableCounts(request):
-   result_dx = DM.Reporter.GetTableCounts()
-   return Response(result_dx)
+    result_dx = NL.General.GetTableCounts()
+    return Response(result_dx)
+
+@api_view(["GET"])
+def DeleteTables(request):
+    NL.General.DeleteTable('All')
+    return Response()
+
+# recommendations
+
+@api_view(["GET"])
+def SyntheticScores(request):
+    NL.FeatureEngineer.CreateSyntheticVotes()
+    return Response()
+
+@api_view(["GET"])
+def FeaturesFile(request):
+    NL.FeatureEngineer.RunFeatures()
+    return Response()
+
+@api_view(["GET"])
+def TrainPredict(request):
+    NL.SvmClassifier.RunRecommendations()
+    return Response()
 

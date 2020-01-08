@@ -13,6 +13,7 @@ class TableWrapper extends React.Component {
 
     static propTypes = {
         tableRows: PropTypes.array.isRequired,
+        title: PropTypes.string,
         sizeClass: PropTypes.string.isRequired,
     }
 
@@ -71,14 +72,23 @@ class TableWrapper extends React.Component {
 
                 <When condition={ this.props.tableRows.length > 0 }>
                 { () =>
-                    <ReactTable
-                        data={ this.props.tableRows }
-                        columns={ this.getColumnsDef() }
-                        minRows={ 1 }
-                        showPagination={ false }
-                        sortable={ false }
-                        resizable={ false }
-                    />
+                    <div>
+                        <When condition={ !!this.props.title }>
+                            <div className='strong-font'>
+                                { this.props.title }
+                            </div>
+                        </When>
+                        <div className='table-container small-font'>
+                            <ReactTable
+                                data={ this.props.tableRows }
+                                columns={ this.getColumnsDef() }
+                                minRows={ 1 }
+                                showPagination={ false }
+                                sortable={ false }
+                                resizable={ false }
+                            />
+                        </div>
+                    </div>
                 }
                 </When>
                 <When condition={ this.props.tableRows.length == 0 }>

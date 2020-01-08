@@ -81,6 +81,7 @@ CONTENT BLOCK STYLES
     .even-panel {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-evenly;
         align-items: center;
     }
@@ -125,6 +126,11 @@ CONTENT BLOCK STYLES
         flex-wrap: wrap;
     }
 
+    .tiny-plot {
+        width: 400px;
+        height: 300px;
+        border: 1px solid $contentHighlight;
+    }
     .small-plot {
         width: 500px;
         height: 400px;

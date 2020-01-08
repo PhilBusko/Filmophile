@@ -5,12 +5,12 @@ import django.db as DB
 import movies.models.tables as MT
 
 
-class UserVotes(DB.models.Model):
+class UserScores(DB.models.Model):
     class Meta:
         unique_together = [['Movie_ID', 'User']]
     Movie_ID = DB.models.IntegerField()     # if not a foreign key, can reload master table
     User = DB.models.TextField()            # should be foreign key to user
-    Vote = DB.models.IntegerField()
+    Score = DB.models.IntegerField()
 
 
 class UserRecommendations(DB.models.Model):

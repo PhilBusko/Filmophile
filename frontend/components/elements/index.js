@@ -6,6 +6,7 @@ import LoadingIcon from './displays/loading-icon'
 import PlotWrapper from './displays/plot-wrapper'
 import TableWrapper from './displays/table-wrapper'
 
+import ButtonWrapper from './inputs/button-wrapper'
 import SelectWrapper from './inputs/select-wrapper'
 import TextWrapper from './inputs/text-wrapper'
 
@@ -17,7 +18,7 @@ import MoviesPanel from './movies-panel/movies-panel'
 
 export {
     LoadingIcon, PlotWrapper, TableWrapper, 
-    SelectWrapper, TextWrapper,
+    ButtonWrapper, SelectWrapper, TextWrapper,
     ContentLink, Paginator, PERPAGE, ResourceLink,
     MoviesPanel
 }

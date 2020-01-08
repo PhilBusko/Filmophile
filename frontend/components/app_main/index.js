@@ -12,8 +12,8 @@ import App from './app-component';
 // set axios defaults
 // this isn't best practice - how to configure this for prod ?
 
-axios.defaults.baseURL = 'http://localhost:8000';
-axios.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
+//axios.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 

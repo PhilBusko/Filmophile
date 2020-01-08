@@ -18,13 +18,19 @@ class MasterMovie(DB.models.Model):
     Cast = DB.models.TextField(null=True)
     Poster = DB.models.TextField(null=True)
     Genres = DB.models.TextField(null=True)
-    #Collection = DB.models.TextField(null=True)
+    Keywords = DB.models.TextField(null=True)
     Synopsis = DB.models.TextField(null=True)
     Budget = DB.models.IntegerField(null=True)
     Gross = DB.models.IntegerField(null=True)
     ScoreImdb = DB.models.FloatField(null=True)
     VotesImdb = DB.models.IntegerField(null=True)
     Indeces = DB.models.TextField(null=True)
+
+class StreamService(DB.models.Model):
+    Movie_ID = DB.models.IntegerField()
+    Service = DB.models.TextField()
+    ServiceKey = DB.models.TextField()
+    Active = DB.models.BooleanField()
 
 
 class MovieDB_Load(DB.models.Model):
@@ -48,7 +54,6 @@ class MovieDB_Load(DB.models.Model):
     Score = DB.models.TextField(null=True)
     Votes = DB.models.TextField(null=True)
     ImdbId = DB.models.TextField(null=True)
-
 
 class Reelgood_Load(DB.models.Model):
     class Meta:
@@ -74,7 +79,6 @@ class Reelgood_Load(DB.models.Model):
     RtScore = DB.models.TextField(null=True)
     Services = DB.models.TextField()
 
-
 class IMDB_Load(DB.models.Model):
     ImdbId = DB.models.TextField(unique=True, default='tt')
     Title = DB.models.TextField()
@@ -97,11 +101,4 @@ class IMDB_Load(DB.models.Model):
     GrossWorldwide = DB.models.TextField(null=True)
     Score = DB.models.FloatField(null=True)
     Votes = DB.models.IntegerField(null=True)
-
-
-class StreamService(DB.models.Model):
-    Movie_ID = DB.models.IntegerField()
-    Service = DB.models.TextField()
-    ServiceKey = DB.models.TextField()
-    Active = DB.models.BooleanField()
 

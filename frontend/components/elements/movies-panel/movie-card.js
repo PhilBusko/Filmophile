@@ -59,8 +59,8 @@ class MovieCard extends React.Component {
 
         let numberStars = 0
 
-        if ('Vote' in movie)
-            numberStars = movie['Vote']
+        if ('Score' in movie)
+            numberStars = movie['Score']
 
         return (
             <div className='movie-card movie-panel'>

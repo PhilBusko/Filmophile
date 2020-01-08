@@ -4,7 +4,8 @@ APP-PROJ UTILITY
 
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# os.path.join(UT.BASE_DIR, ...) ... must not start with /
+# os.path.join(UT.BASE_DIR, <file_name>) : <file_name> must not start with /
+# BASE_DIR is /backend/
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

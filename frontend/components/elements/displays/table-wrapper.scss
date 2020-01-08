@@ -8,7 +8,11 @@ $tableBorder: DarkGray;
 .table-wrapper {
     display: inline-table;
     margin: 10px;
-    background: $controlBkgd;
+
+    .table-container {
+        margin-top: 6px;
+        background: $controlBkgd;
+    }
 
     .table-header {
         text-align: left;

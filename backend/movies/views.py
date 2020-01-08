@@ -1,5 +1,5 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-FILMOPHILE VIEWS
+MOVIES VIEWS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,7 +8,7 @@ import movies.models.data_manager as DM
 import movies.models.exploration as XT
 
 
-# exploration page 
+# EXPLORATION PAGE 
 
 @api_view(["GET"])
 def YearPlot(request):
@@ -51,10 +51,37 @@ def ScoresPlot(request):
     return Response(json_ls)
 
 
-# admin page
+# ADMIN PAGE
 
 @api_view(["GET"])
 def TableCounts(request):
-   result_dx = DM.Reporter.GetTableCounts()
-   return Response(result_dx)
+    result_dx = DM.Reporter.GetTableCounts()
+    return Response(result_dx)
+
+@api_view(["GET"])
+def DeleteTables(request):
+    DM.Editor.DeleteTable('All')
+    return Response()
+
+@api_view(["GET"])
+def LoadCsvs(request):
+    DM.Editor.LoadBaseCsvs()
+    return Response()
+
+@api_view(["GET"])
+def MasterMovies(request):
+
+    master_ls = DM.Editor.RunMasterMovies()
+    DM.Editor.InsertDictToTable(master_ls, 'MasterMovie')
+
+    return Response()
+
+
+# extract data 
+
+
+@api_view(["GET"])
+def MoviedbExtract(request):
+    NL.SvmClassifier.RunRecommendations()
+    return Response()
 

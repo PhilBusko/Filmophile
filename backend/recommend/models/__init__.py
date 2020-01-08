@@ -2,6 +2,6 @@
 MODELS INIT
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-from .tables import UserVotes
+from .tables import UserScores
 from .tables import UserRecommendations
 

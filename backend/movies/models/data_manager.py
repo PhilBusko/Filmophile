@@ -14,7 +14,6 @@ import movies.models.tables as TB
 DATABASE EDITOR 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
 class Editor(object):
 
 
@@ -34,8 +33,8 @@ class Editor(object):
     def InsertDictToTable(data_ls, table):
         # data_obj_ls = [MovieDB_Load(**r) for r in data_ls]
         # MovieDB_Load.objects.bulk_create(data_obj_ls)
-        data_obj_ls = eval(f"[{table}(**r) for r in data_ls]")
-        exec(f"{table}.objects.bulk_create(data_obj_ls, ignore_conflicts=True)")
+        data_obj_ls = eval(f"[TB.{table}(**r) for r in data_ls]")
+        exec(f"TB.{table}.objects.bulk_create(data_obj_ls, ignore_conflicts=True)")
 
         # for debugging input data
         # bulk insert is faster
@@ -52,24 +51,22 @@ class Editor(object):
 
 
     @staticmethod
-    def ToDBColumns(header_ls):
-        new_ls = []
-        for hdr in header_ls:
-            new_col = hdr.replace('_', ' ').title().replace(' ', '')
-            new_ls.append(new_col)
-        return new_ls
-
-
-    @staticmethod
     def CSVtoDict(file_path):
         
         if not os.path.isfile(file_path):
             raise Exception(f"CSV file not found: {file_path}")
         
+        def ToDBColumns(header_ls):
+            new_ls = []
+            for hdr in header_ls:
+                new_col = hdr.replace('_', ' ').title().replace(' ', '')
+                new_ls.append(new_col)
+            return new_ls
+
         fhandle = open(file_path, 'r')
         reader = csv.reader(fhandle)
         header_ls = next(reader)            
-        header_ls = Editor.ToDBColumns(header_ls)
+        header_ls = ToDBColumns(header_ls)
         data_ls = []
 
         for row in reader:
@@ -89,6 +86,22 @@ class Editor(object):
 
 
     @staticmethod
+    def LoadBaseCsvs():
+
+        movieDB_path = os.path.join(UT.BASE_DIR, 'movies/data/moviedb_movie.csv')
+        movieDB_ls = Editor.CSVtoDict(movieDB_path)
+        Editor.InsertDictToTable(movieDB_ls, 'MovieDB_Load')
+
+        reelgood_path = os.path.join(UT.BASE_DIR, 'movies/data/reelgood_movie.csv')
+        reelgood_ls = Editor.CSVtoDict(reelgood_path)
+        Editor.InsertDictToTable(reelgood_ls, 'Reelgood_Load')
+
+        imdb_path = os.path.join(UT.BASE_DIR, 'movies/data/imdb_movie.csv')
+        imdb_ls = Editor.CSVtoDict(imdb_path)
+        Editor.InsertDictToTable(imdb_ls, 'IMDB_Load')
+
+
+    @staticmethod
     def RunMasterMovies():
 
         # apparently django ORM can only join tables if there is a foreign key relation
@@ -99,9 +112,9 @@ class Editor(object):
         # create and join dataframes
         # joining imdb on id is better than on the token, though the token in 100% for tmdb and reelgood
 
-        moviedb_df = PD.DataFrame(list(MovieDB_Load.objects.values()))
-        reelgood_df = PD.DataFrame(list(Reelgood_Load.objects.values()))
-        imdb_df = PD.DataFrame(list(IMDB_Load.objects.values()))
+        moviedb_df = PD.DataFrame(list(TB.MovieDB_Load.objects.values()))
+        reelgood_df = PD.DataFrame(list(TB.Reelgood_Load.objects.values()))
+        imdb_df = PD.DataFrame(list(TB.IMDB_Load.objects.values()))
 
         def GetJoinToken(row):
             title = row['Title']
@@ -356,62 +369,46 @@ class Editor(object):
 DATABASE REPORTER 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
 class Reporter(object):
 
-    # BROWSE PAGES
 
     @staticmethod
     def GetTableCounts():
+        table_ls = [ table for table, clss in TB.__dict__.items() if isinstance(clss, type) ]
+        count_ls = []
+
+        for tbl in table_ls:
+            command = f'TB.{tbl}.objects.count()'
+            count = eval(command)
+            new_dx ={
+                'Table': tbl,
+                'Count': count,
+            }
+            count_ls.append(new_dx)
+
+        return count_ls
 
 
-        dict([(name, cls) for name, cls in TB.__dict__.items() if isinstance(cls, type)])
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+DATA EXTRACTOR
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+class Extractor(object):
 
 
+    @staticmethod
+    def GetTableCounts():
+        table_ls = [ table for table, clss in TB.__dict__.items() if isinstance(clss, type) ]
+        count_ls = []
 
-        history_ls = []
-        tmdb_total = TB.MovieDB_Load.objects.count()
-        imdb_total = TB.IMDB_Load.objects.count()
-        reelgood_total = TB.Reelgood_Load.objects.count() 
-        master_total = TB.MasterMovie.objects.count()
+        for tbl in table_ls:
+            command = f'TB.{tbl}.objects.count()'
+            count = eval(command)
+            new_dx ={
+                'Table': tbl,
+                'Count': count,
+            }
+            count_ls.append(new_dx)
 
-        new_dx = {
-            'Feature': 'Title',
-            'TMDB': tmdb_total,
-            'IMDB': imdb_total,
-            'Reelgood': reelgood_total,
-            'Union-All': master_total,
-        }
-        history_ls.append(new_dx)
+        return count_ls
 
-        new_dx = {
-            'Feature': 'Year',
-            'TMDB': tmdb_total,
-            'IMDB': imdb_total,
-            'Reelgood': reelgood_total,
-            'Union-All': master_total,
-
-        }
-        history_ls.append(new_dx)
-
-        new_dx = {
-            'Feature': 'Rating',
-            'TMDB': 0,
-            'IMDB': TB.IMDB_Load.objects.filter(Rating__isnull=False).
-                    exclude(Rating__in=['Not Rated', 'Unrated', 'Approved', 'Passed']).count(),
-            'Reelgood': TB.Reelgood_Load.objects.filter(Rating__isnull=False).count(),
-            'Union-All': TB.MasterMovie.objects.filter(Rating__isnull=False).count(),
-        }
-        history_ls.append(new_dx)
-
-
-
-        # normalize the values, done here to simplify the above code
-
-        for row in history_ls:
-            row['TMDB'] = round(row['TMDB'] / tmdb_total * 100, 1)
-            row['IMDB'] = round(row['IMDB'] / imdb_total * 100, 1)
-            row['Reelgood'] = round(row['Reelgood'] / reelgood_total * 100, 1)
-            row['Union-All'] = round(row['Union-All'] / master_total * 100, 1)
-
-        return history_ls

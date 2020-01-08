@@ -10,13 +10,21 @@ SELECT WRAPPER STYLES
 
     }
 
-    select {
+    .button-format {
+        padding: 6px 10px;
+        border: 2px outset silver;
+        border-radius: 1px;
+        background: aliceblue;
         color: black;
+        //font-weight: bold;
     }
-
     .input-format {
         width: 110px;
         color: black;
     }
+    select {
+        color: black;
+    }
+
 }
 

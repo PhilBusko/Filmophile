@@ -20,7 +20,10 @@ movie_url = [
 
     # admin page
     url(r'^table_counts/', MV.TableCounts),
-    url(r'^table_counts/', MV.TableCounts),
+    url(r'^delete_tables/', MV.DeleteTables),
+    url(r'^load_csvs/', MV.LoadCsvs),
+    url(r'^master_movies/', MV.MasterMovies),
+    url(r'^moviedb_extract/', MV.MoviedbExtract),
 ]
 
 recommend_url = [
@@ -34,6 +37,13 @@ recommend_url = [
     url(r'^data_history/', RV.DataHistory),
     url(r'^score_plot/', RV.ScorePlot),
     url(r'^restricted_classifiers/', RV.RestrictedClassifiers),
+
+    # admin page
+    url(r'^table_counts/', RV.TableCounts),
+    url(r'^delete_tables/', RV.DeleteTables),
+    url(r'^synthetic_scores/', RV.SyntheticScores),
+    url(r'^features_file/', RV.FeaturesFile),
+    url(r'^train_predict/', RV.TrainPredict),
 ]
 
 urlpatterns = [

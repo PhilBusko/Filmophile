@@ -44,7 +44,7 @@ class MovieDBHelper(object):
 
         total_pages = int(pagination['total_pages'])
         total_results = pagination['total_results']
-        print(f'results for {date_start} to {date_end}: {total_results} ({total_pages} pages)')
+        #print(f'results for {date_start} to {date_end}: {total_results} ({total_pages} pages)')
 
         movie_ls = []
 
