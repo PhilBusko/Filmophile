@@ -70,10 +70,8 @@ def LoadCsvs(request):
 
 @api_view(["GET"])
 def MasterMovies(request):
-
     master_ls = DM.Editor.RunMasterMovies()
     DM.Editor.InsertDictToTable(master_ls, 'MasterMovie')
-
     return Response()
 
 
