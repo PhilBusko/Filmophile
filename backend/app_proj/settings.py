@@ -5,7 +5,7 @@ BACKEND SETTINGS
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # from django.conf import settings
-# os.path.join(settings.BASE_DIR, ...) ... must not start with /
+# os.path.join(settings.BASE_DIR, <file>) <file> must not start with /
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'webpack_loader',
+    'channels',
     # custom apps
     'movies',
     'recommend',
@@ -87,13 +88,21 @@ SITE_ID = 1
 LIVE SERVER SETTINGS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+ALLOWED_HOSTS = ['*']
+DEBUG = True
 SECRET_KEY = '2wsrwy%9h)gwl-$6jkk&*@f$+qp0@8dim%rmvz3#qmmp%q#(0m'
 
-DEBUG = True
+ASGI_APPLICATION = 'app_proj.routing.application'
+WSGI_APPLICATION = 'app_proj.wsgi.application'
 
-ALLOWED_HOSTS = ['*']
-
-WSGI_APPLICATION = 'app_proj.server.wsgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -161,8 +170,6 @@ LOGGING = {
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 INSTALLED PACKAGES 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-# REST API
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

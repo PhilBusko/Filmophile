@@ -23,6 +23,7 @@ class About extends Component {
     purecssIcon = require('../assets/icons/purecss.png')
     webpackIcon = require('../assets/icons/webpack.ico')
     githubIcon = require('../assets/icons/github.png')
+    awsIcon = require('../assets/icons/aws.jpg')
 
     render() {
         return (
@@ -37,7 +38,7 @@ class About extends Component {
 
                     <div className='pure-u-1'>
                         <div className='spacing-inner'>
-                            This site aggregates movies and TV shows from different streaming services
+                            This site takes movies and TV shows from different streaming services
                             and makes them all available in one place. 
                             The user votes on their favorite and disliked movies, 
                             and the computer model learns their preferences from that information. 
@@ -152,8 +153,8 @@ class About extends Component {
                             <span>
                                 <ResourceLink url={'https://github.com/PhilBusko/Filmophile'} 
                                     icon={ this.githubIcon } text='Github Repo'></ResourceLink>
-                                <ResourceLink url={'https://github.com/PhilBusko/Filmophile'} 
-                                    icon={ this.githubIcon } text='PaaS' isLast={ true }></ResourceLink>
+                                <ResourceLink url={'https://console.aws.amazon.com/console/home?region=us-east-1'} 
+                                    icon={ this.awsIcon } text='AWS EC2' isLast={ true }></ResourceLink>
                             </span>
                         </div>
                     </div>

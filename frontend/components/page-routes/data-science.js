@@ -141,7 +141,7 @@ class DataScience extends React.Component {
                             </div>
                             <br></br>
                             <div className='center-both'>
-                                <img src={ this.dataClean } style={{ height: '130px', marginTop: '10px'}}
+                                <img src={ this.dataClean } style={{ height: '140px', marginTop: '10px'}}
                                     alt='Example cleaning of categorical list data.'></img>
                             </div>
                         </div>

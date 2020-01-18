@@ -23,7 +23,9 @@ movie_url = [
     url(r'^delete_tables/', MV.DeleteTables),
     url(r'^load_csvs/', MV.LoadCsvs),
     url(r'^master_movies/', MV.MasterMovies),
-    url(r'^moviedb_extract/', MV.MoviedbExtract),
+    url(r'^extract_moviedb/', MV.ExtractMovieDb),
+    url(r'^extract_reelgood/', MV.ExtractReelgood),
+    url(r'^extract_imdb/', MV.ExtractImdb),
 ]
 
 recommend_url = [

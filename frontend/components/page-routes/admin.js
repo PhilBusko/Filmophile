@@ -1,11 +1,73 @@
 /**************************************************************************************************
 ADMIN PAGE
 **************************************************************************************************/
-import * as React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
+import useWebSocket from 'react-use-websocket';
+
 import MenuLayout from '../layouts/menu-layout'
-import { SelectWrapper, ButtonWrapper } from '../elements'
-import { PlotWrapper, TableWrapper } from '../elements'
+import { SelectWrapper, ButtonWrapper, PlotWrapper, TableWrapper } from '../elements'
+
+import { When } from 'react-if';
+
+
+const WebsocketWrapper = () => {
+
+    // initialize websocket connection
+
+    const socketUrl = 'ws://' + window.location.host + '/ws/chat/lobby/';
+    const [receivedJson, setReceivedJson] = useState({});
+    const [sendMessage, lastMessage, readyState, getWebSocket] = useWebSocket(socketUrl);
+    const connectionStatus = ['Connecting', 'Open', 'Closing', 'Closed'][readyState];
+
+
+    // send a new message with data from props
+
+    const message = {
+        'type': 'from wrapper',
+        'text': 'from wrapper',
+        'data': null,
+    }
+    const messageJson = JSON.stringify(message);
+
+    const handleClickSendMessage = useCallback(() => sendMessage(messageJson), []);
+
+
+
+
+    // triggers when a new message is received
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+            console.log('received message from: ', getWebSocket().url);
+            setReceivedJson(prev => JSON.parse(lastMessage.data));
+        }
+    }, [lastMessage]);
+
+
+    return (
+        <div>
+            
+            <div className='control-inner'>
+                <ButtonWrapper label='Start Process Websocket' updateClick={ handleClickSendMessage }></ButtonWrapper>
+            </div>
+            <div className='panel-new-line'></div>
+
+            <When condition={ true }>
+                { () =>
+                    <div>
+                        <div>Text: {receivedJson['text']}</div>
+                        <div>Progress: {receivedJson['data']}</div>
+                    </div>
+                }
+            </When>
+            
+            <div>Connection Status: {connectionStatus}</div>
+
+        </div>
+    );
+};
+
 
 
 class Admin extends React.Component {
@@ -24,6 +86,7 @@ class Admin extends React.Component {
         setTimeout( () => {
             //console.log( this.state );
         }, 1000);
+
     }
 
     axiosWrapper(relativeUrl, stateVar) {
@@ -37,6 +100,59 @@ class Admin extends React.Component {
             console.log(error);
         });    
     }
+
+
+    // WEBSOCKET
+
+    extractMovieDb = () => {
+        //document.body.style.cursor = 'wait';
+        axios({
+            url: 'api/movies/extract_moviedb/',
+        }).then( success => {
+            console.log("extract_moviedb success");
+            console.log(success);
+            //this.axiosWrapper('api/movies/table_counts/', 'movieTables');
+        }).catch( error => {
+            console.log(error);
+        }).finally(function () {
+            //document.body.style.cursor = '';
+        });
+    }
+
+    extractReelgood = () => {
+        //document.body.style.cursor = 'wait';
+        axios({
+            url: 'api/movies/extract_reelgood/',
+        }).then( success => {
+            console.log("extract_reelgood success");
+            console.log(success);
+            //this.axiosWrapper('api/movies/table_counts/', 'movieTables');
+        }).catch( error => {
+            console.log(error);
+        }).finally(function () {
+            //document.body.style.cursor = '';
+        });
+    }
+
+
+    extractImdb = () => {
+        //document.body.style.cursor = 'wait';
+        axios({
+            url: 'api/movies/extract_imdb/',
+        }).then( success => {
+            console.log("extract_imdb success");
+            console.log(success);
+            //this.axiosWrapper('api/movies/table_counts/', 'movieTables');
+        }).catch( error => {
+            console.log(error);
+        }).finally(function () {
+            //document.body.style.cursor = '';
+        });
+    }
+
+
+
+    // BASIC TABLES
 
     loadCsvs = () => {
         document.body.style.cursor = 'wait';
@@ -123,6 +239,9 @@ class Admin extends React.Component {
         });
     }
 
+
+    // RENDER
+
     render() {
         return (
             <MenuLayout>
@@ -132,6 +251,23 @@ class Admin extends React.Component {
                             Webmaster Dashboard
                         </div>
                     </div>
+
+                    <div className='pure-u-1-5'>
+                        <div className='spacing-inner control-island control-outer'>
+
+
+                            <div className='control-inner'>
+                                <ButtonWrapper label='Start Process Axios' updateClick={ this.extractReelgood }></ButtonWrapper>
+                            </div>
+                            <div className='panel-new-line'></div>
+
+                            <div className='control-inner'>
+                                <WebsocketWrapper></WebsocketWrapper>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div className='pure-u-1'></div>
 
                     <div className='pure-u-1-5'>
                         <div className='spacing-inner control-island control-outer even-panel'>

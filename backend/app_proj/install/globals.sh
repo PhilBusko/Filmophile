@@ -11,3 +11,14 @@ sudo apt-get install nginx -y
 
 sudo apt-get install gunicorn3 -y
 
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+. ~/.nvm/nvm.sh
+nvm install node
+
+echo ''
+pip3 --version
+psql --version
+nginx -v
+gunicorn3 --version
+node -e "console.log('node.js: ' + process.version)"
+

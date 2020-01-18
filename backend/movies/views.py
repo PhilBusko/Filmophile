@@ -79,7 +79,31 @@ def MasterMovies(request):
 
 
 @api_view(["GET"])
-def MoviedbExtract(request):
-    NL.SvmClassifier.RunRecommendations()
+def ExtractMovieDb(request):
+
+    print("ExtractMovieDb")
+    # join websocket group ?
+
+
+
     return Response()
 
+@api_view(["GET"])
+def ExtractReelgood(request):
+
+    print("ExtractReelgood")
+    # join websocket group ?
+
+
+
+    return Response()
+
+@api_view(["GET"])
+def ExtractImdb(request):
+
+    print("ExtractImdb")
+    # join websocket group ?
+
+
+
+    return Response()
